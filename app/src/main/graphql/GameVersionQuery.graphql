@@ -1,0 +1,8 @@
+query GameVersionsQuery {
+    versions {
+        game
+        id
+        name
+        __typename
+    }
+}

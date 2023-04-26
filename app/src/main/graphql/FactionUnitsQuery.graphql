@@ -1,0 +1,30 @@
+query factionUnitsQuery($tww_version: String! = "327635228256759215", $faction: String! = "wh3_dlc23_chd_legion_of_azgorh") {
+  tww(tww_version: $tww_version) {
+    tww_version
+    faction(id: $faction) {
+      units(groupHeroesAndLords: true) {
+        unit
+        caste
+        multiplayer_cost
+        custom_battle_permissions {
+          general_portrait
+          __typename
+        }
+        land_unit {
+          onscreen_name
+          __typename
+        }
+        ui_unit_group {
+          icon
+          key
+          name
+          tooltip
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
