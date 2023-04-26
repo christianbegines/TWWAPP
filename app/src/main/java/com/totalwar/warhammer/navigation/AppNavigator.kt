@@ -24,6 +24,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.views.FactionUnitsScreen
 import com.totalwar.warhammer.views.faction.FactionListScreen
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -54,8 +55,8 @@ fun AppRouter(
                 )
             }
         ) {
-            val empId = it.arguments?.getString("id")
-            // FactionListScreen(viewModel, dataStore, openDrawer)
+            val id = it.arguments?.getString("id").orEmpty()
+            FactionUnitsScreen(navController, viewModel, dataStore, openDrawer,id)
         }
         composable(
             route = AppScreens.UnitScreen.route + "/{id}",
@@ -72,7 +73,7 @@ fun AppRouter(
         }
         composable(route = AppScreens.FactionsScreen.route) {
             EnterAnimation {
-                FactionListScreen(viewModel, dataStore, openDrawer)
+                FactionListScreen(viewModel, dataStore, openDrawer, navController)
             }
         }
         composable(route = AppScreens.Account.route) {

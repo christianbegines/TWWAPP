@@ -9,12 +9,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -43,9 +41,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.R
+import com.totalwar.warhammer.navigation.AppScreens
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbar
@@ -56,7 +56,8 @@ import com.totalwar.warhammer.viewmodels.AppViewModel
 fun FactionListScreen(
     viewModel: AppViewModel,
     dataStore: DataStore<Settings>,
-    openDrawer: () -> Unit
+    openDrawer: () -> Unit,
+    navController: NavController
 ) {
     val settings: Settings? by dataStore.data.collectAsState(
         initial = null
@@ -80,7 +81,7 @@ fun FactionListScreen(
                     ) {
                         items(factionList) { faction ->
                             faction?.let {
-                                FactionCard(faction = faction)
+                                FactionCard(faction = faction, navController = navController)
                             }
                         }
                     }
@@ -129,7 +130,7 @@ private fun LazyGridState.isScrollingUp(): Boolean {
 }
 
 @Composable
-fun FactionCard(faction: FactionsQuery.Faction) {
+fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
     val expanded by remember { mutableStateOf(true) }
     Card(
         modifier = Modifier
@@ -143,7 +144,11 @@ fun FactionCard(faction: FactionsQuery.Faction) {
             modifier = Modifier
                 .padding(10.dp)
                 .clickable {
-                    // TODO
+                    navController.navigate(
+                        AppScreens.FactionUnitsScreen.routeWithArgs(
+                            faction.key.toString()
+                        )
+                    )
                 }
                 .animateContentSize(
                     animationSpec = spring(

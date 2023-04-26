@@ -1,4 +1,4 @@
-query factionUnitsQuery($tww_version: String! = "327635228256759215", $faction: String! = "wh3_dlc23_chd_legion_of_azgorh") {
+query factionUnitsQuery($tww_version: String!, $faction: String! ) {
   tww(tww_version: $tww_version) {
     tww_version
     faction(id: $faction) {
@@ -12,6 +12,10 @@ query factionUnitsQuery($tww_version: String! = "327635228256759215", $faction: 
         }
         land_unit {
           onscreen_name
+          variant {
+            unit_card_url
+            __typename
+          }
           __typename
         }
         ui_unit_group {

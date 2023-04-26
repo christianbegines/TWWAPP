@@ -3,6 +3,7 @@ package com.totalwar.warhammer.viewmodels
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.GameVersionsQuery
 import com.totalwar.warhammer.repository.FactionRepository
@@ -38,11 +39,13 @@ class AppViewModel @Inject constructor(
         )
     }
 
-    fun findEmployeeById(id: Int) {
-        factionRepository.findFactionById(id)
+    fun findUnitsByFaction(id: String, gameVersion: String) {
+        factionRepository.findUnitsByFaction(id, gameVersion)
     }
 
     val gameVersion: MutableLiveData<GameVersionsQuery.Version?> = factionRepository.gameVersion
     val factionList: MutableLiveData<List<FactionsQuery.Faction?>> = factionRepository.allFactions
+    val unitsFactionList: MutableLiveData<List<FactionUnitsQuery.Unit?>> =
+        factionRepository.factionUnits
     val foundedFaction: MutableLiveData<FactionsQuery.Faction?> = factionRepository.foundFaction
 }

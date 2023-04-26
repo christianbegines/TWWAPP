@@ -2,6 +2,7 @@ package com.totalwar.warhammer.repository
 
 import androidx.lifecycle.MutableLiveData
 import com.apollographql.apollo3.ApolloClient
+import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.GameVersionsQuery
 import kotlinx.coroutines.CoroutineScope
@@ -9,8 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FactionRepository(
-    private val apolloClient: ApolloClient,
+    private val apolloClient: ApolloClient
 ) {
+    val factionUnits = MutableLiveData<List<FactionUnitsQuery.Unit?>>()
     val allFactions = MutableLiveData<List<FactionsQuery.Faction?>>()
     val foundFaction = MutableLiveData<FactionsQuery.Faction?>()
     val gameVersion = MutableLiveData<GameVersionsQuery.Version?>()
@@ -38,8 +40,12 @@ class FactionRepository(
         }
     }
 
-    fun findFactionById(id: Int) {
+    fun findUnitsByFaction(id: String, gameVersion: String) {
         coroutineScope.launch(Dispatchers.IO) {
+            (apolloClient.query(FactionUnitsQuery(gameVersion, id)).execute().data?.tww?.faction as FactionUnitsQuery.Faction)
+                .let {
+                    it.units.let { units -> factionUnits.postValue(units) }
+                }
         }
     }
 }

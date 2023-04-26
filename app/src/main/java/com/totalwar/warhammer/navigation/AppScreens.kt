@@ -12,7 +12,7 @@ sealed class AppScreens(val title: String, val route: String, var icon: ImageVec
         AppScreens("Faction Unit Screen", "factionUnitsScreen", Icons.Default.Home)
 
     object UnitScreen :
-        AppScreens("Faction Unit Screen", "factionUnitsScreen", Icons.Default.Home)
+        AppScreens("Faction Unit Screen", "unitScreen", Icons.Default.Home)
 
     object Account : AppScreens("Account", "account", Icons.Default.AccountCircle)
     object Contact : AppScreens("Raise a Concern", "contact", Icons.Default.Email)
