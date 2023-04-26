@@ -15,21 +15,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FactionsViewModel @Inject constructor(
+class AppViewModel @Inject constructor(
     private val factionRepository: FactionRepository,
-    private val dataStore: DataStore<Settings>
+    val dataStore: DataStore<Settings>
 ) : ViewModel() {
 
-    init {
-        CoroutineScope(Dispatchers.Main).launch {
+    fun getGameVersion() {
+        factionRepository.getVersion()
+    }
+
+    fun setGameVersionInSettings(id: String) {
+        CoroutineScope(Dispatchers.IO).launch {
             dataStore.updateData {
-                Settings(gameVersion.value?.id ?: SETTINGS_DEFAULT_GAME_VERSION)
+                Settings(id.ifEmpty { SETTINGS_DEFAULT_GAME_VERSION })
             }
         }
     }
 
-    fun getAllFAction() {
-        factionRepository.getAllFactions()
+    fun getAllFAction(id: String) {
+        factionRepository.getAllFactions(
+            id
+        )
     }
 
     fun findEmployeeById(id: Int) {

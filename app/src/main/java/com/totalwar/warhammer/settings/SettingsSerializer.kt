@@ -9,10 +9,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.Timer
 import javax.inject.Inject
 import javax.inject.Singleton
+
 const val SETTINGS_DEFAULT_GAME_VERSION = "327635228256759215"
+
 @Serializable
 data class Settings(
     val gameVersion: String

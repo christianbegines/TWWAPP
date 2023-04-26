@@ -1,9 +1,13 @@
-query FactionsQuery($tww_version: String! = "327635228256759215") {
+query FactionsQuery($tww_version: String!) {
   tww(tww_version: $tww_version) {
     tww_version
     factions(include_non_mp: false) {
       key
       screen_name
+      subculture {
+        name
+        __typename
+      }
       flags_url
     }
     __typename
