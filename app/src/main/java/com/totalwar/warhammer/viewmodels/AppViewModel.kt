@@ -6,7 +6,11 @@ import androidx.lifecycle.ViewModel
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.GameVersionsQuery
+import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.repository.FactionRepository
+import com.totalwar.warhammer.repository.FactionUnitsRepository
+import com.totalwar.warhammer.repository.GameVersionRepository
+import com.totalwar.warhammer.repository.UnitsRepository
 import com.totalwar.warhammer.settings.SETTINGS_DEFAULT_GAME_VERSION
 import com.totalwar.warhammer.settings.Settings
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,11 +22,20 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val factionRepository: FactionRepository,
+    private val gameVersionRepository: GameVersionRepository,
+    private val factionUnitsRepository: FactionUnitsRepository,
+    private val unitsRepository: UnitsRepository,
     val dataStore: DataStore<Settings>
 ) : ViewModel() {
 
+    val gameVersion: MutableLiveData<GameVersionsQuery.Version?> = gameVersionRepository.gameVersion
+    val factionList: MutableLiveData<List<FactionsQuery.Faction?>> = factionRepository.factionList
+    val unitsFactionList: MutableLiveData<List<FactionUnitsQuery.Unit?>> =
+        factionUnitsRepository.factionUnits
+    val unit: MutableLiveData<UnitQuery.Unit?> = unitsRepository.unit
+
     fun getGameVersion() {
-        factionRepository.getVersion()
+        gameVersionRepository.getVersion()
     }
 
     fun setGameVersionInSettings(id: String) {
@@ -33,19 +46,17 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getAllFAction(id: String) {
+    fun findAllFactions(gameVersion: String) {
         factionRepository.getAllFactions(
-            id
+            gameVersion
         )
     }
 
     fun findUnitsByFaction(id: String, gameVersion: String) {
-        factionRepository.findUnitsByFaction(id, gameVersion)
+        factionUnitsRepository.findUnitsByFaction(id, gameVersion)
     }
 
-    val gameVersion: MutableLiveData<GameVersionsQuery.Version?> = factionRepository.gameVersion
-    val factionList: MutableLiveData<List<FactionsQuery.Faction?>> = factionRepository.allFactions
-    val unitsFactionList: MutableLiveData<List<FactionUnitsQuery.Unit?>> =
-        factionRepository.factionUnits
-    val foundedFaction: MutableLiveData<FactionsQuery.Faction?> = factionRepository.foundFaction
+    fun findUnitById(id: String, gameVersion: String) {
+        unitsRepository.getUnit(id, gameVersion)
+    }
 }

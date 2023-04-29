@@ -1,0 +1,442 @@
+query UnitQuery($tww_version: String!, $key: String!) {
+    tww(tww_version: $tww_version) {
+        tww_version
+        game_version {
+            name
+            __typename
+        }
+        unit(id: $key) {
+            unit
+            tier
+            unit_sets {
+                special_category
+                __typename
+            }
+            num_men
+            caste
+            multiplayer_cost
+            recruitment_cost
+            weight
+            upkeep_cost
+            create_time
+            mount_name
+            barrier_health
+            is_high_threat
+            can_siege
+            bullet_points {
+                key
+                state
+                sort_order
+                onscreen_name
+                tooltip
+                __typename
+            }
+            battle_mounts {
+                base_unit
+                mounted_unit
+                icon_name
+                mount_name
+                localised_description
+                __typename
+            }
+            custom_battle_permissions {
+                general_portrait
+                set_piece_character {
+                    ancillaries {
+                        ancillary_effects {
+                            effect {
+                                abilities {
+                                    ...effect_bonus
+                                    __typename
+                                }
+                                __typename
+                            }
+                            __typename
+                        }
+                        __typename
+                    }
+                    __typename
+                }
+                __typename
+            }
+            ui_unit_group {
+                key
+                icon
+                name
+                tooltip
+                __typename
+            }
+            factions(include_non_mp: false) {
+                key
+                screen_name
+                flags_url
+                name_group
+                __typename
+            }
+            land_unit {
+                key
+                short_description_text
+                mount {
+                    key
+                    __typename
+                }
+                variant {
+                    variant
+                    unit
+                    name
+                    unit_card_url
+                    __typename
+                }
+                ground_stat_effect_group {
+                    group_name
+                    onscreen_name
+                    stat_effects {
+                        ground_type
+                        affected_group
+                        affected_stat
+                        multiplier
+                        __typename
+                    }
+                    __typename
+                }
+                num_engines
+                num_mounts
+                onscreen_name
+                accuracy
+                category
+                charge_bonus
+                melee_attack
+                melee_defence
+                morale
+                bonus_hit_points
+                attribute_group
+                reload
+                secondary_ammo
+                primary_ammo
+                damage_mod_flame
+                damage_mod_magic
+                damage_mod_physical
+                damage_mod_missile
+                damage_mod_all
+                can_skirmish
+                abilities {
+                    icon_name
+                    key
+                    name
+                    tooltip
+                    __typename
+                }
+                attributes {
+                    key
+                    bullet_text
+                    imbued_effect_text
+                    __typename
+                }
+                special_ability_groups {
+                    abilities {
+                        icon_name
+                        key
+                        name
+                        tooltip
+                        __typename
+                    }
+                    __typename
+                }
+                armour {
+                    key
+                    armour_value
+                    __typename
+                }
+                unit_class {
+                    key
+                    onscreen
+                    __typename
+                }
+                officers {
+                    additionnal_personalities {
+                        key
+                        battle_entity_stats {
+                            primary_missile_weapon {
+                                use_secondary_ammo_pool
+                                default_projectile {
+                                    ...projectile
+                                    __typename
+                                }
+                                __typename
+                            }
+                            __typename
+                        }
+                        __typename
+                    }
+                    __typename
+                }
+                primary_melee_weapon {
+                    key
+                    bonus_v_cavalry
+                    bonus_v_large
+                    bonus_v_infantry
+                    damage
+                    ap_damage
+                    weapon_length
+                    melee_weapon_type
+                    splash_attack_target_size
+                    splash_attack_max_attacks
+                    splash_attack_power_multiplier
+                    ignition_amount
+                    is_magical
+                    contact_phase {
+                        ...contact_phase
+                        __typename
+                    }
+                    collision_attack_max_targets
+                    collision_attack_max_targets_cooldown
+                    melee_attack_interval
+                    __typename
+                }
+                primary_missile_weapon {
+                    use_secondary_ammo_pool
+                    default_projectile {
+                        ...projectile
+                        __typename
+                    }
+                    __typename
+                }
+                shield {
+                    key
+                    parry_chance
+                    material
+                    __typename
+                }
+                battle_entity {
+                    ...battle_entity
+                    __typename
+                }
+                mount {
+                    key
+                    variant
+                    battle_entity {
+                        ...battle_entity
+                        __typename
+                    }
+                    __typename
+                }
+                engine {
+                    key
+                    engine_type
+                    missile_weapon {
+                        use_secondary_ammo_pool
+                        default_projectile {
+                            ...projectile
+                            __typename
+                        }
+                        __typename
+                    }
+                    battle_entity {
+                        ...battle_entity
+                        __typename
+                    }
+                    __typename
+                }
+                articulated_vehicle_entity {
+                    hit_points
+                    __typename
+                }
+                __typename
+            }
+            __typename
+        }
+        __typename
+    }
+}
+fragment contact_phase on phase {
+    id
+    onscreen_name
+    duration
+    effect_type
+    requested_stance
+    unbreakable
+    cant_move
+    freeze_fatigue
+    fatigue_change_ratio
+    ability_recharge_change
+    hp_change_frequency
+    heal_amount
+    damage_chance
+    damage_amount
+    max_damaged_entities
+    resurrect
+    mana_regen_mod
+    mana_max_depletion_mod
+    imbue_magical
+    imbue_ignition
+    phase_display
+    imbue_contact {
+        id
+        onscreen_name
+        duration
+        effect_type
+        requested_stance
+        unbreakable
+        cant_move
+        freeze_fatigue
+        fatigue_change_ratio
+        ability_recharge_change
+        hp_change_frequency
+        heal_amount
+        damage_chance
+        damage_amount
+        max_damaged_entities
+        resurrect
+        mana_regen_mod
+        mana_max_depletion_mod
+        imbue_magical
+        imbue_ignition
+        phase_display
+        stat_effects {
+            phase
+            stat
+            value
+            how
+            __typename
+        }
+        attribute_effects {
+            phase
+            attribute
+            attribute_type
+            __typename
+        }
+        __typename
+    }
+    stat_effects {
+        phase
+        stat
+        value
+        how
+        __typename
+    }
+    attribute_effects {
+        phase
+        attribute
+        attribute_type
+        __typename
+    }
+    __typename
+}
+fragment projectile on projectile {
+    key
+    category
+    shot_type
+    explosion {
+        ...explosion
+        __typename
+    }
+    projectile_number
+    effective_range
+    minimum_range
+    marksmanship_bonus
+    damage
+    ap_damage
+    collision_radius
+    base_reload_time
+    bonus_v_cavalry
+    bonus_v_infantry
+    bonus_v_large
+    calibration_distance
+    calibration_area
+    max_elevation
+    overhead_stat_effect {
+        ...contact_phase
+        __typename
+    }
+    contact_stat_effect {
+        ...contact_phase
+        __typename
+    }
+    projectile_penetration {
+        key
+        entity_size_cap
+        max_penetration
+        description
+        __typename
+    }
+    burst_size
+    burst_shot_delay
+    ignition_amount
+    is_magical
+    shots_per_volley
+    can_damage_buildings
+    __typename
+}
+fragment explosion on explosion {
+    key
+    detonation_damage
+    detonation_damage_ap
+    is_magical
+    ignition_amount
+    detonation_radius
+    detonation_duration
+    detonation_speed
+    shrapnel_amount
+    distance_from_target
+    detonation_force
+    shrapnel_type
+    contact_phase_effect {
+        ...contact_phase
+        __typename
+    }
+    __typename
+}
+fragment battle_entity on battle_entity {
+    key
+    type
+    run_speed
+    mass
+    hit_points
+    fly_speed
+    charge_speed
+    flying_charge_speed
+    acceleration
+    deceleration
+    size
+    radius
+    height
+    hit_reactions_ignore_chance
+    knock_interrupts_ignore_chance
+    charge_distance_commence_run
+    charge_distance_adopt_charge_pose
+    charge_distance_pick_target
+    combat_reaction_radius
+    __typename
+}
+fragment effect_bonus on effect_bonus {
+    bonus_value_id
+    value {
+        __typename
+        ... on agent_action {
+            localised_action_name
+            __typename
+        }
+        ... on phase {
+            ...contact_phase
+            __typename
+        }
+        ... on ability {
+            key
+            supercedes_ability
+            requires_effect_enabling
+            icon_name
+            uniqueness
+            is_unit_upgrade
+            is_hidden_in_ui
+            name
+            tooltip
+            __typename
+        }
+        ... on attribute_effect {
+            phase
+            attribute
+            __typename
+        }
+    }
+    __typename
+}

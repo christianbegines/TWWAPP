@@ -25,6 +25,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.viewmodels.AppViewModel
 import com.totalwar.warhammer.views.FactionUnitsScreen
+import com.totalwar.warhammer.views.UnitScreen
 import com.totalwar.warhammer.views.faction.FactionListScreen
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -56,7 +57,7 @@ fun AppRouter(
             }
         ) {
             val id = it.arguments?.getString("id").orEmpty()
-            FactionUnitsScreen(navController, viewModel, dataStore, openDrawer,id)
+            FactionUnitsScreen(navController, viewModel, dataStore, openDrawer, id)
         }
         composable(
             route = AppScreens.UnitScreen.route + "/{id}",
@@ -68,8 +69,13 @@ fun AppRouter(
                 }
             )
         ) {
-            val empId = it.arguments?.getString("id")
-            // EmployeeDetailScreen(navController, viewModel, id)
+            val id = it.arguments?.getString("id").orEmpty()
+            UnitScreen(
+                viewModel = viewModel,
+                dataStore = dataStore,
+                navController = navController,
+                id = id
+            )
         }
         composable(route = AppScreens.FactionsScreen.route) {
             EnterAnimation {

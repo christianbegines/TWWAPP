@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.MultiProcessDataStoreFactory
 import com.apollographql.apollo3.ApolloClient
+import com.totalwar.warhammer.datasources.FactionDataSource
+import com.totalwar.warhammer.datasources.FactionUnitsDataSource
+import com.totalwar.warhammer.datasources.GameVersionDataSource
+import com.totalwar.warhammer.datasources.UnitsDataSource
 import com.totalwar.warhammer.services.apollo.apolloClient
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.settings.SettingsSerializer
@@ -23,6 +27,30 @@ private object NetworkModule {
     @Singleton
     fun providesApolloClient(): ApolloClient {
         return apolloClient
+    }
+
+    @Provides
+    @Singleton
+    fun providesGameVersionDataSource(apollo: ApolloClient): GameVersionDataSource {
+        return GameVersionDataSource(apollo)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFactionDataSource(apollo: ApolloClient): FactionDataSource {
+        return FactionDataSource(apollo)
+    }
+
+    @Provides
+    @Singleton
+    fun providesFactionUnitsDataSource(apollo: ApolloClient): FactionUnitsDataSource {
+        return FactionUnitsDataSource(apollo)
+    }
+
+    @Provides
+    @Singleton
+    fun providesUnitsDataSource(apollo: ApolloClient): UnitsDataSource {
+        return UnitsDataSource(apollo)
     }
 
     @Provides

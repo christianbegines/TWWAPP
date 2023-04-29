@@ -42,6 +42,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
+import com.totalwar.warhammer.navigation.AppScreens
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbar
@@ -120,7 +121,11 @@ fun FactionUnitCard(factionUnit: FactionUnitsQuery.Unit, navController: NavContr
             modifier = Modifier
                 .padding(10.dp)
                 .clickable {
-                    // TODO
+                    navController.navigate(
+                        AppScreens.UnitScreen.routeWithArgs(
+                            factionUnit.unit.toString()
+                        )
+                    )
                 }
                 .animateContentSize(
                     animationSpec = spring(
@@ -144,7 +149,7 @@ fun FactionUnitCard(factionUnit: FactionUnitsQuery.Unit, navController: NavContr
                 Image(
                     painter = rememberAsyncImagePainter(url),
                     contentDescription = null,
-                    modifier = Modifier.size(90.dp)
+                    modifier = Modifier.size(150.dp)
                 )
             }
             Row {

@@ -65,7 +65,7 @@ fun FactionListScreen(
     val factionList: List<FactionsQuery.Faction?> by viewModel.factionList.observeAsState(
         initial = listOf()
     )
-    settings?.let { viewModel.getAllFAction(it.gameVersion) }
+    settings?.let { viewModel.findAllFactions(it.gameVersion) }
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {

@@ -1,51 +1,21 @@
 package com.totalwar.warhammer.repository
 
 import androidx.lifecycle.MutableLiveData
-import com.apollographql.apollo3.ApolloClient
-import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.FactionsQuery
-import com.totalwar.warhammer.GameVersionsQuery
+import com.totalwar.warhammer.datasources.FactionDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FactionRepository(
-    private val apolloClient: ApolloClient
+    private val factionDataSource: FactionDataSource
 ) {
-    val factionUnits = MutableLiveData<List<FactionUnitsQuery.Unit?>>()
-    val allFactions = MutableLiveData<List<FactionsQuery.Faction?>>()
-    val foundFaction = MutableLiveData<FactionsQuery.Faction?>()
-    val gameVersion = MutableLiveData<GameVersionsQuery.Version?>()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    val factionList = MutableLiveData<List<FactionsQuery.Faction?>>()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun getAllFactions(version: String) {
         coroutineScope.launch(Dispatchers.IO) {
-            (apolloClient.query(FactionsQuery(version)).execute().data?.tww as FactionsQuery.Tww)
-                .let {
-                    it.factions?.let { factions -> allFactions.postValue(factions) }
-                }
-        }
-    }
-
-    fun getVersion() {
-        coroutineScope.launch(Dispatchers.IO) {
-            (
-                apolloClient.query(GameVersionsQuery())
-                    .execute().data?.versions as List<GameVersionsQuery.Version>
-                ).let {
-                it.firstOrNull().let { version ->
-                    gameVersion.postValue(version)
-                }
-            }
-        }
-    }
-
-    fun findUnitsByFaction(id: String, gameVersion: String) {
-        coroutineScope.launch(Dispatchers.IO) {
-            (apolloClient.query(FactionUnitsQuery(gameVersion, id)).execute().data?.tww?.faction as FactionUnitsQuery.Faction)
-                .let {
-                    it.units.let { units -> factionUnits.postValue(units) }
-                }
+           factionList.postValue(factionDataSource.getFactions(version))
         }
     }
 }
