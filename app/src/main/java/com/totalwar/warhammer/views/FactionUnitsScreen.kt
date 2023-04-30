@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -32,26 +30,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import androidx.navigation.NavHostController
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.navigation.AppScreens
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
-import com.totalwar.warhammer.util.CustomToolbar
+import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
+import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.views.common.UnitImage
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FactionUnitsScreen(
-    navController: NavController,
+    navController: NavHostController,
     viewModel: AppViewModel,
     dataStore: DataStore<Settings>,
     openDrawer: () -> Unit,
@@ -67,13 +70,19 @@ fun FactionUnitsScreen(
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {
-            CustomToolbar(title = stringResource(id = R.string.app_name), openDrawer)
+            CustomToolbarWithBackArrow(title = "List of units", navController = navController)
         },
         content = {
             if (unitList.isNotEmpty()) {
-                Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+                Surface(
+                    color = Color.Transparent,
+                    modifier = Modifier.fillMaxSize().paint(
+                        painter = painterResource(R.drawable.backgroundttw),
+                        contentScale = ContentScale.FillBounds
+                    )
+                ) {
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+                        columns = GridCells.Fixed(1),
                         modifier = Modifier.padding(vertical = 4.dp),
                         state = lazyGridState
                     ) {
@@ -117,7 +126,7 @@ fun FactionUnitCard(factionUnit: FactionUnitsQuery.Unit, navController: NavContr
         backgroundColor = Color.White,
         elevation = 2.dp
     ) {
-        Column(
+        Row(
             modifier = Modifier
                 .padding(10.dp)
                 .clickable {
@@ -132,31 +141,19 @@ fun FactionUnitCard(factionUnit: FactionUnitsQuery.Unit, navController: NavContr
                         dampingRatio = Spring.DampingRatioMediumBouncy,
                         stiffness = Spring.StiffnessLow
                     )
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Row {
-                val url = if (factionUnit.caste != "Lord" && factionUnit.caste != "Hero") {
-                    factionUnit.land_unit?.variant?.unit_card_url.let {
-                        "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/327635228256759215/ui/units/icons/$it.png"
-                    }
-                } else {
-                    factionUnit.custom_battle_permissions?.first()?.general_portrait?.let {
-                        "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/327635228256759215/${it.replace("portholes","units")}"
-                    }
-                }
-                Image(
-                    painter = rememberAsyncImagePainter(url),
-                    contentDescription = null,
-                    modifier = Modifier.size(150.dp)
                 )
+        ) {
+            Column {
+                UnitImage(unit = factionUnit.map(), 100.dp)
             }
-            Row {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 factionUnit.land_unit?.onscreen_name?.let {
                     Text(
                         text = it,
-                        color = ColorOnPrimary
+                        color = ColorOnPrimary,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }

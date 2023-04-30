@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -21,6 +19,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -30,11 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.views.common.UnitImage
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -56,26 +56,17 @@ fun UnitScreen(
         }
     ) {
         if (selectedUnit != null) {
-            val url =
-                if (selectedUnit.caste != "Lord" && selectedUnit.caste != "Hero") {
-                    selectedUnit.land_unit?.variant?.unit_card_url.let {
-                        "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/327635228256759215/ui/units/icons/$it.png"
-                    }
-                } else {
-                    selectedUnit.custom_battle_permissions?.first()?.general_portrait?.let {
-                        "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/327635228256759215/${
-                        it.replace(
-                            "portholes",
-                            "units"
-                        )
-                        }"
-                    }
-                }
             Surface(
-                modifier = Modifier.fillMaxSize().padding(10.dp)
+                color = Color.Transparent,
+                modifier = Modifier.fillMaxSize().paint(
+                    painter = painterResource(R.drawable.backgroundttw),
+                    contentScale = ContentScale.FillBounds
+                ).padding(10.dp)
             ) {
                 Box(
-                    modifier = Modifier.zIndex(100f).fillMaxWidth(),
+                    modifier = Modifier
+                        .zIndex(100f)
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Image(
@@ -101,23 +92,11 @@ fun UnitScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Spacer(modifier = Modifier.height(10.dp))
-                        Box(contentAlignment = Alignment.Center) {
-                            Image(
-                                painter = painterResource(id = R.drawable.unit_card_frame_plain),
-                                contentDescription = "",
-                                modifier = Modifier.width(140.dp).height(280.dp).zIndex(100f),
-                                contentScale = ContentScale.FillBounds
-                            )
-                            Image(
-                                painter = rememberAsyncImagePainter(url),
-                                contentDescription = null,
-                                modifier = Modifier.size(280.dp)
-                            )
-                        }
+                        UnitImage(unit = selectedUnit, size = 280.dp)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "${selectedUnit.land_unit?.onscreen_name}",
-                            fontSize = 25.sp,
+                            fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -147,7 +126,9 @@ fun UnitScreen(
                     Image(
                         painter = painterResource(id = R.drawable.roll_bottom),
                         contentDescription = "",
-                        modifier = Modifier.fillMaxWidth().zIndex(100f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .zIndex(100f),
                         alignment = Alignment.BottomCenter,
                         contentScale = ContentScale.Crop
                     )

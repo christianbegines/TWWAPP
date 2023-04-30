@@ -15,7 +15,7 @@ class FactionRepository(
 
     fun getAllFactions(version: String) {
         coroutineScope.launch(Dispatchers.IO) {
-           factionList.postValue(factionDataSource.getFactions(version))
+            factionList.postValue(factionDataSource.getFactions(version))
         }
     }
 }

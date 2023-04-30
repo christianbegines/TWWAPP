@@ -9,10 +9,10 @@ import androidx.compose.ui.unit.sp
 import com.totalwar.warhammer.R
 
 val fonts = FontFamily(
-    Font(R.font.brfirma_regular),
-    Font(R.font.brfirma_medium, FontWeight.Medium),
-    Font(R.font.brfirma_semibold, FontWeight.SemiBold),
-    Font(R.font.brfirma_bold, FontWeight.Bold)
+    Font(R.font.barlow_regular),
+    Font(R.font.barlow_medium, FontWeight.Medium),
+    Font(R.font.barlow_semibold, FontWeight.SemiBold),
+    Font(R.font.barlow_bold, FontWeight.Bold)
 )
 
 // Set of Material typography styles to start with
