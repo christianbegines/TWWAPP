@@ -48,8 +48,8 @@ fun UnitScreen(
         initial = null
     )
     val selectedUnit = viewModel.unit.observeAsState().value
-    settings?.let { viewModel.findUnitById(id, it.gameVersion) }
-
+    val gameVersion: String = settings?.let { it.gameVersion }.orEmpty()
+    viewModel.findUnitById(id, gameVersion)
     Scaffold(
         topBar = {
             CustomToolbarWithBackArrow(title = "Unit Details", navController = navController)
@@ -92,7 +92,7 @@ fun UnitScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Spacer(modifier = Modifier.height(10.dp))
-                        UnitImage(unit = selectedUnit, size = 280.dp)
+                        UnitImage(unit = selectedUnit, size = 280.dp, gameVersion)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "${selectedUnit.land_unit?.onscreen_name}",

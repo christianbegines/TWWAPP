@@ -57,7 +57,7 @@ fun AppRouter(
             }
         ) {
             val id = it.arguments?.getString("id").orEmpty()
-            FactionUnitsScreen(navController, viewModel, dataStore, openDrawer, id)
+            FactionUnitsScreen(navController, viewModel, dataStore, id)
         }
         composable(
             route = AppScreens.UnitScreen.route + "/{id}",

@@ -5,7 +5,12 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
       units(groupHeroesAndLords: true) {
         unit
         caste
+        num_men
         multiplayer_cost
+        unit_sets {
+          special_category
+          __typename
+        }
         custom_battle_permissions {
           general_portrait
           __typename
@@ -15,6 +20,9 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
           variant {
             unit_card_url
             __typename
+          }
+          battle_entity {
+            size
           }
           __typename
         }

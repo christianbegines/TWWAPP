@@ -4,27 +4,32 @@ import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.UnitQuery
 
 private const val UNIT_URL =
-    "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/327635228256759215/ui/units/icons/%s.png"
+    "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/%s/ui/units/icons/%s.png"
 private const val LORD_URL =
-    "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/327635228256759215/"
-
+    "https://res.cloudinary.com/fishofstone/image/upload/q_100/twwstats/api/%s/"
+private const val ICON_URL = "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/%s/ui/common ui/unit_category_icons/"
 private const val PORTHOLES = "portholes"
 private const val UNITS = "units"
-
 const val LORD_HERO = "Lord|Hero"
+fun formatUrlUnitImage(gameVersion: String, param: String): String =
+    String.format(UNIT_URL, param, gameVersion)
 
-private fun checkIfLord(cast: String, url: String) {
-}
+fun formatUrlHeroLordImage(param: String, gameVersion: String): String =
+    "${String.format(LORD_URL, gameVersion)}${param.replace(PORTHOLES, UNITS)}"
 
-fun formatUrlUnitImage(param: String): String = String.format(UNIT_URL, param)
-fun formatUrlHeroLordImage(param: String): String =
-    "$LORD_URL${param.replace(PORTHOLES, UNITS)}"
+fun formatUrlUnitIcon(param: String, gameVersion: String): String =
+    "${String.format(ICON_URL, gameVersion)}$param.png"
 
 fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
     return UnitQuery.Unit(
         null,
         null,
-        null,
+        this.unit_sets?.map{
+            UnitQuery.Unit_set(
+                special_category = it?.special_category.orEmpty(),
+                __typename = it?.__typename.orEmpty()
+            )
+        },
         null,
         caste = this.caste,
         null,
@@ -45,7 +50,13 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
                 __typename = this.custom_battle_permissions?.firstOrNull()?.__typename.orEmpty()
             )
         ),
-        null,
+        ui_unit_group = UnitQuery.Ui_unit_group(
+            key = this.ui_unit_group?.key,
+            name = this.ui_unit_group?.name,
+            tooltip = this.ui_unit_group?.tooltip,
+            icon = this.ui_unit_group?.icon,
+            __typename = this.ui_unit_group?.__typename.orEmpty()
+        ),
         null,
         land_unit = UnitQuery.Land_unit(
             null, null, null,
