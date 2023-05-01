@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -84,12 +83,12 @@ fun UnitScreen(
                         contentScale = ContentScale.FillBounds
                     )
                     Column(
-                        modifier = Modifier.padding(30.dp),
+                        modifier = Modifier.padding(30.dp).border(1.dp, Color.Red),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Spacer(modifier = Modifier.height(10.dp))
-                        UnitDetailImage(unit = selectedUnit, size = 280.dp, gameVersion)
+                        UnitDetailImage(unit = selectedUnit, size = 170.dp, gameVersion)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "${selectedUnit.land_unit?.onscreen_name}",
