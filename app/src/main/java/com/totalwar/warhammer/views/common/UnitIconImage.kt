@@ -1,14 +1,12 @@
 package com.totalwar.warhammer.views.common
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -25,12 +23,15 @@ fun UnitIconImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
     UnitIconImageBox(
         url = url,
         size = size,
-        unit.unit_sets?.any { it?.special_category?.contains("renown") == true }?.or(false) == true
+        unit.unit_sets?.any { it?.special_category?.contains("renown") == true }?.or(false) == true,
+        isCampaignExclusive = unit.custom_battle_permissions?.any {
+            it?.campaign_exclusive == true
+        } == true
     )
 }
 
 @Composable
-fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean) {
+fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean, isCampaignExclusive: Boolean) {
     var sizeForIcon = size
     var paddingTopForIcon = 5.dp
     var paddingBottomForIcon = 2.dp
@@ -43,6 +44,10 @@ fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean) {
                     sizeForIcon += 20.dp
                     paddingBottomForIcon = 0.dp
                     R.drawable.unit_cat_holder_round_renown
+                } else if (isCampaignExclusive) {
+                    sizeForIcon += 20.dp
+                    paddingBottomForIcon = 0.dp
+                    R.drawable.unit_cat_holder_round_elector
                 } else {
                     sizeForIcon += 10.dp
                     paddingTopForIcon = 3.dp
@@ -61,7 +66,9 @@ fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean) {
         Image(
             painter = rememberAsyncImagePainter(url),
             contentDescription = null,
-            modifier = Modifier.size(size + 5.dp).zIndex(100f)
+            modifier = Modifier
+                .size(size + 5.dp)
+                .zIndex(100f)
                 .padding(
                     top = paddingTopForIcon,
                     end = paddingRightForIcon,

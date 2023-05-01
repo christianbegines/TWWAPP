@@ -2,6 +2,7 @@ package com.totalwar.warhammer.views
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,9 +33,8 @@ import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.settings.Settings
-import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
 import com.totalwar.warhammer.viewmodels.AppViewModel
-import com.totalwar.warhammer.views.common.UnitImage
+import com.totalwar.warhammer.views.common.UnitDetailImage
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -51,17 +51,13 @@ fun UnitScreen(
     val gameVersion: String = settings?.let { it.gameVersion }.orEmpty()
     viewModel.findUnitById(id, gameVersion)
     Scaffold(
-        topBar = {
-            CustomToolbarWithBackArrow(title = "Unit Details", navController = navController)
-        }
+        modifier = Modifier.padding(5.dp),
+        backgroundColor = Color.Transparent
     ) {
         if (selectedUnit != null) {
             Surface(
                 color = Color.Transparent,
-                modifier = Modifier.fillMaxSize().paint(
-                    painter = painterResource(R.drawable.backgroundttw),
-                    contentScale = ContentScale.FillBounds
-                ).padding(10.dp)
+                modifier = Modifier.fillMaxSize().padding(10.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -78,7 +74,8 @@ fun UnitScreen(
                     )
                 }
                 Box(
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.unit_background),
@@ -92,7 +89,7 @@ fun UnitScreen(
                         verticalArrangement = Arrangement.Center
                     ) {
                         Spacer(modifier = Modifier.height(10.dp))
-                        UnitImage(unit = selectedUnit, size = 280.dp, gameVersion)
+                        UnitDetailImage(unit = selectedUnit, size = 280.dp, gameVersion)
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = "${selectedUnit.land_unit?.onscreen_name}",

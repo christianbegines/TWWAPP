@@ -41,6 +41,7 @@ query UnitQuery($tww_version: String!, $key: String!) {
             }
             custom_battle_permissions {
                 general_portrait
+                campaign_exclusive
                 set_piece_character {
                     ancillaries {
                         ancillary_effects {

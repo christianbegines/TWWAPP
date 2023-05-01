@@ -13,6 +13,7 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
         }
         custom_battle_permissions {
           general_portrait
+          campaign_exclusive
           __typename
         }
         land_unit {
@@ -23,6 +24,29 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
           }
           battle_entity {
             size
+          }
+          abilities {
+            icon_name
+            key
+            name
+            tooltip
+            __typename
+          }
+          attributes {
+            key
+            bullet_text
+            imbued_effect_text
+            __typename
+          }
+          special_ability_groups {
+            abilities {
+              icon_name
+              key
+              name
+              tooltip
+              __typename
+            }
+            __typename
           }
           __typename
         }

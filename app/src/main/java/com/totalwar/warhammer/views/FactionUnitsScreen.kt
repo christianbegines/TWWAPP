@@ -30,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -41,17 +44,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.datastore.core.DataStore
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.navigation.AppScreens
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.views.common.UnitAbilityAttrIconImage
 import com.totalwar.warhammer.views.common.UnitIconImage
 import com.totalwar.warhammer.views.common.UnitImage
 
@@ -70,69 +73,94 @@ fun FactionUnitsScreen(
     val unitList: List<FactionUnitsQuery.Unit?> by viewModel.unitsFactionList.observeAsState(
         initial = listOf()
     )
-    val gameVersion: String = settings?.let { it.gameVersion }.toString()
-    viewModel.findUnitsByFaction(id, gameVersion)
-
-    Scaffold(
-        topBar = {
-            CustomToolbarWithBackArrow(title = "List of units", navController = navController)
-        },
-        content = {
-            if (unitList.isNotEmpty()) {
-                Surface(
-                    color = Color.Transparent,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .paint(
-                            painter = painterResource(R.drawable.backgroundttw),
-                            contentScale = ContentScale.FillBounds
-                        )
-                ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(1),
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        state = lazyGridState
+    settings?.let { settings ->
+        viewModel.findUnitsByFaction(id, settings.gameVersion)
+        Scaffold(
+            topBar = {
+                CustomToolbarWithBackArrow(title = "List of units", navController = navController)
+            },
+            content = {
+                if (unitList.isNotEmpty()) {
+                    Surface(
+                        color = Color.Transparent,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .paint(
+                                painter = painterResource(R.drawable.backgroundttw),
+                                contentScale = ContentScale.FillBounds
+                            )
                     ) {
-                        items(unitList) { units ->
-                            units?.let {
-                                FactionUnitCard(
-                                    factionUnit = units,
-                                    navController = navController,
-                                    gameVersion
-                                )
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(1),
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            state = lazyGridState
+                        ) {
+                            items(unitList) { units ->
+                                units?.let {
+                                    settings?.let {
+                                        FactionUnitCard(
+                                            viewModel,
+                                            units,
+                                            navController,
+                                            dataStore,
+                                            settings.gameVersion
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        "No Factions to SHOW",
-                        fontSize = 20.sp,
+                } else {
+                    Column(
                         modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight(),
-                        textAlign = TextAlign.Center
-                    )
+                            .fillMaxSize()
+                            .padding(20.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            "No Factions to SHOW",
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .wrapContentWidth()
+                                .wrapContentHeight(),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-        }
-    )
+        )
+    }
 }
 
 @Composable
 fun FactionUnitCard(
+    viewModel: AppViewModel,
     factionUnit: FactionUnitsQuery.Unit,
-    navController: NavController,
+    navController: NavHostController,
+    settings: DataStore<Settings>,
     gameVersion: String
 ) {
+    var showCustomDialogWithResult by remember { mutableStateOf(false) }
+
     val isLarge = factionUnit.land_unit?.battle_entity?.size?.contains("large")
+    if (showCustomDialogWithResult) {
+        UnitDialog(
+            viewModel = viewModel,
+            dataStore = settings,
+            navController = navController,
+            onDismiss = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+            },
+            onNegativeClick = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+            },
+            onPositiveClick = {
+                showCustomDialogWithResult = !showCustomDialogWithResult
+            },
+            id = factionUnit.unit.toString()
+        )
+    }
     Surface(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
@@ -142,11 +170,7 @@ fun FactionUnitCard(
         Row(
             modifier = Modifier
                 .clickable {
-                    navController.navigate(
-                        AppScreens.UnitScreen.routeWithArgs(
-                            factionUnit.unit.toString()
-                        )
-                    )
+                    showCustomDialogWithResult = true
                 }
                 .animateContentSize(
                     animationSpec = spring(
@@ -160,18 +184,22 @@ fun FactionUnitCard(
                 )
                 .padding(10.dp)
         ) {
+            // unit image
             Column {
                 UnitImage(unit = factionUnit.map(), 90.dp, gameVersion)
             }
+            // unit icon
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(2.dp),
+                    .padding(10.dp)
+                    .height(IntrinsicSize.Min),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
             }
+            // unit data
             Column {
                 Text(
                     text = factionUnit.land_unit?.onscreen_name.orEmpty(),
@@ -185,7 +213,7 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.icon_income),
+                        painter = painterResource(id = R.drawable.icon_treasury),
                         contentDescription = "",
                         modifier = Modifier.size(20.dp)
                     )
@@ -203,7 +231,7 @@ fun FactionUnitCard(
                 ) {
                     Image(
                         painter = painterResource(
-                            if(isLarge == true) R.drawable.icon_entity_large else R.drawable.icon_entity_small
+                            if (isLarge == true) R.drawable.icon_entity_large else R.drawable.icon_entity_small
                         ),
                         contentDescription = "",
                         modifier = Modifier.size(20.dp)
@@ -216,7 +244,61 @@ fun FactionUnitCard(
                         textAlign = TextAlign.Start
                     )
                 }
+
+                Row(
+                    modifier = Modifier.padding(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (item in factionUnit.land_unit?.attributes.orEmpty()) {
+                        UnitAbilityAttrIconImage(
+                            params = item?.key.orEmpty(),
+                            gameVersion = gameVersion,
+                            size = 20.dp
+                        )
+                    }
+                    for (item in factionUnit.land_unit?.abilities.orEmpty()) {
+                        UnitAbilityAttrIconImage(
+                            params = item?.icon_name.orEmpty(),
+                            gameVersion = gameVersion,
+                            size = 20.dp
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier.padding(2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (item in factionUnit.land_unit?.special_ability_groups.orEmpty()) {
+                        for (ability in item?.abilities.orEmpty()) {
+                            UnitAbilityAttrIconImage(
+                                params = ability?.icon_name.orEmpty(),
+                                gameVersion = gameVersion,
+                                size = 20.dp
+                            )
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+fun UnitDialog(
+    viewModel: AppViewModel,
+    dataStore: DataStore<Settings>,
+    navController: NavHostController,
+    id: String,
+    onDismiss: () -> Unit,
+    onNegativeClick: () -> Unit,
+    onPositiveClick: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        UnitScreen(
+            viewModel = viewModel,
+            dataStore = dataStore,
+            navController = navController,
+            id = id
+        )
     }
 }
