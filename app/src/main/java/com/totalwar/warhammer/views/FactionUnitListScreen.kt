@@ -264,20 +264,6 @@ fun FactionUnitCard(
                         )
                     }
                 }
-                // Row(
-                //     modifier = Modifier.padding(2.dp),
-                //     verticalAlignment = Alignment.CenterVertically
-                // ) {
-                //     for (item in factionUnit.land_unit?.special_ability_groups.orEmpty()) {
-                //         for (ability in item?.abilities.orEmpty()) {
-                //             UnitAbilityAttrIconImage(
-                //                 params = ability?.icon_name.orEmpty(),
-                //                 gameVersion = gameVersion,
-                //                 size = 20.dp
-                //             )
-                //         }
-                //     }
-                // }
             }
         }
     }

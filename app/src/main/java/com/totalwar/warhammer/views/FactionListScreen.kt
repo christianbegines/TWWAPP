@@ -7,24 +7,26 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -41,10 +43,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.datastore.core.DataStore
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.FactionsQuery
@@ -54,11 +55,13 @@ import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbar
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.viewmodels.FactionListState
 
+@OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FactionListScreen(
-    viewModel: AppViewModel,
+    viewModel: AppViewModel = viewModel(),
     dataStore: DataStore<Settings>,
     openDrawer: () -> Unit,
     navController: NavController
@@ -66,52 +69,62 @@ fun FactionListScreen(
     val settings: Settings? by dataStore.data.collectAsState(
         initial = null
     )
-    val factionList: List<FactionsQuery.Faction?> by viewModel.factionList.observeAsState(
-        initial = listOf()
+    val factionList: FactionListState by viewModel.factionList.observeAsState(
+        initial = FactionListState.Idle
     )
     settings?.let { viewModel.findAllFactions(it.gameVersion) }
+
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {
             CustomToolbar(title = stringResource(id = R.string.app_name), openDrawer)
         },
         content = {
-            if (factionList.isNotEmpty()) {
-                Surface(
-                    color = Color.Transparent,
-                    modifier = Modifier.fillMaxSize().paint(
+            Surface(
+                color = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .paint(
                         painter = painterResource(R.drawable.backgroundttw),
                         contentScale = ContentScale.FillBounds
                     )
-                ) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier.padding(vertical = 4.dp),
-                        state = lazyGridState
-                    ) {
-                        items(factionList) { faction ->
-                            faction?.let {
-                                FactionCard(faction = faction, navController = navController)
+            ) {
+                val refreshState = rememberPullRefreshState(
+                    refreshing = factionList is FactionListState.Loading,
+                    onRefresh = { settings?.let { viewModel.findAllFactions(it.gameVersion) } }
+                )
+                when (val state = factionList) {
+                    FactionListState.Error -> {}
+                    FactionListState.Idle -> {}
+                    is FactionListState.Loading,
+                    is FactionListState.Success -> {
+                        val list = when (state) {
+                            is FactionListState.Loading -> state.factionList
+                            is FactionListState.Success -> state.factionList
+                            else -> emptyList()
+                        }
+                        Box(
+                            modifier = Modifier.pullRefresh(refreshState)
+                        ) {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                state = lazyGridState
+                            ) {
+                                items(list) { faction ->
+                                    faction?.let {
+                                        FactionCard(
+                                            faction = faction,
+                                            navController = navController
+                                        )
+                                    }
+                                }
                             }
                         }
+                        if (state is FactionListState.Loading) {
+                            LinearProgressIndicator()
+                        }
                     }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        "No Factions to SHOW",
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight(),
-                        textAlign = TextAlign.Center
-                    )
                 }
             }
         }
@@ -141,14 +154,15 @@ private fun LazyGridState.isScrollingUp(): Boolean {
 
 @Composable
 fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
-    val expanded by remember { mutableStateOf(true) }
     Card(
         modifier = Modifier
             .padding(10.dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(10.dp),
-        backgroundColor = Color.White,
-        elevation = 2.dp
+            .fillMaxWidth()
+            .paint(
+                painter = painterResource(R.drawable.unit_background),
+                contentScale = ContentScale.FillBounds
+            ),
+        backgroundColor = Color.Transparent
     ) {
         Column(
             modifier = Modifier
@@ -171,9 +185,9 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
         ) {
             Row {
                 Image(
-                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/327635228256759215/${faction.flags_url}/mon_64.jpg"),
+                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${faction.flags_url}/mon_64.jpg"),
                     contentDescription = null,
-                    modifier = Modifier.size(90.dp)
+                    modifier = Modifier.size(130.dp)
                 )
             }
             Row {

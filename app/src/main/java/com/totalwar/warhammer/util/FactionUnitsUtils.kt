@@ -10,7 +10,7 @@ private const val LORD_URL =
 private const val ICON_URL =
     "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/%s/ui/common ui/unit_category_icons/"
 private const val ABILITY_ATTR_ICONS =
-    "https://res.cloudinary.com/fishofstone/image/upload/w_32,h_32/twwstats/api/%s/ui/battle ui/ability_icons/"
+    "https://res.cloudinary.com/fishofstone/image/upload/w_64,h_64/twwstats/api/%s/ui/battle ui/ability_icons/"
 private const val PORTHOLES = "portholes"
 private const val UNITS = "units"
 const val LORD_HERO = "Lord|Hero"
@@ -114,15 +114,15 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
             },
             special_ability_groups = this.land_unit?.special_ability_groups?.map { special ->
                 UnitQuery.Special_ability_group(
-                        abilities = special?.abilities?.map { ability ->
-                            UnitQuery.Ability2(
-                                icon_name = ability?.icon_name,
-                                key = ability?.key,
-                                name = ability?.name,
-                                tooltip = ability?.tooltip,
-                                __typename = ability?.__typename.orEmpty()
-                            )
-                        },
+                    abilities = special?.abilities?.map { ability ->
+                        UnitQuery.Ability2(
+                            icon_name = ability?.icon_name,
+                            key = ability?.key,
+                            name = ability?.name,
+                            tooltip = ability?.tooltip,
+                            __typename = ability?.__typename.orEmpty()
+                        )
+                    },
                     __typename = special?.__typename.orEmpty()
                 )
             },

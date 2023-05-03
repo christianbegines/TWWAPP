@@ -3,6 +3,7 @@ package com.totalwar.warhammer.viewmodels
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.GameVersionsQuery
@@ -29,7 +30,7 @@ class AppViewModel @Inject constructor(
 ) : ViewModel() {
 
     val gameVersion: MutableLiveData<GameVersionsQuery.Version?> = gameVersionRepository.gameVersion
-    val factionList: MutableLiveData<List<FactionsQuery.Faction?>> = factionRepository.factionList
+    val factionList: MutableLiveData<FactionListState> = MutableLiveData(FactionListState.Idle)
     val unitsFactionList: MutableLiveData<List<FactionUnitsQuery.Unit?>> =
         factionUnitsRepository.factionUnits
     val unit: MutableLiveData<UnitQuery.Unit?> = unitsRepository.unit
@@ -47,9 +48,25 @@ class AppViewModel @Inject constructor(
     }
 
     fun findAllFactions(gameVersion: String) {
-        factionRepository.getAllFactions(
-            gameVersion
+        val currentState = factionList.value
+        factionList.postValue(
+            FactionListState.Loading(
+                if (currentState is FactionListState.Success) {
+                    currentState.factionList
+                } else {
+                    emptyList()
+                }
+            )
         )
+        viewModelScope.launch {
+            factionList.postValue(
+                FactionListState.Success(
+                    factionRepository.getAllFactions(
+                        gameVersion
+                    )
+                )
+            )
+        }
     }
 
     fun findUnitsByFaction(id: String, gameVersion: String) {
@@ -59,4 +76,17 @@ class AppViewModel @Inject constructor(
     fun findUnitById(id: String, gameVersion: String) {
         unitsRepository.getUnit(id, gameVersion)
     }
+}
+
+sealed class FactionListState {
+    object Idle : FactionListState()
+    data class Loading(
+        val factionList: List<FactionsQuery.Faction?>
+    ) : FactionListState()
+
+    object Error : FactionListState()
+
+    data class Success(
+        val factionList: List<FactionsQuery.Faction?>
+    ) : FactionListState()
 }
