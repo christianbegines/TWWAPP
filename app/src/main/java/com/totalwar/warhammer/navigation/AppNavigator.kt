@@ -57,7 +57,7 @@ fun AppRouter(
             }
         ) {
             val id = it.arguments?.getString("id").orEmpty()
-            FactionUnitsScreen(navController, viewModel, dataStore, id)
+            FactionUnitsScreen(navController = navController, id = id)
         }
         composable(
             route = AppScreens.UnitScreen.route + "/{id}",
@@ -71,15 +71,12 @@ fun AppRouter(
         ) {
             val id = it.arguments?.getString("id").orEmpty()
             UnitScreen(
-                viewModel = viewModel,
-                dataStore = dataStore,
-                navController = navController,
                 id = id
             )
         }
         composable(route = AppScreens.FactionsScreen.route) {
             EnterAnimation {
-                FactionListScreen(viewModel, dataStore, openDrawer, navController)
+                FactionListScreen(openDrawer = openDrawer, navController = navController)
             }
         }
         composable(route = AppScreens.Account.route) {

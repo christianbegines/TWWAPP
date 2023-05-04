@@ -19,15 +19,13 @@ import androidx.compose.ui.zIndex
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
-import com.totalwar.warhammer.util.LORD_HERO
-import com.totalwar.warhammer.util.formatUrlHeroLordImage
-import com.totalwar.warhammer.util.formatUrlUnitImage
 import com.totalwar.warhammer.util.getUnitImageUrl
 
 @Composable
 fun UnitImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
     UnitImageBox(url = unit.getUnitImageUrl(gameVersion), size = size)
 }
+
 @Composable
 fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
     UnitImageDetailBox(url = unit.getUnitImageUrl(gameVersion), size = size)
@@ -56,6 +54,7 @@ fun UnitImageBox(url: String, size: Dp) {
         )
     }
 }
+
 @Composable
 fun UnitImageDetailBox(url: String, size: Dp) {
     Box(modifier = Modifier.padding(start = 0.dp), contentAlignment = Alignment.Center) {

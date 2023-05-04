@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -23,11 +24,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.datastore.core.DataStore
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
@@ -54,6 +56,8 @@ import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
+import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
 import com.totalwar.warhammer.views.common.UnitAbilityAttrIconImage
 import com.totalwar.warhammer.views.common.UnitIconImage
 import com.totalwar.warhammer.views.common.UnitImage
@@ -62,83 +66,64 @@ import com.totalwar.warhammer.views.common.UnitImage
 @Composable
 fun FactionUnitsScreen(
     navController: NavHostController,
-    viewModel: AppViewModel,
-    dataStore: DataStore<Settings>,
+    viewModel: FactionUnitsViewModel = hiltViewModel(),
     id: String
 ) {
     val lazyGridState = rememberLazyGridState()
-    val settings: Settings? by dataStore.data.collectAsState(
-        initial = null
+    val faction: FactionUnitsState by viewModel.faction.observeAsState(
+        initial = FactionUnitsState.Idle
     )
-    val unitList: List<FactionUnitsQuery.Unit?> by viewModel.unitsFactionList.observeAsState(
-        initial = listOf()
-    )
-    settings?.let { settings ->
-        viewModel.findUnitsByFaction(id, settings.gameVersion)
-        Scaffold(
-            topBar = {
-                CustomToolbarWithBackArrow(title = "List of units", navController = navController)
-            },
-            content = {
-                if (unitList.isNotEmpty()) {
-                    Surface(
-                        color = Color.Transparent,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .paint(
-                                painter = painterResource(R.drawable.backgroundttw),
-                                contentScale = ContentScale.FillBounds
-                            )
-                    ) {
+
+    viewModel.findUnitsByFaction(id)
+    Scaffold(
+        topBar = {
+            CustomToolbarWithBackArrow(title = "List of units", navController = navController)
+        },
+        content = {
+            Surface(
+                color = Color.Transparent,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .paint(
+                        painter = painterResource(R.drawable.backgroundttw),
+                        contentScale = ContentScale.FillBounds
+                    )
+            ) {
+                when(val state = faction) {
+                    FactionUnitsState.Error ->  {}
+                    is FactionUnitsState.Idle,
+                    is FactionUnitsState.Loading ->{
+                        Box(contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                    is FactionUnitsState.Success -> {
+                        val list = state.faction.units.orEmpty()
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(1),
                             modifier = Modifier.padding(vertical = 4.dp),
                             state = lazyGridState
                         ) {
-                            items(unitList) { units ->
+                            items(list) { units ->
                                 units?.let {
-                                    settings?.let {
-                                        FactionUnitCard(
-                                            viewModel,
-                                            units,
-                                            navController,
-                                            dataStore,
-                                            settings.gameVersion
-                                        )
-                                    }
+                                    FactionUnitCard(
+                                        viewModel,
+                                        units,
+                                        navController,
+                                    )
                                 }
                             }
                         }
                     }
-                } else {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(20.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            "No Factions to SHOW",
-                            fontSize = 20.sp,
-                            modifier = Modifier
-                                .wrapContentWidth()
-                                .wrapContentHeight(),
-                            textAlign = TextAlign.Center
-                        )
-                    }
                 }
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
 fun FactionUnitCard(
-    viewModel: AppViewModel,
     factionUnit: FactionUnitsQuery.Unit,
-    navController: NavHostController,
-    settings: DataStore<Settings>,
     gameVersion: String
 ) {
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
@@ -146,9 +131,6 @@ fun FactionUnitCard(
     val isLarge = factionUnit.land_unit?.battle_entity?.size?.contains("large")
     if (showCustomDialogWithResult) {
         UnitDialog(
-            viewModel = viewModel,
-            dataStore = settings,
-            navController = navController,
             onDismiss = {
                 showCustomDialogWithResult = !showCustomDialogWithResult
             },
@@ -271,9 +253,6 @@ fun FactionUnitCard(
 
 @Composable
 fun UnitDialog(
-    viewModel: AppViewModel,
-    dataStore: DataStore<Settings>,
-    navController: NavHostController,
     id: String,
     onDismiss: () -> Unit,
     onNegativeClick: () -> Unit,
@@ -281,9 +260,6 @@ fun UnitDialog(
 ) {
     Dialog(onDismissRequest = onDismiss) {
         UnitScreen(
-            viewModel = viewModel,
-            dataStore = dataStore,
-            navController = navController,
             id = id
         )
     }

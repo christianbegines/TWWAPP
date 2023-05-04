@@ -6,7 +6,7 @@ import com.totalwar.warhammer.FactionUnitsQuery
 class FactionUnitsDataSource(
     private val apolloClient: ApolloClient
 ) {
-    suspend fun getUnitsFaction(id: String, gameVersion: String): List<FactionUnitsQuery.Unit?> =
+    suspend fun getUnitsFaction(id: String, gameVersion: String): FactionUnitsQuery.Faction? =
         apolloClient.query(FactionUnitsQuery(gameVersion, id))
-            .execute().data?.tww?.faction?.units.orEmpty()
+            .execute().data?.tww?.faction
 }

@@ -1,6 +1,5 @@
 package com.totalwar.warhammer.views.faction
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -20,15 +19,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -44,67 +42,65 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.navigation.AppScreens
-import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbar
-import com.totalwar.warhammer.viewmodels.AppViewModel
-import com.totalwar.warhammer.viewmodels.FactionListState
+import com.totalwar.warhammer.viewmodels.faction.FactionState
+import com.totalwar.warhammer.viewmodels.faction.FactionViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FactionListScreen(
-    viewModel: AppViewModel = viewModel(),
-    dataStore: DataStore<Settings>,
+    viewModel: FactionViewModel = hiltViewModel(),
     openDrawer: () -> Unit,
     navController: NavController
 ) {
-    val settings: Settings? by dataStore.data.collectAsState(
-        initial = null
+    val factionList: FactionState by viewModel.factionList.observeAsState(
+        initial = FactionState.Idle
     )
-    val factionList: FactionListState by viewModel.factionList.observeAsState(
-        initial = FactionListState.Idle
-    )
-    settings?.let { viewModel.findAllFactions(it.gameVersion) }
+    viewModel.findAllFactions()
 
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {
-            CustomToolbar(title = stringResource(id = R.string.app_name), openDrawer)
+            CustomToolbar(
+                title = stringResource(id = R.string.app_name),
+                openDrawer
+            )
         },
-        content = {
+        content = { padding ->
             Surface(
                 color = Color.Transparent,
                 modifier = Modifier
+                    .padding(padding)
                     .fillMaxSize()
                     .paint(
                         painter = painterResource(R.drawable.backgroundttw),
                         contentScale = ContentScale.FillBounds
                     )
             ) {
-                val refreshState = rememberPullRefreshState(
-                    refreshing = factionList is FactionListState.Loading,
-                    onRefresh = { settings?.let { viewModel.findAllFactions(it.gameVersion) } }
-                )
                 when (val state = factionList) {
-                    FactionListState.Error -> {}
-                    FactionListState.Idle -> {}
-                    is FactionListState.Loading,
-                    is FactionListState.Success -> {
+                    FactionState.Error -> {}
+                    FactionState.Idle -> {}
+                    is FactionState.Loading,
+                    is FactionState.Success -> {
                         val list = when (state) {
-                            is FactionListState.Loading -> state.factionList
-                            is FactionListState.Success -> state.factionList
+                            is FactionState.Loading -> state.factionList
+                            is FactionState.Success -> state.factionList
                             else -> emptyList()
                         }
                         Box(
-                            modifier = Modifier.pullRefresh(refreshState)
+                            modifier = Modifier.pullRefresh(
+                                rememberPullRefreshState(
+                                    refreshing = factionList is FactionState.Loading,
+                                    onRefresh = { viewModel.findAllFactions() }
+                                )
+                            )
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
@@ -121,8 +117,10 @@ fun FactionListScreen(
                                 }
                             }
                         }
-                        if (state is FactionListState.Loading) {
-                            LinearProgressIndicator()
+                        if (state is FactionState.Loading) {
+                            Box(contentAlignment = Alignment.Center) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
