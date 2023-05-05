@@ -26,18 +26,11 @@ class FactionUnitsViewModel @Inject constructor(
                 faction.postValue(
                     factionUnitsRepository.findUnitsByFaction(id, it.gameVersion)?.let { faction ->
                         FactionUnitsState.Success(
-                            faction
+                            faction,
+                            it.gameVersion
                         )
                     } ?: FactionUnitsState.Error
                 )
-            }
-        }
-    }
-
-    fun getGameVersion(){
-        viewModelScope.launch {
-            return dataStore.data.collect {
-                it.gameVersion
             }
         }
     }

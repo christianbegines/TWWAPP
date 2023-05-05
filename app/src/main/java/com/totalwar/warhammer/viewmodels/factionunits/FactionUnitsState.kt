@@ -8,6 +8,7 @@ sealed class FactionUnitsState() {
     object Loading : FactionUnitsState()
 
     data class Success(
-        val faction: FactionUnitsQuery.Faction
+        val faction: FactionUnitsQuery.Faction,
+        val gameVersion: String
     ) : FactionUnitsState()
 }

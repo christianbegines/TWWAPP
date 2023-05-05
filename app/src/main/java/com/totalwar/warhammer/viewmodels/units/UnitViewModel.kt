@@ -21,7 +21,7 @@ class UnitViewModel @Inject constructor(
         viewModelScope.launch {
             dataStore.data.collect { settings ->
                 unitsRepository.getUnit(id, settings.gameVersion)?.let {
-                    unit.postValue(UnitState.Success(it))
+                    unit.postValue(UnitState.Success(it,settings.gameVersion))
                 } ?: UnitState.Error
             }
         }

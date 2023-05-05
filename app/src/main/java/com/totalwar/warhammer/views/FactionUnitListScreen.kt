@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -44,18 +42,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.datastore.core.DataStore
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
 import com.totalwar.warhammer.util.map
-import com.totalwar.warhammer.viewmodels.AppViewModel
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
 import com.totalwar.warhammer.views.common.UnitAbilityAttrIconImage
@@ -89,14 +83,15 @@ fun FactionUnitsScreen(
                         contentScale = ContentScale.FillBounds
                     )
             ) {
-                when(val state = faction) {
-                    FactionUnitsState.Error ->  {}
+                when (val state = faction) {
+                    FactionUnitsState.Error -> {}
                     is FactionUnitsState.Idle,
-                    is FactionUnitsState.Loading ->{
+                    is FactionUnitsState.Loading -> {
                         Box(contentAlignment = Alignment.Center) {
                             CircularProgressIndicator()
                         }
                     }
+
                     is FactionUnitsState.Success -> {
                         val list = state.faction.units.orEmpty()
                         LazyVerticalGrid(
@@ -107,9 +102,8 @@ fun FactionUnitsScreen(
                             items(list) { units ->
                                 units?.let {
                                     FactionUnitCard(
-                                        viewModel,
                                         units,
-                                        navController,
+                                        state.gameVersion
                                     )
                                 }
                             }
