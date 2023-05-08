@@ -20,6 +20,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.getUnitImageUrl
+import com.totalwar.warhammer.util.isRenown
 
 @Composable
 fun UnitImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
@@ -28,7 +29,7 @@ fun UnitImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
 
 @Composable
 fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
-    UnitImageDetailBox(url = unit.getUnitImageUrl(gameVersion), size = size)
+    UnitImageDetailBox(url = unit.getUnitImageUrl(gameVersion), size = size, isRenown = unit.isRenown())
 }
 
 @Composable
@@ -56,8 +57,21 @@ fun UnitImageBox(url: String, size: Dp) {
 }
 
 @Composable
-fun UnitImageDetailBox(url: String, size: Dp) {
+fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
     Box(modifier = Modifier.padding(start = 0.dp), contentAlignment = Alignment.Center) {
+        if (isRenown) {
+            Image(
+                painter = painterResource(id = R.drawable.unit_renown_unlocked_frame__1_),
+                contentDescription = "",
+                modifier = Modifier
+                    .width(size + 4.dp)
+                    .padding(bottom = 25.dp)
+                    .height(size + 60.dp)
+                    .zIndex(200f)
+                    .clip(RoundedCornerShape(1.dp)),
+                contentScale = ContentScale.FillBounds
+            )
+        }
         Image(
             painter = painterResource(id = R.drawable.unit_card_frame_plain),
             contentDescription = "",

@@ -2,15 +2,19 @@ package com.totalwar.warhammer.views
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -20,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -29,11 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.totalwar.warhammer.R
+import com.totalwar.warhammer.ui.theme.BulletBackground
+import com.totalwar.warhammer.ui.theme.BulletDecrease
+import com.totalwar.warhammer.ui.theme.BulletIncrease
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 import com.totalwar.warhammer.views.common.UnitDetailImage
+import com.totalwar.warhammer.views.common.UnitIconImage
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -87,7 +95,7 @@ fun UnitScreen(
                             contentScale = ContentScale.FillBounds
                         )
                         Column(
-                            modifier = Modifier.padding(30.dp).border(1.dp, Color.Red),
+                            modifier = Modifier.padding(30.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
@@ -105,12 +113,62 @@ fun UnitScreen(
                                 textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = "(${selectedUnit.ui_unit_group?.name})",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row {
+                                UnitIconImage(
+                                    unit = selectedUnit,
+                                    size = 20.dp,
+                                    gameVersion = state.gameVersion
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "${selectedUnit.ui_unit_group?.name}",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                             Spacer(modifier = Modifier.height(10.dp))
+                            Row {
+                                Column(
+                                    modifier = Modifier.border(1.dp, BulletBackground).background(
+                                        Color.Transparent.copy(0.1f)
+                                    ),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    for (item in selectedUnit.bullet_points.orEmpty()) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.Center
+                                        ) {
+                                            if (item?.state.equals("positive")) {
+                                                Image(
+                                                    modifier = Modifier.size(15.dp).padding(top = 2.dp),
+                                                    painter = painterResource(R.drawable.arrow_increase),
+                                                    contentDescription = ""
+                                                )
+                                                Text(
+                                                    text = "${item?.onscreen_name}",
+                                                    fontSize = 15.sp,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = BulletIncrease
+                                                )
+                                            } else {
+                                                Image(
+                                                    modifier = Modifier.size(15.dp).padding(top = 10.dp),
+                                                    painter = painterResource(R.drawable.arrow_decrease),
+                                                    contentDescription = ""
+                                                )
+                                                Text(
+                                                    text = "${item?.onscreen_name}",
+                                                    fontSize = 15.sp,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    color = BulletDecrease
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                             Text(
                                 text = "Cost: ${selectedUnit.multiplayer_cost}",
                                 fontSize = 16.sp,

@@ -15,7 +15,7 @@ private const val PORTHOLES = "portholes"
 private const val UNITS = "units"
 const val LORD_HERO = "Lord|Hero"
 fun formatUrlUnitImage(gameVersion: String, param: String): String =
-    String.format(UNIT_URL, param, gameVersion)
+    String.format(UNIT_URL, gameVersion, param)
 
 fun formatUrlHeroLordImage(param: String, gameVersion: String): String =
     "${String.format(LORD_URL, gameVersion)}${param.replace(PORTHOLES, UNITS)}"
@@ -142,15 +142,32 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
 }
 
 fun UnitQuery.Unit.isLordExclusive(): Boolean {
-    return this.custom_battle_permissions?.any {
-        (it?.campaign_exclusive as? List<Boolean>)?.contains(true)?.or(false) == true
+    return this.custom_battle_permissions?.any { it ->
+        when (val exclusive = it?.campaign_exclusive) {
+            is List<*> -> {
+                exclusive.all { it as Boolean }
+            }
+
+            is Boolean -> {
+                exclusive == true
+            }
+            else -> {
+                false
+            }
+        }
     } == true
 }
+
+fun UnitQuery.Unit.isRenown(): Boolean {
+    return this.unit_sets?.any { it?.special_category?.contains("renown") == true }
+        ?.or(false) == true
+}
+
 fun UnitQuery.Unit.getUnitImageUrl(gameVersion: String): String {
     return if (LORD_HERO.contains(this.caste.orEmpty())) {
         if (isLordExclusive()) {
             this.land_unit?.variant?.unit_card_url.let {
-                formatUrlUnitImage(it.orEmpty(), gameVersion)
+                formatUrlUnitImage(gameVersion, it.orEmpty())
             }
         } else {
             this.custom_battle_permissions?.first()?.general_portrait.let {
@@ -159,7 +176,7 @@ fun UnitQuery.Unit.getUnitImageUrl(gameVersion: String): String {
         }
     } else {
         this.land_unit?.variant?.unit_card_url.let {
-            formatUrlUnitImage(it.orEmpty(), gameVersion)
+            formatUrlUnitImage(gameVersion, it.orEmpty())
         }
     }
 }

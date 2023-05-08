@@ -17,6 +17,7 @@ import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.formatUrlUnitIcon
 import com.totalwar.warhammer.util.isLordExclusive
+import com.totalwar.warhammer.util.isRenown
 
 @Composable
 fun UnitIconImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
@@ -24,7 +25,7 @@ fun UnitIconImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
     UnitIconImageBox(
         url = url,
         size = size,
-        unit.unit_sets?.any { it?.special_category?.contains("renown") == true }?.or(false) == true,
+        isRenown = unit.isRenown(),
         isCampaignExclusive = unit.isLordExclusive()
     )
 }
