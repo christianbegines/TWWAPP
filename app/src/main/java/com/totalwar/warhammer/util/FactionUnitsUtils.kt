@@ -52,7 +52,7 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
         listOf(
             UnitQuery.Custom_battle_permission(
                 general_portrait = this.custom_battle_permissions?.firstOrNull()?.general_portrait,
-                campaign_exclusive = this.custom_battle_permissions?.any { it?.campaign_exclusive as Boolean },
+                campaign_exclusive = this.custom_battle_permissions?.map { it?.campaign_exclusive },
                 set_piece_character = null,
                 __typename = this.custom_battle_permissions?.firstOrNull()?.__typename.orEmpty()
             )
@@ -141,9 +141,14 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
     )
 }
 
+fun UnitQuery.Unit.isLordExclusive(): Boolean {
+    return this.custom_battle_permissions?.any {
+        (it?.campaign_exclusive as? List<Boolean>)?.contains(true)?.or(false) == true
+    } == true
+}
 fun UnitQuery.Unit.getUnitImageUrl(gameVersion: String): String {
     return if (LORD_HERO.contains(this.caste.orEmpty())) {
-        if (this.custom_battle_permissions?.any { it?.campaign_exclusive == true } == true) {
+        if (isLordExclusive()) {
             this.land_unit?.variant?.unit_card_url.let {
                 formatUrlUnitImage(it.orEmpty(), gameVersion)
             }
