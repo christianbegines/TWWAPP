@@ -24,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -36,10 +35,10 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.BulletBackground
-import com.totalwar.warhammer.ui.theme.BulletDecrease
-import com.totalwar.warhammer.ui.theme.BulletIncrease
+import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
+import com.totalwar.warhammer.views.common.UnitBullets
 import com.totalwar.warhammer.views.common.UnitDetailImage
 import com.totalwar.warhammer.views.common.UnitIconImage
 
@@ -113,7 +112,7 @@ fun UnitScreen(
                                 textAlign = TextAlign.Center
                             )
                             Spacer(modifier = Modifier.height(10.dp))
-                            Row {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 UnitIconImage(
                                     unit = selectedUnit,
                                     size = 20.dp,
@@ -135,45 +134,26 @@ fun UnitScreen(
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    for (item in selectedUnit.bullet_points.orEmpty()) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.Center
-                                        ) {
-                                            if (item?.state.equals("positive")) {
-                                                Image(
-                                                    modifier = Modifier.size(15.dp).padding(top = 2.dp),
-                                                    painter = painterResource(R.drawable.arrow_increase),
-                                                    contentDescription = ""
-                                                )
-                                                Text(
-                                                    text = "${item?.onscreen_name}",
-                                                    fontSize = 15.sp,
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    color = BulletIncrease
-                                                )
-                                            } else {
-                                                Image(
-                                                    modifier = Modifier.size(15.dp).padding(top = 10.dp),
-                                                    painter = painterResource(R.drawable.arrow_decrease),
-                                                    contentDescription = ""
-                                                )
-                                                Text(
-                                                    text = "${item?.onscreen_name}",
-                                                    fontSize = 15.sp,
-                                                    fontWeight = FontWeight.SemiBold,
-                                                    color = BulletDecrease
-                                                )
-                                            }
-                                        }
-                                    }
+                                    UnitBullets(selectedUnit)
                                 }
                             }
-                            Text(
-                                text = "Cost: ${selectedUnit.multiplayer_cost}",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.icon_treasury),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = selectedUnit.multiplayer_cost.toString(),
+                                    color = ColorOnPrimary,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Start
+                                )
+                            }
+
                             Spacer(modifier = Modifier.height(10.dp))
                             Text(
                                 text = "Damage:${selectedUnit.land_unit?.primary_melee_weapon?.damage} " +

@@ -142,7 +142,7 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
 }
 
 fun UnitQuery.Unit.isLordExclusive(): Boolean {
-    return this.custom_battle_permissions?.any { it ->
+    return this.custom_battle_permissions?.all { it ->
         when (val exclusive = it?.campaign_exclusive) {
             is List<*> -> {
                 exclusive.all { it as Boolean }
@@ -151,6 +151,7 @@ fun UnitQuery.Unit.isLordExclusive(): Boolean {
             is Boolean -> {
                 exclusive == true
             }
+
             else -> {
                 false
             }
