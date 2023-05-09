@@ -94,11 +94,10 @@ fun UnitScreen(
                             contentScale = ContentScale.FillBounds
                         )
                         Column(
-                            modifier = Modifier.padding(30.dp),
+                            modifier = Modifier.padding(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center
                         ) {
-                            Spacer(modifier = Modifier.height(10.dp))
                             UnitDetailImage(
                                 unit = selectedUnit,
                                 size = 170.dp,
@@ -126,7 +125,7 @@ fun UnitScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.height(10.dp))
-                            Row {
+                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
                                 Column(
                                     modifier = Modifier.border(1.dp, BulletBackground).background(
                                         Color.Transparent.copy(0.1f)

@@ -65,7 +65,7 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
                 contentDescription = "",
                 modifier = Modifier
                     .width(size + 4.dp)
-                    .padding(bottom = 25.dp)
+                    .padding(bottom = 15.dp)
                     .height(size + 60.dp)
                     .zIndex(200f)
                     .clip(RoundedCornerShape(1.dp)),
