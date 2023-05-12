@@ -2,6 +2,9 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
   tww(tww_version: $tww_version) {
     tww_version
     faction(id: $faction) {
+      key
+      screen_name
+      flags_url
       units(groupHeroesAndLords: true) {
         unit
         caste

@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -69,9 +71,13 @@ fun FactionUnitsScreen(
     )
 
     viewModel.findUnitsByFaction(id)
+
     Scaffold(
         topBar = {
-            CustomToolbarWithBackArrow(title = "List of units", navController = navController)
+            val title = if (faction is FactionUnitsState.Success) {
+                (faction as FactionUnitsState.Success).faction.screen_name
+            } else ""
+            CustomToolbarWithBackArrow(title = "$title Units", navController = navController)
         },
         content = {
             Surface(
@@ -102,6 +108,7 @@ fun FactionUnitsScreen(
                             items(list) { units ->
                                 units?.let {
                                     FactionUnitCard(
+                                        state.faction?.key.orEmpty(),
                                         units,
                                         state.gameVersion
                                     )
@@ -117,6 +124,7 @@ fun FactionUnitsScreen(
 
 @Composable
 fun FactionUnitCard(
+    faction_id: String,
     factionUnit: FactionUnitsQuery.Unit,
     gameVersion: String
 ) {
@@ -134,7 +142,8 @@ fun FactionUnitCard(
             onPositiveClick = {
                 showCustomDialogWithResult = !showCustomDialogWithResult
             },
-            id = factionUnit.unit.toString()
+            id = factionUnit.unit.toString(),
+            faction_id = faction_id
         )
     }
     Surface(
@@ -176,7 +185,7 @@ fun FactionUnitCard(
                 UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
             }
             // unit data
-            Column {
+            Column() {
                 Text(
                     text = factionUnit.land_unit?.onscreen_name.orEmpty(),
                     color = ColorOnPrimary,
@@ -201,7 +210,6 @@ fun FactionUnitCard(
                         textAlign = TextAlign.Start
                     )
                 }
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -220,7 +228,18 @@ fun FactionUnitCard(
                         textAlign = TextAlign.Start
                     )
                 }
-
+                Row(
+                    modifier = Modifier.padding(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    for (item in factionUnit.land_unit?.abilities.orEmpty()) {
+                        UnitAbilityAttrIconImage(
+                            params = item?.icon_name.orEmpty(),
+                            gameVersion = gameVersion,
+                            size = 25.dp
+                        )
+                    }
+                }
                 Row(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -229,14 +248,7 @@ fun FactionUnitCard(
                         UnitAbilityAttrIconImage(
                             params = item?.key.orEmpty(),
                             gameVersion = gameVersion,
-                            size = 20.dp
-                        )
-                    }
-                    for (item in factionUnit.land_unit?.abilities.orEmpty()) {
-                        UnitAbilityAttrIconImage(
-                            params = item?.icon_name.orEmpty(),
-                            gameVersion = gameVersion,
-                            size = 20.dp
+                            size = 25.dp
                         )
                     }
                 }
@@ -248,13 +260,15 @@ fun FactionUnitCard(
 @Composable
 fun UnitDialog(
     id: String,
+    faction_id: String,
     onDismiss: () -> Unit,
     onNegativeClick: () -> Unit,
     onPositiveClick: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismiss) {
         UnitScreen(
-            id = id
+            id = id,
+            faction_id = faction_id
         )
     }
 }

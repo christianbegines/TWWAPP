@@ -10,9 +10,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import com.totalwar.warhammer.ui.theme.TotalWarhammerAppTheme
 import com.totalwar.warhammer.viewmodels.AppViewModel
 import com.totalwar.warhammer.views.AppScreen

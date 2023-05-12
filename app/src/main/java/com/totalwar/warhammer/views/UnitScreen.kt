@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -33,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.BulletBackground
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
+import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 import com.totalwar.warhammer.views.common.UnitBullets
@@ -46,10 +50,11 @@ import com.totalwar.warhammer.views.common.UnitIconImage
 @Composable
 fun UnitScreen(
     viewModel: UnitViewModel = hiltViewModel(),
-    id: String
+    id: String,
+    faction_id: String
 ) {
     val unit: UnitState by viewModel.unit.observeAsState(initial = UnitState.Idle)
-    viewModel.findUnitById(id)
+    viewModel.findUnitById(id, faction_id)
     Scaffold(
         modifier = Modifier.padding(5.dp),
         backgroundColor = Color.Transparent
@@ -67,7 +72,7 @@ fun UnitScreen(
                 val selectedUnit = state.unit
                 Surface(
                     color = Color.Transparent,
-                    modifier = Modifier.fillMaxSize().padding(10.dp)
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Box(
                         modifier = Modifier
@@ -85,7 +90,7 @@ fun UnitScreen(
                     }
                     Box(
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.TopCenter
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.unit_background),
@@ -94,23 +99,30 @@ fun UnitScreen(
                             contentScale = ContentScale.FillBounds
                         )
                         Column(
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(top = if (selectedUnit.isRenown()) 10.dp else 40.dp)
+                                .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Top
+
                         ) {
                             UnitDetailImage(
                                 unit = selectedUnit,
-                                size = 170.dp,
+                                size = 135.dp,
                                 state.gameVersion
                             )
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Text(
-                                text = "${selectedUnit.land_unit?.onscreen_name}",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                textAlign = TextAlign.Center
-                            )
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                                Text(
+                                    text = "${selectedUnit.land_unit?.onscreen_name}",
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                                Image(
+                                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${state.faction.flags_url}/mon_64.jpg"),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 UnitIconImage(
                                     unit = selectedUnit,
@@ -124,8 +136,7 @@ fun UnitScreen(
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
-                            Spacer(modifier = Modifier.height(10.dp))
-                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            Row(modifier = Modifier.padding(horizontal = 20.dp)) {
                                 Column(
                                     modifier = Modifier.border(1.dp, BulletBackground).background(
                                         Color.Transparent.copy(0.1f)
@@ -142,18 +153,19 @@ fun UnitScreen(
                                 Image(
                                     painter = painterResource(id = R.drawable.icon_treasury),
                                     contentDescription = "",
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(30.dp)
                                 )
-                                Spacer(modifier = Modifier.width(10.dp))
+                                Spacer(modifier = Modifier.width(5.dp))
                                 Text(
                                     text = selectedUnit.multiplayer_cost.toString(),
                                     color = ColorOnPrimary,
                                     fontWeight = FontWeight.SemiBold,
+                                    fontSize = 30.sp,
                                     textAlign = TextAlign.Start
                                 )
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Spacer(modifier = Modifier.height(0.dp))
                             Text(
                                 text = "Damage:${selectedUnit.land_unit?.primary_melee_weapon?.damage} " +
                                     "| AP:${selectedUnit.land_unit?.primary_melee_weapon?.ap_damage}",

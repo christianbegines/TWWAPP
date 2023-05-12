@@ -60,9 +60,14 @@ fun AppRouter(
             FactionUnitsScreen(navController = navController, id = id)
         }
         composable(
-            route = AppScreens.UnitScreen.route + "/{id}",
+            route = AppScreens.UnitScreen.route + "/{faction_id}/{id}",
             arguments = listOf(
                 navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                },
+                navArgument("faction_id") {
                     type = NavType.StringType
                     defaultValue = ""
                     nullable = true
@@ -70,8 +75,10 @@ fun AppRouter(
             )
         ) {
             val id = it.arguments?.getString("id").orEmpty()
+            val factionId = it.arguments?.getString("faction_id").orEmpty()
             UnitScreen(
-                id = id
+                id = id,
+                faction_id = factionId
             )
         }
         composable(route = AppScreens.FactionsScreen.route) {

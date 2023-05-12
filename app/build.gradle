@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
+    id 'kotlinx-serialization'
     id 'dagger.hilt.android.plugin'
     id("com.apollographql.apollo3") version "3.8.1"
 }

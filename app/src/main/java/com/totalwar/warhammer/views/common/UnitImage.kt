@@ -64,9 +64,9 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
                 painter = painterResource(id = R.drawable.unit_renown_unlocked_frame__1_),
                 contentDescription = "",
                 modifier = Modifier
-                    .width(size + 4.dp)
-                    .padding(bottom = 15.dp)
-                    .height(size + 60.dp)
+                    .width(size)
+                    .padding(bottom = 10.dp)
+                    .height(size + 40.dp)
                     .zIndex(200f)
                     .clip(RoundedCornerShape(1.dp)),
                 contentScale = ContentScale.FillBounds
