@@ -16,7 +16,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.formatUrlUnitIcon
-import com.totalwar.warhammer.util.isLordExclusive
+import com.totalwar.warhammer.util.isExclusive
 import com.totalwar.warhammer.util.isRenown
 
 @Composable
@@ -26,7 +26,7 @@ fun UnitIconImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
         url = url,
         size = size,
         isRenown = unit.isRenown(),
-        isCampaignExclusive = unit.isLordExclusive()
+        isCampaignExclusive = unit.isExclusive()
     )
 }
 

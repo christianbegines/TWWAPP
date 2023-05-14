@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +19,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -51,6 +52,7 @@ import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbarWithBackArrow
+import com.totalwar.warhammer.util.isLargeUnit
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
@@ -58,6 +60,7 @@ import com.totalwar.warhammer.views.common.UnitAbilityAttrIconImage
 import com.totalwar.warhammer.views.common.UnitIconImage
 import com.totalwar.warhammer.views.common.UnitImage
 
+@OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FactionUnitsScreen(
@@ -99,13 +102,44 @@ fun FactionUnitsScreen(
                     }
 
                     is FactionUnitsState.Success -> {
-                        val list = state.faction.units.orEmpty()
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(1),
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            state = lazyGridState
+                        val lords = state.lordUnits.orEmpty()
+                        val units = state.units.orEmpty()
+                        val heroes = state.heroUnits.orEmpty()
+                        val exclusives = state.exclusiveUnits.orEmpty()
+                        LazyColumn(
+                            modifier = Modifier.padding(vertical = 4.dp).fillMaxHeight()
                         ) {
-                            items(list) { units ->
+                            items(lords) { units ->
+                                units?.let {
+                                    FactionUnitCard(
+                                        state.faction?.key.orEmpty(),
+                                        units,
+                                        state.gameVersion
+                                    )
+                                }
+                            }
+                        }
+
+                        LazyColumn(
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            stickyHeader {
+                                Header()
+                            }
+                            items(heroes) { units ->
+                                units?.let {
+                                    FactionUnitCard(
+                                        state.faction?.key.orEmpty(),
+                                        units,
+                                        state.gameVersion
+                                    )
+                                }
+                            }
+                        }
+                        LazyColumn(
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        ) {
+                            items(units) { units ->
                                 units?.let {
                                     FactionUnitCard(
                                         state.faction?.key.orEmpty(),
@@ -130,7 +164,7 @@ fun FactionUnitCard(
 ) {
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
 
-    val isLarge = factionUnit.land_unit?.battle_entity?.size?.contains("large")
+    val isLarge = factionUnit.isLargeUnit()
     if (showCustomDialogWithResult) {
         UnitDialog(
             onDismiss = {
@@ -271,4 +305,8 @@ fun UnitDialog(
             faction_id = faction_id
         )
     }
+}
+
+@Composable
+fun Header() {
 }

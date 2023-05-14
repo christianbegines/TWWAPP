@@ -6,6 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.totalwar.warhammer.repository.FactionUnitsRepository
 import com.totalwar.warhammer.settings.Settings
+import com.totalwar.warhammer.util.isExclusive
+import com.totalwar.warhammer.util.isHero
+import com.totalwar.warhammer.util.isLord
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +30,13 @@ class FactionUnitsViewModel @Inject constructor(
                     factionUnitsRepository.findUnitsByFaction(id, it.gameVersion)?.let { faction ->
                         FactionUnitsState.Success(
                             faction,
+                            faction.units?.filter { unit -> unit?.isLord() == true }.orEmpty(),
+                            faction.units?.filter { unit -> unit?.isHero() == true && !unit.isExclusive() }
+                                .orEmpty(),
+                            faction.units?.filter { unit ->
+                                (unit?.isHero() == false && !unit.isLord() && !unit.isExclusive())
+                            },
+                            faction.units?.filter{unit -> unit?.isExclusive() == true },
                             it.gameVersion
                         )
                     } ?: FactionUnitsState.Error

@@ -1,6 +1,7 @@
 package com.totalwar.warhammer.util
 
 import com.totalwar.warhammer.FactionUnitsQuery
+import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.UnitQuery
 
 private const val UNIT_URL =
@@ -13,7 +14,8 @@ private const val ABILITY_ATTR_ICONS =
     "https://res.cloudinary.com/fishofstone/image/upload/w_64,h_64/twwstats/api/%s/ui/battle ui/ability_icons/"
 private const val PORTHOLES = "portholes"
 private const val UNITS = "units"
-const val LORD_HERO = "Lord|Hero"
+const val LORD = "Lord"
+const val HERO = "Hero"
 fun formatUrlUnitImage(gameVersion: String, param: String): String =
     String.format(UNIT_URL, gameVersion, param)
 
@@ -141,7 +143,24 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
     )
 }
 
-fun UnitQuery.Unit.isLordExclusive(): Boolean {
+fun UnitQuery.Unit.isExclusive(): Boolean {
+    return this.custom_battle_permissions?.all { it ->
+        when (val exclusive = it?.campaign_exclusive) {
+            is List<*> -> {
+                exclusive.all { it as Boolean }
+            }
+
+            is Boolean -> {
+                exclusive == true
+            }
+
+            else -> {
+                false
+            }
+        }
+    } == true
+}
+fun FactionUnitsQuery.Unit.isExclusive(): Boolean {
     return this.custom_battle_permissions?.all { it ->
         when (val exclusive = it?.campaign_exclusive) {
             is List<*> -> {
@@ -165,8 +184,8 @@ fun UnitQuery.Unit.isRenown(): Boolean {
 }
 
 fun UnitQuery.Unit.getUnitImageUrl(gameVersion: String): String {
-    return if (LORD_HERO.contains(this.caste.orEmpty())) {
-        if (isLordExclusive()) {
+    return if ("$LORD|$HERO".contains(this.caste.orEmpty())) {
+        if (isExclusive()) {
             this.land_unit?.variant?.unit_card_url.let {
                 formatUrlUnitImage(gameVersion, it.orEmpty())
             }
@@ -180,4 +199,20 @@ fun UnitQuery.Unit.getUnitImageUrl(gameVersion: String): String {
             formatUrlUnitImage(gameVersion, it.orEmpty())
         }
     }
+}
+
+fun FactionUnitsQuery.Unit.isLargeUnit(): Boolean {
+    return this.land_unit?.battle_entity?.size?.contains("large") == true
+}
+
+fun UnitQuery.Unit.isLargeUnit(): Boolean {
+    return this.land_unit?.battle_entity?.battle_entity?.size?.contains("large") == true
+}
+
+fun FactionUnitsQuery.Unit.isLord(): Boolean {
+    return this.caste.equals(LORD)
+}
+
+fun FactionUnitsQuery.Unit.isHero(): Boolean {
+    return this.caste.equals(HERO)
 }
