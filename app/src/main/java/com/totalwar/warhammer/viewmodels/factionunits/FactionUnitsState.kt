@@ -9,10 +9,7 @@ sealed class FactionUnitsState {
 
     data class Success(
         val faction: FactionUnitsQuery.Faction,
-        val lordUnits: List<FactionUnitsQuery.Unit?>?,
-        val heroUnits: List<FactionUnitsQuery.Unit?>?,
-        val units: List<FactionUnitsQuery.Unit?>?,
-        val exclusiveUnits: List<FactionUnitsQuery.Unit?>?,
+        val unitTypes: MutableMap<String, List<FactionUnitsQuery.Unit?>>,
         val gameVersion: String
     ) : FactionUnitsState()
 }

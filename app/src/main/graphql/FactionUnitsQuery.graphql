@@ -4,6 +4,10 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
     faction(id: $faction) {
       key
       screen_name
+      subculture {
+        name
+        __typename
+      }
       flags_url
       units(groupHeroesAndLords: true) {
         unit

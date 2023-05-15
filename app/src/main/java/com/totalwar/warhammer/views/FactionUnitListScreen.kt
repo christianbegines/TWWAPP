@@ -15,14 +15,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
@@ -45,7 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.FactionUnitsQuery
@@ -78,7 +78,7 @@ fun FactionUnitsScreen(
     Scaffold(
         topBar = {
             val title = if (faction is FactionUnitsState.Success) {
-                (faction as FactionUnitsState.Success).faction.screen_name
+                (faction as FactionUnitsState.Success).faction.subculture?.name.orEmpty()
             } else ""
             CustomToolbarWithBackArrow(title = "$title Units", navController = navController)
         },
@@ -106,46 +106,26 @@ fun FactionUnitsScreen(
                         val units = state.units.orEmpty()
                         val heroes = state.heroUnits.orEmpty()
                         val exclusives = state.exclusiveUnits.orEmpty()
-                        LazyColumn(
-                            modifier = Modifier.padding(vertical = 4.dp).fillMaxHeight()
-                        ) {
-                            items(lords) { units ->
-                                units?.let {
-                                    FactionUnitCard(
-                                        state.faction?.key.orEmpty(),
-                                        units,
-                                        state.gameVersion
-                                    )
+                        val listOfUnits =
+                            mutableMapOf<String, List<FactionUnitsQuery.Unit?>>().also {
+                                it["Lords"] = lords
+                                it["Heroes"] = heroes
+                                it["Units"] = units
+                                it["Exclusive"] = exclusives
+                            }
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            listOfUnits.forEach { (initial, units) ->
+                                stickyHeader {
+                                    Header(initial)
                                 }
-                            }
-                        }
-
-                        LazyColumn(
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        ) {
-                            stickyHeader {
-                                Header()
-                            }
-                            items(heroes) { units ->
-                                units?.let {
-                                    FactionUnitCard(
-                                        state.faction?.key.orEmpty(),
-                                        units,
-                                        state.gameVersion
-                                    )
-                                }
-                            }
-                        }
-                        LazyColumn(
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        ) {
-                            items(units) { units ->
-                                units?.let {
-                                    FactionUnitCard(
-                                        state.faction?.key.orEmpty(),
-                                        units,
-                                        state.gameVersion
-                                    )
+                                items(units) { units ->
+                                    units?.let {
+                                        FactionUnitCard(
+                                            state.faction.key.orEmpty(),
+                                            units,
+                                            state.gameVersion
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -202,9 +182,16 @@ fun FactionUnitCard(
                     contentScale = ContentScale.FillBounds
                 )
                 .padding(10.dp)
+                .fillMaxWidth()
+
         ) {
             // unit image
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(10.dp)
+                    .height(IntrinsicSize.Min)
+            ) {
                 UnitImage(unit = factionUnit.map(), 90.dp, gameVersion)
             }
             // unit icon
@@ -249,7 +236,7 @@ fun FactionUnitCard(
                 ) {
                     Image(
                         painter = painterResource(
-                            if (isLarge == true) R.drawable.icon_entity_large else R.drawable.icon_entity_small
+                            if (isLarge) R.drawable.icon_entity_large else R.drawable.icon_entity_small
                         ),
                         contentDescription = "",
                         modifier = Modifier.size(20.dp)
@@ -308,5 +295,21 @@ fun UnitDialog(
 }
 
 @Composable
-fun Header() {
+fun Header(title: String) {
+    Box(
+        modifier = Modifier
+            .zIndex(100f)
+            .padding(top = 5.dp)
+            .fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.unit_background),
+            contentDescription = "",
+            modifier = Modifier.fillMaxWidth().height(30.dp),
+            alignment = Alignment.TopCenter,
+            contentScale = ContentScale.FillBounds
+        )
+        Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+    }
 }
