@@ -70,7 +70,7 @@ fun FactionUnitsScreen(
 ) {
     val lazyGridState = rememberLazyGridState()
     val faction: FactionUnitsState by viewModel.faction.observeAsState(
-        initial = FactionUnitsState.Idle
+        initial = FactionUnitsState.Idle,
     )
 
     viewModel.findUnitsByFaction(id)
@@ -79,7 +79,9 @@ fun FactionUnitsScreen(
         topBar = {
             val title = if (faction is FactionUnitsState.Success) {
                 (faction as FactionUnitsState.Success).faction.subculture?.name.orEmpty()
-            } else ""
+            } else {
+                ""
+            }
             CustomToolbarWithBackArrow(title = "$title Units", navController = navController)
         },
         content = {
@@ -89,8 +91,8 @@ fun FactionUnitsScreen(
                     .fillMaxSize()
                     .paint(
                         painter = painterResource(R.drawable.backgroundttw),
-                        contentScale = ContentScale.FillBounds
-                    )
+                        contentScale = ContentScale.FillBounds,
+                    ),
             ) {
                 when (val state = faction) {
                     FactionUnitsState.Error -> {}
@@ -102,19 +104,9 @@ fun FactionUnitsScreen(
                     }
 
                     is FactionUnitsState.Success -> {
-                        val lords = state.lordUnits.orEmpty()
-                        val units = state.units.orEmpty()
-                        val heroes = state.heroUnits.orEmpty()
-                        val exclusives = state.exclusiveUnits.orEmpty()
-                        val listOfUnits =
-                            mutableMapOf<String, List<FactionUnitsQuery.Unit?>>().also {
-                                it["Lords"] = lords
-                                it["Heroes"] = heroes
-                                it["Units"] = units
-                                it["Exclusive"] = exclusives
-                            }
+                        val list = state.unitTypes
                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                            listOfUnits.forEach { (initial, units) ->
+                            list.forEach { (initial, units) ->
                                 stickyHeader {
                                     Header(initial)
                                 }
@@ -123,7 +115,7 @@ fun FactionUnitsScreen(
                                         FactionUnitCard(
                                             state.faction.key.orEmpty(),
                                             units,
-                                            state.gameVersion
+                                            state.gameVersion,
                                         )
                                     }
                                 }
@@ -132,7 +124,7 @@ fun FactionUnitsScreen(
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -157,14 +149,14 @@ fun FactionUnitCard(
                 showCustomDialogWithResult = !showCustomDialogWithResult
             },
             id = factionUnit.unit.toString(),
-            faction_id = faction_id
+            faction_id = faction_id,
         )
     }
     Surface(
         modifier = Modifier
             .padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp)
             .height(IntrinsicSize.Min),
-        color = Color.Transparent
+        color = Color.Transparent,
     ) {
         Row(
             modifier = Modifier
@@ -174,15 +166,15 @@ fun FactionUnitCard(
                 .animateContentSize(
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
+                        stiffness = Spring.StiffnessLow,
+                    ),
                 )
                 .paint(
                     painter = painterResource(R.drawable.unit_background),
-                    contentScale = ContentScale.FillBounds
+                    contentScale = ContentScale.FillBounds,
                 )
                 .padding(10.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
 
         ) {
             // unit image
@@ -190,7 +182,7 @@ fun FactionUnitCard(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(10.dp)
-                    .height(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min),
             ) {
                 UnitImage(unit = factionUnit.map(), 90.dp, gameVersion)
             }
@@ -201,7 +193,7 @@ fun FactionUnitCard(
                     .padding(10.dp)
                     .height(IntrinsicSize.Min),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
             }
@@ -213,63 +205,63 @@ fun FactionUnitCard(
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Start,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.icon_treasury),
                         contentDescription = "",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = factionUnit.multiplayer_cost.toString(),
                         color = ColorOnPrimary,
                         fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
                     )
                 }
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Image(
                         painter = painterResource(
-                            if (isLarge) R.drawable.icon_entity_large else R.drawable.icon_entity_small
+                            if (isLarge) R.drawable.icon_entity_large else R.drawable.icon_entity_small,
                         ),
                         contentDescription = "",
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = factionUnit.num_men.toString(),
                         color = ColorOnPrimary,
                         fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
                     )
                 }
                 Row(
                     modifier = Modifier.padding(0.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     for (item in factionUnit.land_unit?.abilities.orEmpty()) {
                         UnitAbilityAttrIconImage(
                             params = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
-                            size = 25.dp
+                            size = 25.dp,
                         )
                     }
                 }
                 Row(
                     modifier = Modifier.padding(0.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     for (item in factionUnit.land_unit?.attributes.orEmpty()) {
                         UnitAbilityAttrIconImage(
                             params = item?.key.orEmpty(),
                             gameVersion = gameVersion,
-                            size = 25.dp
+                            size = 25.dp,
                         )
                     }
                 }
@@ -289,7 +281,7 @@ fun UnitDialog(
     Dialog(onDismissRequest = onDismiss) {
         UnitScreen(
             id = id,
-            faction_id = faction_id
+            faction_id = faction_id,
         )
     }
 }
@@ -301,14 +293,14 @@ fun Header(title: String) {
             .zIndex(100f)
             .padding(top = 5.dp)
             .fillMaxWidth(),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.TopCenter,
     ) {
         Image(
             painter = painterResource(id = R.drawable.unit_background),
             contentDescription = "",
             modifier = Modifier.fillMaxWidth().height(30.dp),
             alignment = Alignment.TopCenter,
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
         Text(text = title, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
     }

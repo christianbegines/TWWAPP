@@ -61,7 +61,7 @@ fun FactionListScreen(
     navController: NavController
 ) {
     val factionList: FactionState by viewModel.factionList.observeAsState(
-        initial = FactionState.Idle
+        initial = FactionState.Idle,
     )
     viewModel.findAllFactions()
 
@@ -70,7 +70,7 @@ fun FactionListScreen(
         topBar = {
             CustomToolbar(
                 title = stringResource(id = R.string.app_name),
-                openDrawer
+                openDrawer,
             )
         },
         content = { padding ->
@@ -81,8 +81,8 @@ fun FactionListScreen(
                     .fillMaxSize()
                     .paint(
                         painter = painterResource(R.drawable.backgroundttw),
-                        contentScale = ContentScale.FillBounds
-                    )
+                        contentScale = ContentScale.FillBounds,
+                    ),
             ) {
                 when (val state = factionList) {
                     FactionState.Error -> {}
@@ -98,20 +98,20 @@ fun FactionListScreen(
                             modifier = Modifier.pullRefresh(
                                 rememberPullRefreshState(
                                     refreshing = factionList is FactionState.Loading,
-                                    onRefresh = { viewModel.findAllFactions() }
-                                )
-                            )
+                                    onRefresh = { viewModel.findAllFactions() },
+                                ),
+                            ),
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                                 modifier = Modifier.padding(vertical = 4.dp),
-                                state = lazyGridState
+                                state = lazyGridState,
                             ) {
                                 items(list) { faction ->
                                     faction?.let {
                                         FactionCard(
                                             faction = faction,
-                                            navController = navController
+                                            navController = navController,
                                         )
                                     }
                                 }
@@ -125,7 +125,7 @@ fun FactionListScreen(
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -158,9 +158,9 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
             .fillMaxWidth()
             .paint(
                 painter = painterResource(R.drawable.unit_background),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillBounds,
             ),
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
     ) {
         Column(
             modifier = Modifier
@@ -168,31 +168,31 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
                 .clickable {
                     navController.navigate(
                         AppScreens.FactionUnitsScreen.routeWithArgs(
-                            faction.key.toString()
-                        )
+                            faction.key.toString(),
+                        ),
                     )
                 }
                 .animateContentSize(
                     animationSpec = spring(
                         dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
+                        stiffness = Spring.StiffnessLow,
+                    ),
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Row {
                 Image(
                     painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${faction.flags_url}/mon_64.jpg"),
                     contentDescription = null,
-                    modifier = Modifier.size(130.dp)
+                    modifier = Modifier.size(130.dp),
                 )
             }
             Row {
                 Text(
                     text = faction.subculture?.name.orEmpty(),
                     color = ColorOnPrimary,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

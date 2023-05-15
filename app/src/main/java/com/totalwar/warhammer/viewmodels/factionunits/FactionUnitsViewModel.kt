@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.repository.FactionUnitsRepository
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.util.isExclusive
@@ -22,24 +23,35 @@ class FactionUnitsViewModel @Inject constructor(
 
     fun findUnitsByFaction(id: String) {
         faction.postValue(
-            FactionUnitsState.Loading
+            FactionUnitsState.Loading,
         )
         viewModelScope.launch {
             dataStore.data.collect {
                 faction.postValue(
                     factionUnitsRepository.findUnitsByFaction(id, it.gameVersion)?.let { faction ->
+                        val lords =
+                            faction.units?.filter { unit -> unit?.isLord() == true }.orEmpty()
+                        val units = faction.units?.filter { unit ->
+                            (unit?.isHero() == false && !unit.isLord() && !unit.isExclusive())
+                        }.orEmpty()
+                        val heroes =
+                            faction.units?.filter { unit -> unit?.isHero() == true && !unit.isExclusive() }
+                                .orEmpty()
+                        val exclusives =
+                            faction.units?.filter { unit -> unit?.isExclusive() == true }.orEmpty()
+                        val listOfUnits =
+                            mutableMapOf<String, List<FactionUnitsQuery.Unit?>>().also {
+                                it["Lords"] = lords
+                                it["Heroes"] = heroes
+                                it["Units"] = units
+                                it["Exclusive"] = exclusives
+                            }
                         FactionUnitsState.Success(
                             faction,
-                            faction.units?.filter { unit -> unit?.isLord() == true }.orEmpty(),
-                            faction.units?.filter { unit -> unit?.isHero() == true && !unit.isExclusive() }
-                                .orEmpty(),
-                            faction.units?.filter { unit ->
-                                (unit?.isHero() == false && !unit.isLord() && !unit.isExclusive())
-                            },
-                            faction.units?.filter{unit -> unit?.isExclusive() == true },
-                            it.gameVersion
+                            listOfUnits,
+                            it.gameVersion,
                         )
-                    } ?: FactionUnitsState.Error
+                    } ?: FactionUnitsState.Error,
                 )
             }
         }
