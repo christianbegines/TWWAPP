@@ -1,0 +1,292 @@
+query AbilityQuery($tww_version: String!, $id: String!) {
+    tww(tww_version: $tww_version) {
+        tww_version
+        ability(id: $id) {
+            ...ability
+            __typename
+        }
+        __typename
+    }
+}
+fragment ability on ability {
+    key
+    supercedes_ability
+    requires_effect_enabling
+    icon_name
+    is_unit_upgrade
+    is_hidden_in_ui
+    name
+    tooltip
+    uniqueness
+    additional_ui_effects {
+        localised_text
+        sort_order
+        __typename
+    }
+    overpower_option {
+        key
+        __typename
+    }
+    type {
+        key
+        icon
+        onscreen_name
+        __typename
+    }
+    unit_special_ability {
+        key
+        active_time
+        recharge_time
+        num_uses
+        effect_range
+        affect_self
+        num_effected_friendly_units
+        num_effected_enemy_units
+        initial_recharge
+        target_friends
+        target_enemies
+        target_ground
+        target_intercept_range
+        assume_specific_behaviour
+        clear_current_order
+        wind_up_time
+        passive
+        invalid_targets
+        invalid_usages
+        update_targets_every_frame
+        auto_deactivate_flags {
+            flag_key
+            flag_description
+            alt_description
+            __typename
+        }
+        activated_projectile {
+            ...projectile_ability
+            __typename
+        }
+        bombardment {
+            arrival_window
+            bombardment_key
+            num_projectiles
+            radius_spread
+            start_time
+            launch_source
+            launch_height
+            launch_height_underground
+            projectile_type {
+                ...projectile_ability
+                __typename
+            }
+            __typename
+        }
+        spawned_unit {
+            key
+            short_description_text
+            onscreen_name
+            variant {
+                variant
+                name
+                unit
+                unit_card_url
+                __typename
+            }
+            __typename
+        }
+        wind_up_stance
+        mana_cost
+        min_range
+        vortex {
+            vortex_key
+            change_max_angle
+            damage
+            damage_ap
+            duration
+            expansion_speed
+            goal_radius
+            infinite_height
+            move_change_freq
+            movement_speed
+            start_radius
+            ignition_amount
+            is_magical
+            detonation_force
+            launch_source
+            building_collision
+            height_off_ground
+            delay
+            num_vortexs
+            contact_effect {
+                ...contact_phase_ability
+                __typename
+            }
+            __typename
+        }
+        miscast_chance
+        miscast_explosion {
+            ...explosion_ability
+            __typename
+        }
+        additional_melee_cp
+        additional_missile_cp
+        parent_ability {
+            key
+            __typename
+        }
+        __typename
+    }
+    phases {
+        ...contact_phase_ability
+        __typename
+    }
+    special_ability_groups {
+        ability_group
+        icon_path
+        special_edition_mask
+        sort_order
+        is_naval
+        colour_r
+        colour_g
+        colour_b
+        button_name
+        __typename
+    }
+    __typename
+}
+fragment contact_phase_ability on phase {
+    id
+    onscreen_name
+    duration
+    effect_type
+    requested_stance
+    unbreakable
+    cant_move
+    freeze_fatigue
+    fatigue_change_ratio
+    ability_recharge_change
+    hp_change_frequency
+    heal_amount
+    damage_chance
+    damage_amount
+    max_damaged_entities
+    resurrect
+    mana_regen_mod
+    mana_max_depletion_mod
+    imbue_magical
+    imbue_ignition
+    phase_display
+    imbue_contact {
+        id
+        onscreen_name
+        duration
+        effect_type
+        requested_stance
+        unbreakable
+        cant_move
+        freeze_fatigue
+        fatigue_change_ratio
+        ability_recharge_change
+        hp_change_frequency
+        heal_amount
+        damage_chance
+        damage_amount
+        max_damaged_entities
+        resurrect
+        mana_regen_mod
+        mana_max_depletion_mod
+        imbue_magical
+        imbue_ignition
+        phase_display
+        stat_effects {
+            phase
+            stat
+            value
+            how
+            __typename
+        }
+        attribute_effects {
+            phase
+            attribute
+            attribute_type
+            __typename
+        }
+        __typename
+    }
+    stat_effects {
+        phase
+        stat
+        value
+        how
+        __typename
+    }
+    attribute_effects {
+        phase
+        attribute
+        attribute_type
+        __typename
+    }
+    __typename
+}
+fragment projectile_ability on projectile {
+    key
+    category
+    shot_type
+    explosion {
+        ...explosion_ability
+        __typename
+    }
+    projectile_number
+    effective_range
+    minimum_range
+    marksmanship_bonus
+    damage
+    ap_damage
+    collision_radius
+    base_reload_time
+    bonus_v_cavalry
+    bonus_v_infantry
+    bonus_v_large
+    calibration_distance
+    calibration_area
+    max_elevation
+    overhead_stat_effect {
+        ...contact_phase_ability
+        __typename
+    }
+    contact_stat_effect {
+        ...contact_phase_ability
+        __typename
+    }
+    projectile_penetration {
+        key
+        entity_size_cap
+        max_penetration
+        description
+        __typename
+    }
+    burst_size
+    burst_shot_delay
+    ignition_amount
+    is_magical
+    shots_per_volley
+    can_damage_buildings
+    __typename
+}
+fragment explosion_ability on explosion {
+    key
+    detonation_damage
+    detonation_damage_ap
+    is_magical
+    ignition_amount
+    detonation_radius
+    detonation_duration
+    detonation_speed
+    shrapnel_amount
+    distance_from_target
+    detonation_force
+    shrapnel_type
+    contact_phase_effect {
+        ...contact_phase_ability
+        __typename
+    }
+    __typename
+}

@@ -63,7 +63,7 @@ fun UnitScreen(
             is UnitState.Error -> {}
             is UnitState.Idle,
             is UnitState.Loading -> {
-                Box(contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             }
@@ -110,7 +110,10 @@ fun UnitScreen(
                                 size = 135.dp,
                                 state.gameVersion
                             )
-                            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
                                 Text(
                                     text = "${selectedUnit.land_unit?.onscreen_name}",
                                     fontSize = 20.sp,
@@ -123,7 +126,10 @@ fun UnitScreen(
                                     modifier = Modifier.size(30.dp)
                                 )
                             }
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                modifier = Modifier.padding(5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 UnitIconImage(
                                     unit = selectedUnit,
                                     size = 20.dp,
@@ -169,7 +175,7 @@ fun UnitScreen(
                             Text(
                                 text = "Damage:${selectedUnit.land_unit?.primary_melee_weapon?.damage} " +
                                     "| AP:${selectedUnit.land_unit?.primary_melee_weapon?.ap_damage}",
-                                fontSize = 14.sp,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
                             Spacer(modifier = Modifier.weight(1f))

@@ -3,12 +3,8 @@ package com.totalwar.warhammer.viewmodels
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.GameVersionsQuery
-import com.totalwar.warhammer.UnitQuery
-import com.totalwar.warhammer.repository.FactionUnitsRepository
 import com.totalwar.warhammer.repository.GameVersionRepository
-import com.totalwar.warhammer.repository.UnitsRepository
 import com.totalwar.warhammer.settings.SETTINGS_DEFAULT_GAME_VERSION
 import com.totalwar.warhammer.settings.Settings
 import dagger.hilt.android.lifecycle.HiltViewModel

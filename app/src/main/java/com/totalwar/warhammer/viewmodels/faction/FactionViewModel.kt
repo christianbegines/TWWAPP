@@ -29,13 +29,16 @@ class FactionViewModel @Inject constructor(
             )
         )
         viewModelScope.launch {
-            dataStore.data.collect {
+            dataStore.data.collect { settings ->
                 factionList.postValue(
-                    FactionState.Success(
-                        factionRepository.getAllFactions(
-                            it.gameVersion
+                    factionRepository.getAllFactions(
+                        settings.gameVersion
+                    ).let {
+                        FactionState.Success(
+                            it.sortedBy { faction -> faction?.subculture?.name }
                         )
-                    )
+                    }
+
                 )
             }
         }

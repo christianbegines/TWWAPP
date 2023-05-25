@@ -3,14 +3,12 @@ query UnitQuery($tww_version: String!, $key: String!) {
         tww_version
         game_version {
             name
-            __typename
         }
         unit(id: $key) {
             unit
             tier
             unit_sets {
                 special_category
-                __typename
             }
             num_men
             caste
@@ -29,7 +27,6 @@ query UnitQuery($tww_version: String!, $key: String!) {
                 sort_order
                 onscreen_name
                 tooltip
-                __typename
             }
             battle_mounts {
                 base_unit
@@ -37,7 +34,6 @@ query UnitQuery($tww_version: String!, $key: String!) {
                 icon_name
                 mount_name
                 localised_description
-                __typename
             }
             custom_battle_permissions {
                 general_portrait
@@ -48,45 +44,41 @@ query UnitQuery($tww_version: String!, $key: String!) {
                             effect {
                                 abilities {
                                     ...effect_bonus
-                                    __typename
+
                                 }
-                                __typename
                             }
-                            __typename
                         }
-                        __typename
                     }
-                    __typename
                 }
-                __typename
             }
             ui_unit_group {
                 key
                 icon
                 name
+                parent_group {
+                    key
+                    onscreen_name
+                    order
+                }
                 tooltip
-                __typename
             }
             factions(include_non_mp: false) {
                 key
                 screen_name
                 flags_url
                 name_group
-                __typename
             }
             land_unit {
                 key
                 short_description_text
                 mount {
                     key
-                    __typename
                 }
                 variant {
                     variant
                     unit
                     name
                     unit_card_url
-                    __typename
                 }
                 ground_stat_effect_group {
                     group_name
@@ -96,9 +88,7 @@ query UnitQuery($tww_version: String!, $key: String!) {
                         affected_group
                         affected_stat
                         multiplier
-                        __typename
                     }
-                    __typename
                 }
                 num_engines
                 num_mounts
@@ -125,13 +115,11 @@ query UnitQuery($tww_version: String!, $key: String!) {
                     key
                     name
                     tooltip
-                    __typename
                 }
                 attributes {
                     key
                     bullet_text
                     imbued_effect_text
-                    __typename
                 }
                 special_ability_groups {
                     abilities {
@@ -139,19 +127,15 @@ query UnitQuery($tww_version: String!, $key: String!) {
                         key
                         name
                         tooltip
-                        __typename
                     }
-                    __typename
                 }
                 armour {
                     key
                     armour_value
-                    __typename
                 }
                 unit_class {
                     key
                     onscreen
-                    __typename
                 }
                 officers {
                     additionnal_personalities {
@@ -161,15 +145,10 @@ query UnitQuery($tww_version: String!, $key: String!) {
                                 use_secondary_ammo_pool
                                 default_projectile {
                                     ...projectile
-                                    __typename
                                 }
-                                __typename
                             }
-                            __typename
                         }
-                        __typename
                     }
-                    __typename
                 }
                 primary_melee_weapon {
                     key
@@ -187,39 +166,31 @@ query UnitQuery($tww_version: String!, $key: String!) {
                     is_magical
                     contact_phase {
                         ...contact_phase
-                        __typename
                     }
                     collision_attack_max_targets
                     collision_attack_max_targets_cooldown
                     melee_attack_interval
-                    __typename
                 }
                 primary_missile_weapon {
                     use_secondary_ammo_pool
                     default_projectile {
                         ...projectile
-                        __typename
                     }
-                    __typename
                 }
                 shield {
                     key
                     parry_chance
                     material
-                    __typename
                 }
                 battle_entity {
                     ...battle_entity
-                    __typename
                 }
                 mount {
                     key
                     variant
                     battle_entity {
                         ...battle_entity
-                        __typename
                     }
-                    __typename
                 }
                 engine {
                     key
@@ -228,25 +199,20 @@ query UnitQuery($tww_version: String!, $key: String!) {
                         use_secondary_ammo_pool
                         default_projectile {
                             ...projectile
-                            __typename
+
                         }
-                        __typename
                     }
                     battle_entity {
                         ...battle_entity
-                        __typename
+
                     }
-                    __typename
                 }
                 articulated_vehicle_entity {
                     hit_points
-                    __typename
+
                 }
-                __typename
             }
-            __typename
         }
-        __typename
     }
 }
 fragment contact_phase on phase {
@@ -298,30 +264,25 @@ fragment contact_phase on phase {
             stat
             value
             how
-            __typename
         }
         attribute_effects {
             phase
             attribute
             attribute_type
-            __typename
+
         }
-        __typename
     }
     stat_effects {
         phase
         stat
         value
         how
-        __typename
     }
     attribute_effects {
         phase
         attribute
         attribute_type
-        __typename
     }
-    __typename
 }
 fragment projectile on projectile {
     key
@@ -329,7 +290,6 @@ fragment projectile on projectile {
     shot_type
     explosion {
         ...explosion
-        __typename
     }
     projectile_number
     effective_range
@@ -347,18 +307,15 @@ fragment projectile on projectile {
     max_elevation
     overhead_stat_effect {
         ...contact_phase
-        __typename
     }
     contact_stat_effect {
         ...contact_phase
-        __typename
     }
     projectile_penetration {
         key
         entity_size_cap
         max_penetration
         description
-        __typename
     }
     burst_size
     burst_shot_delay
@@ -366,7 +323,6 @@ fragment projectile on projectile {
     is_magical
     shots_per_volley
     can_damage_buildings
-    __typename
 }
 fragment explosion on explosion {
     key
@@ -383,9 +339,8 @@ fragment explosion on explosion {
     shrapnel_type
     contact_phase_effect {
         ...contact_phase
-        __typename
+
     }
-    __typename
 }
 fragment battle_entity on battle_entity {
     key
@@ -407,19 +362,15 @@ fragment battle_entity on battle_entity {
     charge_distance_adopt_charge_pose
     charge_distance_pick_target
     combat_reaction_radius
-    __typename
 }
 fragment effect_bonus on effect_bonus {
     bonus_value_id
     value {
-        __typename
         ... on agent_action {
             localised_action_name
-            __typename
         }
         ... on phase {
             ...contact_phase
-            __typename
         }
         ... on ability {
             key
@@ -431,13 +382,11 @@ fragment effect_bonus on effect_bonus {
             is_hidden_in_ui
             name
             tooltip
-            __typename
         }
         ... on attribute_effect {
             phase
             attribute
-            __typename
         }
     }
-    __typename
+
 }

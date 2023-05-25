@@ -6,17 +6,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.memory.MemoryCache
+import coil.request.ImageRequest
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.getUnitImageUrl
@@ -45,8 +51,13 @@ fun UnitImageBox(url: String, size: Dp) {
                 .clip(RoundedCornerShape(1.dp)),
             contentScale = ContentScale.FillBounds
         )
-        Image(
-            painter = rememberAsyncImagePainter(url),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(url)
+                .diskCacheKey(url)
+                .memoryCacheKey(url)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             modifier = Modifier
                 .width(size / 2)
@@ -82,8 +93,13 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
                 .clip(RoundedCornerShape(1.dp)),
             contentScale = ContentScale.FillBounds
         )
-        Image(
-            painter = rememberAsyncImagePainter(url),
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(url)
+                .diskCacheKey(url)
+                .memoryCacheKey(url)
+                .crossfade(true)
+                .build(),
             contentDescription = null,
             modifier = Modifier
                 .width(size / 2)
