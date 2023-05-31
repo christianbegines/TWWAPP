@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.MultiProcessDataStoreFactory
 import com.apollographql.apollo3.ApolloClient
+import com.totalwar.warhammer.datasources.AbilityDataSource
 import com.totalwar.warhammer.datasources.FactionDataSource
 import com.totalwar.warhammer.datasources.FactionUnitsDataSource
 import com.totalwar.warhammer.datasources.GameVersionDataSource
@@ -51,6 +52,12 @@ private object NetworkModule {
     @Singleton
     fun providesUnitsDataSource(apollo: ApolloClient): UnitsDataSource {
         return UnitsDataSource(apollo)
+    }
+
+    @Provides
+    @Singleton
+    fun providesAbilityDataSource(apollo: ApolloClient): AbilityDataSource {
+        return AbilityDataSource(apollo)
     }
 
     @Provides

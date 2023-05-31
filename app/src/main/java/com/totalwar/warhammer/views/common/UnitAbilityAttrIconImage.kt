@@ -1,55 +1,58 @@
 package com.totalwar.warhammer.views.common
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.RichTooltipBox
-import androidx.compose.material3.Text
+import androidx.compose.material3.RichTooltipColors
+import androidx.compose.material3.RichTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.totalwar.warhammer.ui.theme.Grey
 import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
+import com.totalwar.warhammer.views.AbilityTooltip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-@Composable
-fun UnitAbilityAttrIconImage(
-    params: String,
-    size: Dp,
-    gameVersion: String,
-    tooltip: String
-) {
-    UnitAbilityAttrImageBox(
-        url = formatUrlAbilityAttrIcon(params, gameVersion),
-        size = size,
-        tooltip = tooltip
-    )
-}
-
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitAbilityAttrImageBox(url: String, size: Dp, tooltip: String) {
+fun UnitAbilityAttrImageBox(id: String, size: Dp, gameVersion: String, scope: CoroutineScope) {
+    val tooltipState = remember { RichTooltipState() }
+
     RichTooltipBox(
-        title = { Text(tooltip) },
-        action = {},
+        action = { },
         text = {
-            Text(tooltip)
-        }
+            AbilityTooltip(id = id)
+        },
+        colors = RichTooltipColors(
+            containerColor = Grey,
+            contentColor = Color.Transparent,
+            titleContentColor = Color.Transparent,
+            actionContentColor = Color.Transparent
+        ),
+        tooltipState = tooltipState
     ) {
+        val url = formatUrlAbilityAttrIcon(id, gameVersion)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(url).diskCacheKey(url)
                 .memoryCacheKey(url).crossfade(true).build(),
             contentDescription = null,
-            modifier = Modifier.tooltipAnchor().size(size).padding(1.dp)
-                .clip(RoundedCornerShape(5.dp))
+            modifier = Modifier.tooltipAnchor().size(size).padding(0.dp).clickable {
+                scope.launch { tooltipState.show() }
+            }.clip(RoundedCornerShape(5.dp))
         )
     }
-}
-
-@Composable
-fun UnitAbilityAttrImageBox() {
 }

@@ -19,9 +19,7 @@ class FactionUnitsViewModel @Inject constructor(
     val faction: MutableLiveData<FactionUnitsState> = MutableLiveData(FactionUnitsState.Idle)
 
     fun findUnitsByFaction(id: String) {
-        faction.postValue(
-            FactionUnitsState.Loading
-        )
+        faction.postValue(FactionUnitsState.Loading)
         viewModelScope.launch {
             dataStore.data.collect {
                 faction.postValue(

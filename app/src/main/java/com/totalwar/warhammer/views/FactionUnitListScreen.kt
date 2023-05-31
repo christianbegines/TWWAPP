@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
@@ -28,7 +28,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.PlainTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -59,7 +58,7 @@ import com.totalwar.warhammer.util.isLargeUnit
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
-import com.totalwar.warhammer.views.common.UnitAbilityAttrIconImage
+import com.totalwar.warhammer.views.common.UnitAbilityAttrImageBox
 import com.totalwar.warhammer.views.common.UnitIconImage
 import com.totalwar.warhammer.views.common.UnitImage
 
@@ -98,7 +97,7 @@ fun FactionUnitsScreen(
                     )
             ) {
                 when (val state = faction) {
-                    FactionUnitsState.Error -> {}
+                    is FactionUnitsState.Error -> {}
                     is FactionUnitsState.Idle,
                     is FactionUnitsState.Loading -> {
                         Box(contentAlignment = Alignment.Center) {
@@ -158,8 +157,7 @@ fun FactionUnitCard(
     }
     Surface(
         modifier = Modifier
-            .padding(5.dp)
-            .height(IntrinsicSize.Min),
+            .padding(5.dp),
         color = Color.Transparent
     ) {
         Row(
@@ -177,32 +175,34 @@ fun FactionUnitCard(
                     painter = painterResource(R.drawable.unit_background),
                     contentScale = ContentScale.FillBounds
                 )
-                .padding(10.dp)
-                .fillMaxWidth()
-
+                .padding(5.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             // unit image
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(5.dp)
-                    .height(IntrinsicSize.Min)
+                    .weight(1f)
             ) {
-                UnitImage(unit = factionUnit.map(), 90.dp, gameVersion)
+                UnitImage(unit = factionUnit.map(), 110.dp, gameVersion)
             }
             // unit icon
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
                     .padding(1.dp)
-                    .height(IntrinsicSize.Min),
+                    .weight(0.5f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
             }
             // unit data
-            Column() {
+            Column(
+                modifier = Modifier.weight(4f)
+            ) {
                 Text(
                     text = factionUnit.land_unit?.onscreen_name.orEmpty(),
                     color = ColorOnPrimary,
@@ -245,29 +245,29 @@ fun FactionUnitCard(
                         textAlign = TextAlign.Start
                     )
                 }
-                Row(
+                LazyRow(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    for (item in factionUnit.land_unit?.abilities.orEmpty()) {
-                        UnitAbilityAttrIconImage(
-                            params = item?.icon_name.orEmpty(),
+                    items(factionUnit.land_unit?.abilities.orEmpty()) { item ->
+                        UnitAbilityAttrImageBox(
+                            id = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
-                            tooltip = item?.tooltip.orEmpty()
+                            scope = rememberCoroutineScope()
                         )
                     }
                 }
-                Row(
+                LazyRow(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    for (item in factionUnit.land_unit?.attributes.orEmpty()) {
-                        UnitAbilityAttrIconImage(
-                            params = item?.key.orEmpty(),
+                    items(factionUnit.land_unit?.attributes.orEmpty()) { item ->
+                        UnitAbilityAttrImageBox(
+                            id = item?.key.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
-                            tooltip = item?.bullet_text.orEmpty()
+                            scope = rememberCoroutineScope()
                         )
                     }
                 }
