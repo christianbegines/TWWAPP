@@ -8,16 +8,22 @@ object TooltipUtils {
             UniquenessType.Common.type -> {
                 R.drawable.tooltip_title_common
             }
+
             UniquenessType.Uncommon.type -> {
                 R.drawable.tooltip_title_uncommon
             }
+
             UniquenessType.Rare.type -> {
                 R.drawable.tooltip_title_rare
             }
+
             UniquenessType.Epic.type -> {
                 R.drawable.tooltip_title_legendary
             }
+
             else -> null
         }
     }
 }
+val typePattern = """\[\[/img]](.+)""".toRegex()
+val pattern = """img:(.*?)(?=\]])""".toRegex()

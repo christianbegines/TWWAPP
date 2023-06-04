@@ -11,7 +11,6 @@ import androidx.compose.material3.RichTooltipColors
 import androidx.compose.material3.RichTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,11 +28,17 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitAbilityAttrImageBox(id: String, size: Dp, gameVersion: String, scope: CoroutineScope) {
+fun UnitAbility(
+    id: String,
+    iconName: String,
+    size: Dp,
+    gameVersion: String,
+    scope: CoroutineScope
+) {
     val tooltipState = remember { RichTooltipState() }
 
     RichTooltipBox(
-        action = { },
+        action = {},
         text = {
             AbilityTooltip(id = id)
         },
@@ -45,7 +50,7 @@ fun UnitAbilityAttrImageBox(id: String, size: Dp, gameVersion: String, scope: Co
         ),
         tooltipState = tooltipState
     ) {
-        val url = formatUrlAbilityAttrIcon(id, gameVersion)
+        val url = formatUrlAbilityAttrIcon(iconName, gameVersion)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(url).diskCacheKey(url)
                 .memoryCacheKey(url).crossfade(true).build(),

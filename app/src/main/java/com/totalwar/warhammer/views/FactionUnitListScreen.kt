@@ -58,7 +58,8 @@ import com.totalwar.warhammer.util.isLargeUnit
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
-import com.totalwar.warhammer.views.common.UnitAbilityAttrImageBox
+import com.totalwar.warhammer.views.common.UnitAbility
+import com.totalwar.warhammer.views.common.UnitAttribute
 import com.totalwar.warhammer.views.common.UnitIconImage
 import com.totalwar.warhammer.views.common.UnitImage
 
@@ -74,9 +75,7 @@ fun FactionUnitsScreen(
     val faction: FactionUnitsState by viewModel.faction.observeAsState(
         initial = FactionUnitsState.Idle
     )
-
     viewModel.findUnitsByFaction(id)
-
     Scaffold(
         topBar = {
             val title = if (faction is FactionUnitsState.Success) {
@@ -250,8 +249,9 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(factionUnit.land_unit?.abilities.orEmpty()) { item ->
-                        UnitAbilityAttrImageBox(
-                            id = item?.icon_name.orEmpty(),
+                        UnitAbility(
+                            id = item?.key.orEmpty(),
+                            iconName = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
                             scope = rememberCoroutineScope()
@@ -263,8 +263,23 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(factionUnit.land_unit?.attributes.orEmpty()) { item ->
-                        UnitAbilityAttrImageBox(
+                        UnitAttribute(
+                            id = item?.key.toString(),
+                            tooltip = item?.bullet_text.orEmpty(),
+                            gameVersion = gameVersion,
+                            size = 30.dp,
+                            scope = rememberCoroutineScope()
+                        )
+                    }
+                }
+                LazyRow(
+                    modifier = Modifier.padding(0.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    items(factionUnit.land_unit?.special_ability_groups?.firstOrNull()?.abilities.orEmpty()) { item ->
+                        UnitAbility(
                             id = item?.key.orEmpty(),
+                            iconName = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
                             scope = rememberCoroutineScope()

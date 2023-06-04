@@ -55,9 +55,7 @@ fun UnitScreen(
     faction_id: String
 ) {
     val unit: UnitState by viewModel.unit.observeAsState(initial = UnitState.Idle)
-    LaunchedEffect(Unit) {
-        viewModel.findUnitById(id, faction_id)
-    }
+    viewModel.findUnitById(id, faction_id)
     Scaffold(
         modifier = Modifier.padding(5.dp),
         backgroundColor = Color.Transparent

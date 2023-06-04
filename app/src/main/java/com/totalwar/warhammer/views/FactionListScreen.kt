@@ -59,10 +59,7 @@ fun FactionListScreen(
     val factionList: FactionState by viewModel.factionList.observeAsState(
         initial = FactionState.Idle
     )
-    LaunchedEffect(Unit) {
-        viewModel.findAllFactions()
-    }
-
+    viewModel.findAllFactions()
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {

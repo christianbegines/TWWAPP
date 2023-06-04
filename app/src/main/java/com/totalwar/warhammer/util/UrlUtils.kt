@@ -8,17 +8,24 @@ private const val ICON_URL =
     "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/%s/ui/common ui/unit_category_icons/"
 private const val ABILITY_ATTR_ICONS =
     "https://res.cloudinary.com/fishofstone/image/upload/w_64,h_64/twwstats/api/%s/ui/battle ui/ability_icons/"
+private const val ABILITY_URL =
+    "https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/%s/%s"
+
 private const val PORTHOLES = "portholes"
 private const val UNITS = "units"
+private const val PNG = ".png"
 
 fun formatUrlUnitImage(gameVersion: String, param: String): String =
     String.format(UNIT_URL, gameVersion, param)
+
+fun formatUrlAbilityTypeImage(gameVersion: String, param: String): String =
+    String.format(ABILITY_URL, gameVersion, param)
 
 fun formatUrlHeroLordImage(param: String, gameVersion: String): String =
     "${String.format(LORD_URL, gameVersion)}${param.replace(PORTHOLES, UNITS)}"
 
 fun formatUrlUnitIcon(param: String, gameVersion: String): String =
-    "${String.format(ICON_URL, gameVersion)}$param.png"
+    "${String.format(ICON_URL, gameVersion)}$param$PNG"
 
 fun formatUrlAbilityAttrIcon(param: String, gameVersion: String): String =
-    "${String.format(ABILITY_ATTR_ICONS, gameVersion)}$param.png"
+    "${String.format(ABILITY_ATTR_ICONS, gameVersion)}$param$PNG"
