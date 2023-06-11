@@ -1,6 +1,7 @@
 package com.totalwar.warhammer.views.common
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -40,13 +42,11 @@ fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
 
 @Composable
 fun UnitImageBox(url: String, size: Dp) {
-    Surface(modifier = Modifier.padding(start = 5.dp)) {
+    Surface(modifier = Modifier.padding(start = 5.dp).border(1.dp, Color.Red)) {
         Image(
             painter = painterResource(id = R.drawable.unit_card_frame_plain),
             contentDescription = "",
             modifier = Modifier
-                .width(size / 2)
-                .height(size)
                 .zIndex(100f)
                 .clip(RoundedCornerShape(1.dp)),
             contentScale = ContentScale.FillBounds
@@ -60,8 +60,6 @@ fun UnitImageBox(url: String, size: Dp) {
                 .build(),
             contentDescription = null,
             modifier = Modifier
-                .width(size / 2)
-                .height(size)
                 .clip(RoundedCornerShape(5.dp))
         )
     }

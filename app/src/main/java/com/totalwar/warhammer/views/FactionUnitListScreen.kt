@@ -6,10 +6,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -27,7 +30,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -129,7 +131,6 @@ fun FactionUnitsScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FactionUnitCard(
     faction_id: String,
@@ -174,30 +175,21 @@ fun FactionUnitCard(
                     painter = painterResource(R.drawable.unit_background),
                     contentScale = ContentScale.FillBounds
                 )
-                .padding(5.dp)
-                .fillMaxWidth(),
+                .border(1.dp, Color.Red)
+                .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // unit image
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
                     .padding(5.dp)
-                    .weight(1f)
+                    .border(1.dp, Color.Red)
+                    .weight(1f, true)
             ) {
                 UnitImage(unit = factionUnit.map(), 110.dp, gameVersion)
             }
             // unit icon
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(1.dp)
-                    .weight(0.5f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
-            }
+            UnitIconImage(unit = factionUnit.map(), size = 20.dp, gameVersion = gameVersion)
             // unit data
             Column(
                 modifier = Modifier.weight(4f)
@@ -248,24 +240,25 @@ fun FactionUnitCard(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(factionUnit.land_unit?.abilities.orEmpty()) { item ->
-                        UnitAbility(
-                            id = item?.key.orEmpty(),
-                            iconName = item?.icon_name.orEmpty(),
+                    items(factionUnit.land_unit?.attributes.orEmpty()) { item ->
+                        UnitAttribute(
+                            id = item?.key.toString(),
+                            tooltip = item?.bullet_text.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
                             scope = rememberCoroutineScope()
                         )
                     }
                 }
+
                 LazyRow(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    items(factionUnit.land_unit?.attributes.orEmpty()) { item ->
-                        UnitAttribute(
-                            id = item?.key.toString(),
-                            tooltip = item?.bullet_text.orEmpty(),
+                    items(factionUnit.land_unit?.abilities.orEmpty()) { item ->
+                        UnitAbility(
+                            id = item?.key.orEmpty(),
+                            iconName = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
                             size = 30.dp,
                             scope = rememberCoroutineScope()

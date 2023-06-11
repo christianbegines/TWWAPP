@@ -146,16 +146,28 @@ fun FactionUnitsQuery.Unit.isHero(): Boolean {
     return this.caste.equals(HERO)
 }
 
-fun FactionUnitsQuery.Faction.getUnitsByType(): MutableMap<String, List<FactionUnitsQuery.Unit?>> {
-    return this.units?.filter { unit -> unit?.isExclusive() == false }
-        ?.groupBy { unit ->
-            unit?.ui_unit_group?.parent_group?.onscreen_name.orEmpty()
-        }?.toList()
-        ?.sortedBy { it -> it.second.first()?.ui_unit_group?.parent_group?.order }
-        ?.toMap()?.toMutableMap().also { list ->
-            list?.put(
-                CAMPAIGN_EXCLUSIVE,
-                this.units?.filter { unit -> unit?.isExclusive() == true }.orEmpty()
-            ).orEmpty()
-        }.orEmpty().toMutableMap()
+fun FactionUnitsQuery.Faction.getUnitsByType(): Map<String, List<FactionUnitsQuery.Unit?>> {
+    val lords = this.units?.filter { unit -> unit?.isLord() == true }.orEmpty()
+    val heroes = this.units?.filter { unit -> unit?.isHero() == true }.orEmpty()
+    val units =
+        this.units?.filter { unit -> unit?.isExclusive() == false && !unit.isHero() && !unit.isLord() }
+            ?.groupBy { unit ->
+                unit?.ui_unit_group?.parent_group?.onscreen_name.orEmpty()
+            }?.toList()
+            ?.sortedBy { it -> it.second.first()?.ui_unit_group?.parent_group?.order }
+            ?.toMap()?.toMutableMap().also { list ->
+                this.units?.filter { unit -> unit?.isExclusive() == true }
+                    .takeIf { it?.isNotEmpty() == true }?.let {
+                        list?.put(
+                            CAMPAIGN_EXCLUSIVE,
+                            it
+                        )
+                    }
+            }.orEmpty().toMutableMap()
+    val result = mutableMapOf(
+        LORD to lords,
+        HERO to heroes
+    )
+    result.putAll(units)
+    return result.toMutableMap()
 }
