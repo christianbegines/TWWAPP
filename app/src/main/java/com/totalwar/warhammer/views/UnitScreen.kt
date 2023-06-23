@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,7 +21,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -39,13 +37,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.BulletBackground
-import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 import com.totalwar.warhammer.views.common.UnitBullets
 import com.totalwar.warhammer.views.common.UnitDetailImage
 import com.totalwar.warhammer.views.common.UnitIconImage
+import com.totalwar.warhammer.views.common.UnitStat
+import com.totalwar.warhammer.views.common.UnitSubStat
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -100,7 +99,8 @@ fun UnitScreen(
                             contentScale = ContentScale.FillBounds
                         )
                         Column(
-                            modifier = Modifier.padding(top = if (selectedUnit.isRenown()) 10.dp else 40.dp)
+                            modifier = Modifier
+                                .padding(top = if (selectedUnit.isRenown()) 10.dp else 40.dp)
                                 .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Top
@@ -145,41 +145,102 @@ fun UnitScreen(
                             }
                             Row(modifier = Modifier.padding(horizontal = 20.dp)) {
                                 Column(
-                                    modifier = Modifier.border(1.dp, BulletBackground).background(
-                                        Color.Transparent.copy(0.1f)
-                                    ),
+                                    modifier = Modifier
+                                        .border(1.dp, BulletBackground)
+                                        .background(
+                                            Color.Transparent.copy(0.1f)
+                                        ),
                                     verticalArrangement = Arrangement.Center,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     UnitBullets(selectedUnit)
                                 }
                             }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.icon_treasury),
-                                    contentDescription = "",
-                                    modifier = Modifier.size(30.dp)
-                                )
-                                Spacer(modifier = Modifier.width(5.dp))
-                                Text(
-                                    text = selectedUnit.multiplayer_cost.toString(),
-                                    color = ColorOnPrimary,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 30.sp,
-                                    textAlign = TextAlign.Start
-                                )
+                            Row(modifier = Modifier.padding(horizontal = 20.dp, vertical = 5.dp)) {
+                                Column(
+                                    modifier = Modifier
+                                        .border(1.dp, BulletBackground)
+                                        .background(
+                                            Color.Transparent.copy(0.1f)
+                                        ),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    UnitStat(
+                                        statName = "MP Cost",
+                                        statValue = selectedUnit.multiplayer_cost.toString(),
+                                        statIcon = R.drawable.icon_treasury
+                                    )
+                                    UnitStat(
+                                        statName = "Health",
+                                        statValue =
+                                        selectedUnit.land_unit?.bonus_hit_points?.plus(
+                                            selectedUnit.land_unit.battle_entity?.battle_entity?.hit_points
+                                                ?: 0
+                                        )?.times((selectedUnit.num_men ?: 1)).toString(),
+                                        statIcon = R.drawable.icon_stat_health
+                                    )
+                                    UnitSubStat(
+                                        statName = "Health per entity",
+                                        statValue = selectedUnit.land_unit?.bonus_hit_points?.plus(
+                                            selectedUnit.land_unit.battle_entity?.battle_entity?.hit_points
+                                                ?: 0
+                                        ).toString(),
+                                        statIcon = R.drawable.spacebar_unit_health_ammo,
+                                        iconSize = 30.dp
+                                    )
+                                    UnitStat(
+                                        statName = "Barrier",
+                                        statValue = selectedUnit.barrier_health?.toInt().toString(),
+                                        statIcon = R.drawable.barrier
+                                    )
+                                    UnitStat(
+                                        statName = "Armor",
+                                        statValue = selectedUnit.land_unit?.armour?.armour_value.toString(),
+                                        statIcon = R.drawable.icon_stat_armour
+                                    )
+                                    UnitSubStat(
+                                        statName = "Parry Chance",
+                                        statValue = selectedUnit.land_unit?.shield?.parry_chance.toString(),
+                                        statIcon = when (selectedUnit.land_unit?.shield?.material) {
+                                            "wood" -> {
+                                                R.drawable.modifier_icon_shield1
+                                            }
+                                            "metal" -> {
+                                                R.drawable.modifier_icon_shield2
+                                            }
+                                            else -> {
+                                                null
+                                            }
+                                        },
+                                        iconSize = 15.dp
+                                    )
+                                    UnitSubStat(
+                                        statName = "Physical Resistance",
+                                        statValue = selectedUnit.land_unit?.damage_mod_physical?.toString() ?: "0",
+                                        statIcon = R.drawable.resistance_physical,
+                                        iconSize = 15.dp
+                                    )
+                                    UnitSubStat(
+                                        statName = "Missile Resistance",
+                                        statValue = selectedUnit.land_unit?.damage_mod_missile?.toString() ?: "0",
+                                        statIcon = R.drawable.resistance_missile,
+                                        iconSize = 15.dp
+                                    )
+                                    UnitSubStat(
+                                        statName = "Magic Resistance",
+                                        statValue = selectedUnit.land_unit?.damage_mod_magic?.toString() ?: "0",
+                                        statIcon = R.drawable.resistance_magic,
+                                        iconSize = 15.dp
+                                    )
+                                    UnitSubStat(
+                                        statName = "Fire Resistance",
+                                        statValue = selectedUnit.land_unit?.damage_mod_flame?.toString() ?: "0",
+                                        statIcon = R.drawable.resistance_fire,
+                                        iconSize = 15.dp
+                                    )
+                                }
                             }
-
-                            Spacer(modifier = Modifier.height(0.dp))
-                            Text(
-                                text = "Damage:${selectedUnit.land_unit?.primary_melee_weapon?.damage} " +
-                                    "| AP:${selectedUnit.land_unit?.primary_melee_weapon?.ap_damage}",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
                         }
                     }
                     Box(contentAlignment = Alignment.BottomCenter) {

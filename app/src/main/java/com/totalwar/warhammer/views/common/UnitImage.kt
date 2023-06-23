@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -42,7 +43,7 @@ fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
 
 @Composable
 fun UnitImageBox(url: String, size: Dp) {
-    Surface(modifier = Modifier.padding(start = 5.dp).border(1.dp, Color.Red)) {
+    Surface(modifier = Modifier.padding(start = 5.dp).size(size)) {
         Image(
             painter = painterResource(id = R.drawable.unit_card_frame_plain),
             contentDescription = "",

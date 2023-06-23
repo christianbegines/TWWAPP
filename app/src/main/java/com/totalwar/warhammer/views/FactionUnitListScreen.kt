@@ -175,7 +175,6 @@ fun FactionUnitCard(
                     painter = painterResource(R.drawable.unit_background),
                     contentScale = ContentScale.FillBounds
                 )
-                .border(1.dp, Color.Red)
                 .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -183,7 +182,6 @@ fun FactionUnitCard(
             Column(
                 modifier = Modifier
                     .padding(5.dp)
-                    .border(1.dp, Color.Red)
                     .weight(1f, true)
             ) {
                 UnitImage(unit = factionUnit.map(), 110.dp, gameVersion)
