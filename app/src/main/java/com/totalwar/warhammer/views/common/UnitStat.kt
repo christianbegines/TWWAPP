@@ -23,27 +23,27 @@ fun UnitStat(statName: String, statValue: String, statIcon: Int) {
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = 5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row {
             Image(
                 painter = painterResource(id = statIcon),
                 contentDescription = "",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.dp),
             )
             Text(
                 text = statName,
                 color = ColorOnPrimary,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
             )
         }
         Text(
             text = statValue,
             color = ColorOnPrimary,
             fontSize = 20.sp,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
         )
     }
 }

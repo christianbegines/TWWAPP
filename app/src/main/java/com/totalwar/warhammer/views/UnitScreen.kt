@@ -37,7 +37,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.BulletBackground
+import com.totalwar.warhammer.util.calculateReloadTime
 import com.totalwar.warhammer.util.isRenown
+import com.totalwar.warhammer.util.missileDamage
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 import com.totalwar.warhammer.views.common.UnitBullets
@@ -53,18 +55,19 @@ import kotlin.math.roundToInt
 fun UnitScreen(
     viewModel: UnitViewModel = hiltViewModel(),
     id: String,
-    faction_id: String
+    faction_id: String,
 ) {
     val unit: UnitState by viewModel.unit.observeAsState(initial = UnitState.Idle)
     viewModel.findUnitById(id, faction_id)
     Scaffold(
         modifier = Modifier.padding(5.dp),
-        backgroundColor = Color.Transparent
+        backgroundColor = Color.Transparent,
     ) {
         when (val state = unit) {
             is UnitState.Error -> {}
             is UnitState.Idle,
-            is UnitState.Loading -> {
+            is UnitState.Loading,
+            -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
@@ -74,51 +77,49 @@ fun UnitScreen(
                 val selectedUnit = state.unit
                 Surface(
                     color = Color.Transparent,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     Box(
                         modifier = Modifier
                             .zIndex(100f)
                             .fillMaxWidth(),
-                        contentAlignment = Alignment.TopCenter
+                        contentAlignment = Alignment.TopCenter,
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.roll_top),
                             contentDescription = "",
                             modifier = Modifier.fillMaxWidth(),
                             alignment = Alignment.TopCenter,
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                     }
                     Box(
                         modifier = Modifier.padding(start = 10.dp, end = 10.dp),
-                        contentAlignment = Alignment.TopCenter
+                        contentAlignment = Alignment.TopCenter,
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.unit_background),
                             contentDescription = "",
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.FillBounds
+                            contentScale = ContentScale.FillBounds,
                         )
                         Column(
                             modifier = Modifier
                                 .padding(
                                     top = if (selectedUnit.isRenown()) 10.dp else 40.dp,
-                                    bottom = 20.dp
+                                    bottom = 20.dp,
                                 )
                                 .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Top
+                            verticalArrangement = Arrangement.Top,
 
-                        ) {
+                            ) {
                             UnitDetailImage(
-                                unit = selectedUnit,
-                                size = 135.dp,
-                                state.gameVersion
+                                unit = selectedUnit, size = 135.dp, state.gameVersion
                             )
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
+                                verticalArrangement = Arrangement.Center,
                             ) {
                                 Text(
                                     text = "${selectedUnit.land_unit?.onscreen_name}",
@@ -129,23 +130,23 @@ fun UnitScreen(
                                 Image(
                                     painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${state.faction.flags_url}/mon_64.jpg"),
                                     contentDescription = null,
-                                    modifier = Modifier.size(30.dp)
+                                    modifier = Modifier.size(30.dp),
                                 )
                             }
                             Row(
                                 modifier = Modifier.padding(5.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 UnitIconImage(
                                     unit = selectedUnit,
                                     size = 20.dp,
-                                    gameVersion = state.gameVersion
+                                    gameVersion = state.gameVersion,
                                 )
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
                                     text = "${selectedUnit.ui_unit_group?.name}",
                                     fontSize = 20.sp,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.SemiBold,
                                 )
                             }
                             Row(modifier = Modifier.padding(horizontal = 20.dp)) {
@@ -153,10 +154,10 @@ fun UnitScreen(
                                     modifier = Modifier
                                         .border(1.dp, BulletBackground)
                                         .background(
-                                            Color.Transparent.copy(0.1f)
+                                            Color.Transparent.copy(0.1f),
                                         ),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     UnitBullets(selectedUnit)
                                 }
@@ -166,43 +167,48 @@ fun UnitScreen(
                                     modifier = Modifier
                                         .border(1.dp, BulletBackground)
                                         .background(
-                                            Color.Transparent.copy(0.1f)
+                                            Color.Transparent.copy(0.1f),
                                         ),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
+                                    horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     UnitStat(
                                         statName = "MP Cost",
                                         statValue = selectedUnit.multiplayer_cost.toString(),
-                                        statIcon = R.drawable.icon_treasury
+                                        statIcon = R.drawable.icon_treasury,
                                     )
                                     UnitStat(
                                         statName = "Health",
-                                        statValue =
-                                        selectedUnit.land_unit?.bonus_hit_points?.plus(
+                                        statValue = selectedUnit.land_unit?.bonus_hit_points?.plus(
                                             selectedUnit.land_unit.battle_entity?.battle_entity?.hit_points
-                                                ?: 0
+                                                ?: 0,
+                                        )?.plus(
+                                            selectedUnit.land_unit.mount?.battle_entity?.battle_entity?.hit_points
+                                                ?: 0,
                                         )?.times((selectedUnit.num_men ?: 1)).toString(),
-                                        statIcon = R.drawable.icon_stat_health
+                                        statIcon = R.drawable.icon_stat_health,
                                     )
                                     UnitSubStat(
                                         statName = "Health per entity",
                                         statValue = selectedUnit.land_unit?.bonus_hit_points?.plus(
                                             selectedUnit.land_unit.battle_entity?.battle_entity?.hit_points
-                                                ?: 0
+                                                ?: 0,
+                                        )?.plus(
+                                            selectedUnit.land_unit.mount?.battle_entity?.battle_entity?.hit_points
+                                                ?: 0,
                                         ).toString(),
                                         statIcon = R.drawable.spacebar_unit_health_ammo,
-                                        iconSize = 30.dp
+                                        iconSize = 30.dp,
                                     )
                                     UnitStat(
                                         statName = "Barrier",
                                         statValue = selectedUnit.barrier_health?.toInt().toString(),
-                                        statIcon = R.drawable.barrier
+                                        statIcon = R.drawable.barrier,
                                     )
                                     UnitStat(
                                         statName = "Armor",
                                         statValue = selectedUnit.land_unit?.armour?.armour_value.toString(),
-                                        statIcon = R.drawable.icon_stat_armour
+                                        statIcon = R.drawable.icon_stat_armour,
                                     )
                                     UnitSubStat(
                                         statName = "Parry Chance",
@@ -220,65 +226,65 @@ fun UnitScreen(
                                                 null
                                             }
                                         },
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Physical Resistance",
                                         statValue = selectedUnit.land_unit?.damage_mod_physical?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.resistance_physical,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Missile Resistance",
                                         statValue = selectedUnit.land_unit?.damage_mod_missile?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.resistance_missile,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Magic Resistance",
                                         statValue = selectedUnit.land_unit?.damage_mod_magic?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.resistance_magic,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Fire Resistance",
                                         statValue = selectedUnit.land_unit?.damage_mod_flame?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.resistance_fire,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitStat(
                                         statName = "Leadership",
                                         statValue = selectedUnit.land_unit?.morale.toString(),
-                                        statIcon = R.drawable.icon_stat_morale
+                                        statIcon = R.drawable.icon_stat_morale,
                                     )
                                     UnitStat(
                                         statName = "Speed",
                                         statValue = if (selectedUnit.land_unit?.mount != null) {
                                             selectedUnit.land_unit.mount.battle_entity?.battle_entity?.run_speed?.times(
-                                                10
+                                                10,
                                             )?.roundToInt().toString()
                                         } else {
                                             selectedUnit.land_unit?.battle_entity?.battle_entity?.run_speed?.times(
-                                                10
+                                                10,
                                             )?.roundToInt().toString()
                                         },
-                                        statIcon = R.drawable.icon_stat_speed
+                                        statIcon = R.drawable.icon_stat_speed,
                                     )
                                     UnitStat(
                                         statName = "Melee Attack",
                                         statValue = selectedUnit.land_unit?.melee_attack.toString(),
-                                        statIcon = R.drawable.icon_stat_attack
+                                        statIcon = R.drawable.icon_stat_attack,
                                     )
                                     UnitSubStat(
                                         statName = "Attack Interval",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.melee_attack_interval?.toBigDecimal()
                                             ?.setScale(1, RoundingMode.UP)?.toDouble().toString(),
                                         statIcon = R.drawable.icon_status_melee_24px,
-                                        iconSize = 20.dp
+                                        iconSize = 20.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Is High Threat",
@@ -288,104 +294,218 @@ fun UnitScreen(
                                             "No"
                                         },
                                         statIcon = R.drawable.icon_status_alert_high_24px,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Splash Target Size",
-                                        statValue =
-                                        selectedUnit.land_unit?.primary_melee_weapon?.splash_attack_target_size.toString(),
+                                        statValue = selectedUnit.land_unit?.primary_melee_weapon?.splash_attack_target_size.toString(),
                                         statIcon = R.drawable.fontawesome_street_view_icon,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Splash Max Attacks",
-                                        statValue =
-                                        selectedUnit.land_unit?.primary_melee_weapon?.splash_attack_max_attacks.toString(),
+                                        statValue = selectedUnit.land_unit?.primary_melee_weapon?.splash_attack_max_attacks.toString(),
                                         statIcon = R.drawable.splash,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitStat(
                                         statName = "Melee Defense",
                                         statValue = selectedUnit.land_unit?.melee_defence.toString(),
-                                        statIcon = R.drawable.icon_stat_defence
+                                        statIcon = R.drawable.icon_stat_defence,
                                     )
                                     UnitStat(
                                         statName = "Weapon Strength",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.damage?.plus(
                                             selectedUnit.land_unit.primary_melee_weapon.ap_damage
-                                                ?: 0
+                                                ?: 0,
                                         ).toString(),
-                                        statIcon = R.drawable.icon_stat_damage
+                                        statIcon = R.drawable.icon_stat_damage,
                                     )
                                     UnitSubStat(
                                         statName = "Base Damage",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.damage.toString(),
                                         statIcon = R.drawable.icon_stat_damage,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "AP Damage",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.ap_damage.toString(),
                                         statIcon = R.drawable.modifier_icon_armour_piercing,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Bonus vs. Large",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.bonus_v_large?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.modifier_icon_bonus_vs_large,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitSubStat(
                                         statName = "Bonus vs. Infantry",
                                         statValue = selectedUnit.land_unit?.primary_melee_weapon?.bonus_v_infantry?.toString()
                                             ?: "0",
                                         statIcon = R.drawable.modifier_icon_bonus_vs_infantry,
-                                        iconSize = 15.dp
+                                        iconSize = 15.dp,
                                     )
                                     UnitStat(
                                         statName = "Charge Bonus",
                                         statValue = selectedUnit.land_unit?.charge_bonus.toString(),
-                                        statIcon = R.drawable.icon_stat_charge_bonus
+                                        statIcon = R.drawable.icon_stat_charge_bonus,
                                     )
-                                    if (selectedUnit.land_unit?.primary_missile_weapon != null) {
+                                    if (selectedUnit.land_unit?.primary_missile_weapon != null || selectedUnit.land_unit?.engine?.missile_weapon != null) {
                                         Text(
                                             text = "Primary Missile Weapon",
                                             modifier = Modifier.padding(5.dp),
-                                            fontWeight = FontWeight.SemiBold
+                                            fontWeight = FontWeight.SemiBold,
                                         )
                                         UnitStat(
                                             statName = "Ammunition",
-                                            statValue = selectedUnit.land_unit?.secondary_ammo.toString(),
-                                            statIcon = R.drawable.icon_stat_ammo
+                                            statValue = selectedUnit.land_unit.primary_ammo.toString(),
+                                            statIcon = R.drawable.icon_stat_ammo,
                                         )
                                         UnitStat(
                                             statName = "Range",
-                                            statValue = selectedUnit.land_unit?.primary_missile_weapon?.default_projectile?.projectile?.effective_range.toString(),
-                                            statIcon = R.drawable.icon_stat_range
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.effective_range?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.effective_range.toString(),
+                                            statIcon = R.drawable.icon_stat_range,
+                                        )
+                                        UnitStat(
+                                            statName = "Missile Damage",
+                                            statValue = if (selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile != null) {
+                                                missileDamage(
+                                                    selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
+                                                    selectedUnit.land_unit.reload?.toDouble(),
+                                                ).toString()
+                                            } else if (selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile != null) {
+                                                missileDamage(
+                                                    selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
+                                                    selectedUnit.land_unit.reload?.toDouble(),
+                                                ).toString()
+                                            } else {
+                                                "0"
+                                            },
+                                            statIcon = R.drawable.icon_stat_ranged_damage,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Missile Base Damage",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.damage?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.damage?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.icon_stat_ranged_damage,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Missile AP Damage",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.ap_damage?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.ap_damage?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.modifier_icon_armour_piercing_ranged,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Bonus vs. Infantry",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.bonus_v_infantry?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.bonus_v_infantry?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.modifier_icon_bonus_vs_infantry,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Bonus vs. Large",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.bonus_v_large?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.bonus_v_large?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.modifier_icon_bonus_vs_large,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Explosion Base Dmg.",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.icon_stat_ranged_damage,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Explosion AP Dmg.",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage_ap?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage_ap?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.modifier_icon_armour_piercing_ranged,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Detonation Radius",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_radius?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_radius?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.fontawesome_street_view_icon,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Shots Per Volley",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.shots_per_volley?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.shots_per_volley?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.icon_status_firing_24px,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Projectile Number",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.projectile_number?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.projectile_number?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.icon_status_firing_24px,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Reload Time",
+                                            statValue = if (selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile != null) {
+                                                calculateReloadTime(
+                                                    selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
+                                                    selectedUnit.land_unit.reload?.toDouble(),
+                                                ).toString()
+                                            } else if (selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile != null) {
+                                                calculateReloadTime(
+                                                    selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
+                                                    selectedUnit.land_unit.reload?.toDouble(),
+                                                ).toString()
+                                            } else {
+                                                "0"
+                                            },
+                                            statIcon = R.drawable.icon_cooldown,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Total Accuracy",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.marksmanship_bonus?.plus(
+                                                selectedUnit.land_unit.accuracy ?: 0
+                                            )?.toInt()?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.marksmanship_bonus?.plus(
+                                                    selectedUnit.land_unit.accuracy ?: 0
+                                                )?.toInt()?.toString() ?: "0",
+                                            statIcon = R.drawable.spacebar_fire_arc,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Calibration Distance",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.calibration_distance?.toInt()?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.calibration_distance?.toInt()?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.icon_distance_to_target,
+                                            iconSize = 15.dp,
+                                        )
+                                        UnitSubStat(
+                                            statName = "Calibration Area",
+                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.calibration_area?.toBigDecimal()
+                                                ?.setScale(1, RoundingMode.UP)?.toDouble()?.toString()
+                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.calibration_area?.toBigDecimal()
+                                                    ?.setScale(1, RoundingMode.UP)?.toDouble()?.toString()
+                                                ?: "0",
+                                            statIcon = R.drawable.help_page_drag,
+                                            iconSize = 15.dp,
                                         )
                                     }
-
-                                    UnitStat(
-                                        statName = "Leadership",
-                                        statValue = selectedUnit.land_unit?.morale.toString(),
-                                        statIcon = R.drawable.icon_stat_morale
-                                    )
-                                    UnitStat(
-                                        statName = "Leadership",
-                                        statValue = selectedUnit.land_unit?.morale.toString(),
-                                        statIcon = R.drawable.icon_stat_morale
-                                    )
-                                    UnitStat(
-                                        statName = "Leadership",
-                                        statValue = selectedUnit.land_unit?.morale.toString(),
-                                        statIcon = R.drawable.icon_stat_morale
-                                    )
-                                    UnitStat(
-                                        statName = "Leadership",
-                                        statValue = selectedUnit.land_unit?.morale.toString(),
-                                        statIcon = R.drawable.icon_stat_morale
-                                    )
                                 }
                             }
                         }
@@ -398,7 +518,7 @@ fun UnitScreen(
                                 .fillMaxWidth()
                                 .zIndex(100f),
                             alignment = Alignment.BottomCenter,
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
                         )
                     }
                 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
@@ -29,7 +28,7 @@ fun UnitIconImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
         url = url,
         size = size,
         isRenown = unit.isRenown(),
-        isCampaignExclusive = unit.isExclusive()
+        isCampaignExclusive = unit.isExclusive(),
     )
 }
 
@@ -57,14 +56,14 @@ fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean, isCampaignExclusi
                     paddingLeftForIcon = 0.dp
                     paddingRightForIcon = 0.dp
                     R.drawable.unit_cat_holder_round
-                }
+                },
             ),
             contentDescription = "",
             modifier = Modifier
                 .size(sizeForIcon)
                 .zIndex(100f)
                 .align(Alignment.CenterStart),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -81,8 +80,8 @@ fun UnitIconImageBox(url: String, size: Dp, isRenown: Boolean, isCampaignExclusi
                     top = paddingTopForIcon,
                     end = paddingRightForIcon,
                     start = paddingLeftForIcon,
-                    bottom = paddingBottomForIcon
-                )
+                    bottom = paddingBottomForIcon,
+                ),
         )
     }
 }

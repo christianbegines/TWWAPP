@@ -12,7 +12,7 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
         null,
         this.unit_sets?.map {
             UnitQuery.Unit_set(
-                special_category = it?.special_category.orEmpty()
+                special_category = it?.special_category.orEmpty(),
             )
         },
         null,
@@ -32,8 +32,8 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
             UnitQuery.Custom_battle_permission(
                 general_portrait = this.custom_battle_permissions?.firstOrNull()?.general_portrait,
                 campaign_exclusive = this.custom_battle_permissions?.map { it?.campaign_exclusive },
-                set_piece_character = null
-            )
+                set_piece_character = null,
+            ),
         ),
         ui_unit_group = UnitQuery.Ui_unit_group(
             key = this.ui_unit_group?.key,
@@ -42,9 +42,9 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
             parent_group = UnitQuery.Parent_group(
                 key = this.ui_unit_group?.parent_group?.key,
                 onscreen_name = this.ui_unit_group?.parent_group?.onscreen_name,
-                order = this.ui_unit_group?.parent_group?.order
+                order = this.ui_unit_group?.parent_group?.order,
             ),
-            icon = this.ui_unit_group?.icon
+            icon = this.ui_unit_group?.icon,
         ),
         null,
         land_unit = UnitQuery.Land_unit(
@@ -53,7 +53,7 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
                 null,
                 null,
                 null,
-                unit_card_url = this.land_unit?.variant?.unit_card_url
+                unit_card_url = this.land_unit?.variant?.unit_card_url,
             ),
             null,
             null,
@@ -81,14 +81,14 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
                     it?.icon_name,
                     it?.key,
                     it?.name,
-                    it?.tooltip
+                    it?.tooltip,
                 )
             },
             attributes = this.land_unit?.attributes?.map {
                 UnitQuery.Attribute(
                     key = it?.key,
                     bullet_text = it?.bullet_text,
-                    imbued_effect_text = it?.imbued_effect_text
+                    imbued_effect_text = it?.imbued_effect_text,
                 )
             },
             special_ability_groups = this.land_unit?.special_ability_groups?.map { special ->
@@ -98,9 +98,9 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
                             icon_name = ability?.icon_name,
                             key = ability?.key,
                             name = ability?.name,
-                            tooltip = ability?.tooltip
+                            tooltip = ability?.tooltip,
                         )
-                    }
+                    },
                 )
             },
             null,
@@ -111,8 +111,8 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
             null,
             null,
             null,
-            null
-        )
+            null,
+        ),
     )
 }
 
@@ -147,8 +147,10 @@ fun FactionUnitsQuery.Unit.isHero(): Boolean {
 }
 
 fun FactionUnitsQuery.Faction.getUnitsByType(): Map<String, List<FactionUnitsQuery.Unit?>> {
-    val lords = this.units?.filter { unit -> unit?.isLord() == true }.orEmpty()
-    val heroes = this.units?.filter { unit -> unit?.isHero() == true }.orEmpty()
+    val lords =
+        this.units?.filter { unit -> unit?.isLord() == true && !unit.isExclusive() }.orEmpty()
+    val heroes =
+        this.units?.filter { unit -> unit?.isHero() == true && !unit.isExclusive() }.orEmpty()
     val units =
         this.units?.filter { unit -> unit?.isExclusive() == false && !unit.isHero() && !unit.isLord() }
             ?.groupBy { unit ->
@@ -156,17 +158,17 @@ fun FactionUnitsQuery.Faction.getUnitsByType(): Map<String, List<FactionUnitsQue
             }?.toList()
             ?.sortedBy { it -> it.second.first()?.ui_unit_group?.parent_group?.order }
             ?.toMap()?.toMutableMap().also { list ->
-                this.units?.filter { unit -> unit?.isExclusive() == true }
-                    .takeIf { it?.isNotEmpty() == true }?.let {
-                        list?.put(
-                            CAMPAIGN_EXCLUSIVE,
-                            it
-                        )
-                    }
-            }.orEmpty().toMutableMap()
+            this.units?.filter { unit -> unit?.isExclusive() == true }
+                .takeIf { it?.isNotEmpty() == true }?.let {
+                list?.put(
+                    CAMPAIGN_EXCLUSIVE,
+                    it,
+                )
+            }
+        }.orEmpty().toMutableMap()
     val result = mutableMapOf(
         LORD to lords,
-        HERO to heroes
+        HERO to heroes,
     )
     result.putAll(units)
     return result.toMutableMap()

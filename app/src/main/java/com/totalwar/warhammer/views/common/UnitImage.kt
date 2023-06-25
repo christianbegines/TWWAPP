@@ -1,20 +1,17 @@
 package com.totalwar.warhammer.views.common
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -22,9 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.memory.MemoryCache
 import coil.request.ImageRequest
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
@@ -38,7 +32,11 @@ fun UnitImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
 
 @Composable
 fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
-    UnitImageDetailBox(url = unit.getUnitImageUrl(gameVersion), size = size, isRenown = unit.isRenown())
+    UnitImageDetailBox(
+        url = unit.getUnitImageUrl(gameVersion),
+        size = size,
+        isRenown = unit.isRenown(),
+    )
 }
 
 @Composable
@@ -50,7 +48,7 @@ fun UnitImageBox(url: String, size: Dp) {
             modifier = Modifier
                 .zIndex(100f)
                 .clip(RoundedCornerShape(1.dp)),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -61,7 +59,7 @@ fun UnitImageBox(url: String, size: Dp) {
                 .build(),
             contentDescription = null,
             modifier = Modifier
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(5.dp)),
         )
     }
 }
@@ -79,7 +77,7 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
                     .height(size + 40.dp)
                     .zIndex(200f)
                     .clip(RoundedCornerShape(1.dp)),
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillBounds,
             )
         }
         Image(
@@ -90,7 +88,7 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
                 .height(size)
                 .zIndex(100f)
                 .clip(RoundedCornerShape(1.dp)),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillBounds,
         )
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -103,7 +101,7 @@ fun UnitImageDetailBox(url: String, size: Dp, isRenown: Boolean) {
             modifier = Modifier
                 .width(size / 2)
                 .height(size)
-                .clip(RoundedCornerShape(5.dp))
+                .clip(RoundedCornerShape(5.dp)),
         )
     }
 }

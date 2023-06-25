@@ -33,7 +33,7 @@ fun UnitAbility(
     iconName: String,
     size: Dp,
     gameVersion: String,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) {
     val tooltipState = remember { RichTooltipState() }
 
@@ -46,9 +46,9 @@ fun UnitAbility(
             containerColor = Grey,
             contentColor = Color.Transparent,
             titleContentColor = Color.Transparent,
-            actionContentColor = Color.Transparent
+            actionContentColor = Color.Transparent,
         ),
-        tooltipState = tooltipState
+        tooltipState = tooltipState,
     ) {
         val url = formatUrlAbilityAttrIcon(iconName, gameVersion)
         AsyncImage(
@@ -57,7 +57,7 @@ fun UnitAbility(
             contentDescription = null,
             modifier = Modifier.tooltipAnchor().size(size).padding(0.dp).clickable {
                 scope.launch { tooltipState.show() }
-            }.clip(RoundedCornerShape(5.dp))
+            }.clip(RoundedCornerShape(5.dp)),
         )
     }
 }
