@@ -110,8 +110,8 @@ fun UnitScreen(
                         Column(
                             modifier = Modifier
                                 .padding(
-                                    top = if (selectedUnit.isRenown()) 10.dp else 25.dp,
-                                    bottom = 10.dp,
+                                    top = if (selectedUnit.isRenown()) 10.dp else 20.dp,
+                                    bottom = 20.dp,
                                 )
                                 .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -119,7 +119,7 @@ fun UnitScreen(
 
                             ) {
                             UnitDetailImage(
-                                unit = selectedUnit, size = 135.dp, state.gameVersion
+                                unit = selectedUnit, size = 130.dp, state.gameVersion
                             )
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
