@@ -6,22 +6,17 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -235,6 +230,28 @@ fun FactionUnitCard(
                     )
                 }
                 LazyRow(
+                    modifier = Modifier.padding(2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val abilitiesCustom = factionUnit.custom_battle_permissions
+                        ?.firstOrNull()
+                        ?.set_piece_character?.ancillaries.orEmpty()
+                    for (item in abilitiesCustom){
+                        val abilities = item?.ancillary_effects?.firstOrNull {
+                            it?.effect?.abilities?.isNotEmpty() == true
+                        }?.effect?.abilities.orEmpty()
+                        items(abilities) { ability ->
+                            UnitAbility(
+                                id = ability?.effect_bonus?.value?.onAbility?.key.orEmpty(),
+                                iconName = ability?.effect_bonus?.value?.onAbility?.icon_name.orEmpty(),
+                                gameVersion = gameVersion,
+                                size = 30.dp,
+                                scope = rememberCoroutineScope()
+                            )
+                        }
+                    }
+                }
+                LazyRow(
                     modifier = Modifier.padding(0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -310,7 +327,9 @@ fun Header(title: String) {
         Image(
             painter = painterResource(id = R.drawable.unit_background),
             contentDescription = "",
-            modifier = Modifier.fillMaxWidth().height(30.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp),
             alignment = Alignment.TopCenter,
             contentScale = ContentScale.FillBounds
         )

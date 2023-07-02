@@ -19,6 +19,18 @@ query factionUnitsQuery($tww_version: String!, $faction: String! ) {
         custom_battle_permissions {
           general_portrait
           campaign_exclusive
+          set_piece_character {
+            ancillaries {
+              ancillary_effects {
+                effect {
+                  abilities {
+                    ...effect_bonus
+
+                  }
+                }
+              }
+            }
+          }
         }
         land_unit {
           onscreen_name

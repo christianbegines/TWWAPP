@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
@@ -23,6 +25,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,14 +40,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.theme.BulletBackground
-import com.totalwar.warhammer.util.calculateReloadTime
 import com.totalwar.warhammer.util.isRenown
-import com.totalwar.warhammer.util.missileDamage
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
+import com.totalwar.warhammer.views.common.UnitAbility
+import com.totalwar.warhammer.views.common.UnitAttribute
 import com.totalwar.warhammer.views.common.UnitBullets
 import com.totalwar.warhammer.views.common.UnitDetailImage
 import com.totalwar.warhammer.views.common.UnitIconImage
+import com.totalwar.warhammer.views.common.UnitMount
+import com.totalwar.warhammer.views.common.UnitPrimaryWeapon
 import com.totalwar.warhammer.views.common.UnitStat
 import com.totalwar.warhammer.views.common.UnitSubStat
 import java.math.RoundingMode
@@ -133,10 +138,23 @@ fun UnitScreen(
                                     modifier = Modifier.size(30.dp),
                                 )
                             }
+
                             Row(
                                 modifier = Modifier.padding(5.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                if (selectedUnit.battle_mounts?.isNotEmpty() == true) {
+                                    UnitMount(
+                                        faction_id,
+                                        selectedUnit.land_unit?.key.toString(),
+                                        scope = rememberCoroutineScope(),
+                                        selectedUnit.land_unit?.mount,
+                                        state.gameVersion,
+                                        selectedUnit.battle_mounts.orEmpty(),
+                                        viewModel
+                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                }
                                 UnitIconImage(
                                     unit = selectedUnit,
                                     size = 20.dp,
@@ -213,18 +231,17 @@ fun UnitScreen(
                                     UnitSubStat(
                                         statName = "Parry Chance",
                                         statValue = selectedUnit.land_unit?.shield?.parry_chance.toString(),
-                                        statIcon = when (selectedUnit.land_unit?.shield?.material) {
-                                            "wood" -> {
-                                                R.drawable.modifier_icon_shield1
-                                            }
-
-                                            "metal" -> {
-                                                R.drawable.modifier_icon_shield2
-                                            }
-
-                                            else -> {
-                                                null
-                                            }
+                                        statIcon =
+                                        if ((selectedUnit.land_unit?.shield?.parry_chance
+                                                ?: 0) <= 35
+                                        ) {
+                                            R.drawable.modifier_icon_shield1
+                                        } else if ((selectedUnit.land_unit?.shield?.parry_chance
+                                                ?: 0) >= 35
+                                        ) {
+                                            R.drawable.modifier_icon_shield2
+                                        } else {
+                                            null
                                         },
                                         iconSize = 15.dp,
                                     )
@@ -352,158 +369,123 @@ fun UnitScreen(
                                         statValue = selectedUnit.land_unit?.charge_bonus.toString(),
                                         statIcon = R.drawable.icon_stat_charge_bonus,
                                     )
-                                    if (selectedUnit.land_unit?.primary_missile_weapon != null || selectedUnit.land_unit?.engine?.missile_weapon != null) {
-                                        Text(
-                                            text = "Primary Missile Weapon",
-                                            modifier = Modifier.padding(5.dp),
-                                            fontWeight = FontWeight.SemiBold,
+                                    if (selectedUnit.land_unit?.primary_missile_weapon?.default_projectile?.projectile != null) {
+                                        UnitPrimaryWeapon(
+                                            landUnit = selectedUnit.land_unit,
+                                            ammo = selectedUnit.land_unit.primary_ammo,
+                                            projectile = selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
+                                            title = "Primary Missile Weapon"
                                         )
-                                        UnitStat(
-                                            statName = "Ammunition",
-                                            statValue = selectedUnit.land_unit.primary_ammo.toString(),
-                                            statIcon = R.drawable.icon_stat_ammo,
+                                    } else if (selectedUnit.land_unit?.engine?.missile_weapon?.default_projectile?.projectile != null) {
+                                        UnitPrimaryWeapon(
+                                            landUnit = selectedUnit.land_unit,
+                                            ammo = selectedUnit.land_unit.primary_ammo,
+                                            projectile = selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
+                                            title = "Primary Missile Weapon"
                                         )
-                                        UnitStat(
-                                            statName = "Range",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.effective_range?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.effective_range.toString(),
-                                            statIcon = R.drawable.icon_stat_range,
+                                    }
+
+                                    if (selectedUnit.land_unit?.primary_missile_weapon?.default_projectile?.projectile != null && selectedUnit.land_unit.primary_missile_weapon.use_secondary_ammo_pool == true) {
+                                        UnitPrimaryWeapon(
+                                            title = "Secondary Missile Weapon",
+                                            ammo = selectedUnit.land_unit.secondary_ammo,
+                                            landUnit = selectedUnit.land_unit,
+                                            projectile = selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile
                                         )
-                                        UnitStat(
-                                            statName = "Missile Damage",
-                                            statValue = if (selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile != null) {
-                                                missileDamage(
-                                                    selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
-                                                    selectedUnit.land_unit.reload?.toDouble(),
-                                                ).toString()
-                                            } else if (selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile != null) {
-                                                missileDamage(
-                                                    selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
-                                                    selectedUnit.land_unit.reload?.toDouble(),
-                                                ).toString()
-                                            } else {
-                                                "0"
-                                            },
-                                            statIcon = R.drawable.icon_stat_ranged_damage,
+                                    } else if (selectedUnit.land_unit?.engine?.missile_weapon?.default_projectile?.projectile != null && selectedUnit.land_unit.engine.missile_weapon.use_secondary_ammo_pool == true) {
+                                        UnitPrimaryWeapon(
+                                            landUnit = selectedUnit.land_unit,
+                                            ammo = selectedUnit.land_unit.secondary_ammo,
+                                            projectile = selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
+                                            title = "Secondary Missile Weapon"
                                         )
-                                        UnitSubStat(
-                                            statName = "Missile Base Damage",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.damage?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.damage?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.icon_stat_ranged_damage,
-                                            iconSize = 15.dp,
+                                    }
+                                    UnitStat(
+                                        statName = "Mass",
+                                        statValue = if (selectedUnit.land_unit?.mount != null) {
+                                            selectedUnit.land_unit.mount.battle_entity?.battle_entity?.mass?.toInt()
+                                                .toString()
+                                        } else {
+                                            selectedUnit.land_unit?.battle_entity?.battle_entity?.mass?.toInt()
+                                                .toString()
+                                        },
+                                        statIcon = R.drawable.resource_marble,
+                                    )
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp)
+                                    .border(1.dp, BulletBackground)
+                                    .background(
+                                        Color.Transparent.copy(0.1f),
+                                    )
+                            ) {
+                                LazyRow(
+                                    modifier = Modifier.padding(2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(selectedUnit.land_unit?.attributes.orEmpty()) { item ->
+                                        UnitAttribute(
+                                            id = item?.key.toString(),
+                                            tooltip = item?.bullet_text.orEmpty(),
+                                            gameVersion = state.gameVersion,
+                                            size = 30.dp,
+                                            scope = rememberCoroutineScope()
                                         )
-                                        UnitSubStat(
-                                            statName = "Missile AP Damage",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.ap_damage?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.ap_damage?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.modifier_icon_armour_piercing_ranged,
-                                            iconSize = 15.dp,
+                                    }
+                                }
+
+                                LazyRow(
+                                    modifier = Modifier.padding(2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(selectedUnit.land_unit?.abilities.orEmpty()) { item ->
+                                        UnitAbility(
+                                            id = item?.key.orEmpty(),
+                                            iconName = item?.icon_name.orEmpty(),
+                                            gameVersion = state.gameVersion,
+                                            size = 30.dp,
+                                            scope = rememberCoroutineScope()
                                         )
-                                        UnitSubStat(
-                                            statName = "Bonus vs. Infantry",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.bonus_v_infantry?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.bonus_v_infantry?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.modifier_icon_bonus_vs_infantry,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Bonus vs. Large",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.bonus_v_large?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.bonus_v_large?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.modifier_icon_bonus_vs_large,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Explosion Base Dmg.",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.icon_stat_ranged_damage,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Explosion AP Dmg.",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage_ap?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_damage_ap?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.modifier_icon_armour_piercing_ranged,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Detonation Radius",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_radius?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.explosion?.explosion?.detonation_radius?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.fontawesome_street_view_icon,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Shots Per Volley",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.shots_per_volley?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.shots_per_volley?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.icon_status_firing_24px,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Projectile Number",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.projectile_number?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.projectile_number?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.icon_status_firing_24px,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Reload Time",
-                                            statValue = if (selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile != null) {
-                                                calculateReloadTime(
-                                                    selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
-                                                    selectedUnit.land_unit.reload?.toDouble(),
-                                                ).toString()
-                                            } else if (selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile != null) {
-                                                calculateReloadTime(
-                                                    selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
-                                                    selectedUnit.land_unit.reload?.toDouble(),
-                                                ).toString()
-                                            } else {
-                                                "0"
-                                            },
-                                            statIcon = R.drawable.icon_cooldown,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Total Accuracy",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.marksmanship_bonus?.plus(
-                                                selectedUnit.land_unit.accuracy ?: 0
-                                            )?.toInt()?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.marksmanship_bonus?.plus(
-                                                    selectedUnit.land_unit.accuracy ?: 0
-                                                )?.toInt()?.toString() ?: "0",
-                                            statIcon = R.drawable.spacebar_fire_arc,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Calibration Distance",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.calibration_distance?.toInt()?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.calibration_distance?.toInt()?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.icon_distance_to_target,
-                                            iconSize = 15.dp,
-                                        )
-                                        UnitSubStat(
-                                            statName = "Calibration Area",
-                                            statValue = selectedUnit.land_unit.primary_missile_weapon?.default_projectile?.projectile?.calibration_area?.toBigDecimal()
-                                                ?.setScale(1, RoundingMode.UP)?.toDouble()?.toString()
-                                                ?: selectedUnit.land_unit.engine?.missile_weapon?.default_projectile?.projectile?.calibration_area?.toBigDecimal()
-                                                    ?.setScale(1, RoundingMode.UP)?.toDouble()?.toString()
-                                                ?: "0",
-                                            statIcon = R.drawable.help_page_drag,
-                                            iconSize = 15.dp,
+                                    }
+                                }
+                                LazyRow(
+                                    modifier = Modifier.padding(2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    val abilitiesCustom = selectedUnit.custom_battle_permissions
+                                        ?.firstOrNull()
+                                        ?.set_piece_character?.ancillaries.orEmpty()
+                                    for (item in abilitiesCustom) {
+                                        val abilities = item?.ancillary_effects?.firstOrNull {
+                                            it?.effect?.abilities?.isNotEmpty() == true
+                                        }?.effect?.abilities.orEmpty()
+                                        items(abilities) { ability ->
+                                            UnitAbility(
+                                                id = ability?.effect_bonus?.value?.onAbility?.key.orEmpty(),
+                                                iconName = ability?.effect_bonus?.value?.onAbility?.icon_name.orEmpty(),
+                                                gameVersion = state.gameVersion,
+                                                size = 30.dp,
+                                                scope = rememberCoroutineScope()
+                                            )
+                                        }
+                                    }
+
+                                }
+
+                                LazyRow(
+                                    modifier = Modifier.padding(0.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    items(selectedUnit.land_unit?.special_ability_groups?.firstOrNull()?.abilities.orEmpty()) { item ->
+                                        UnitAbility(
+                                            id = item?.key.orEmpty(),
+                                            iconName = item?.icon_name.orEmpty(),
+                                            gameVersion = state.gameVersion,
+                                            size = 30.dp,
+                                            scope = rememberCoroutineScope()
                                         )
                                     }
                                 }

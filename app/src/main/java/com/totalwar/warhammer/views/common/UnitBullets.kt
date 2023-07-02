@@ -35,7 +35,7 @@ fun UnitBullets(selectedUnit: UnitQuery.Unit) {
                 )
                 Text(
                     text = "${item?.onscreen_name}",
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = BulletIncrease
                 )
