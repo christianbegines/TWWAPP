@@ -32,9 +32,7 @@ import com.totalwar.warhammer.R
 import com.totalwar.warhammer.navigation.AppScreens
 
 private val screens = listOf(
-    AppScreens.FactionsScreen,
-    AppScreens.Contact,
-    AppScreens.Account
+    AppScreens.FactionsScreen
 )
 
 @Composable

@@ -16,7 +16,13 @@ import java.math.RoundingMode
 private const val ZERO = "0"
 
 @Composable
-fun UnitPrimaryWeapon(landUnit: UnitQuery.Land_unit, projectile: Projectile, title: String, ammo: Int?) {
+fun UnitMissileWeapon(
+    gameVersion: String?,
+    landUnit: UnitQuery.Land_unit,
+    projectile: Projectile,
+    title: String,
+    ammo: Int?
+) {
     Text(
         text = title,
         modifier = Modifier.padding(5.dp),
@@ -33,6 +39,7 @@ fun UnitPrimaryWeapon(landUnit: UnitQuery.Land_unit, projectile: Projectile, tit
         statIcon = R.drawable.icon_stat_range,
     )
     UnitStat(
+        gameVersion = gameVersion,
         statName = "Missile Damage",
         statValue =
         missileDamage(
@@ -40,6 +47,9 @@ fun UnitPrimaryWeapon(landUnit: UnitQuery.Land_unit, projectile: Projectile, tit
             landUnit.reload?.toDouble(),
         ).toString(),
         statIcon = R.drawable.icon_stat_ranged_damage,
+        magical = projectile.is_magical == true,
+        ignition = projectile.ignition_amount ?: 0 > 0,
+        contact = projectile.contact_stat_effect?.contact_phase
     )
     UnitSubStat(
         statName = "Missile Base Damage",

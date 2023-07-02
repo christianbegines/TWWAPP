@@ -32,8 +32,6 @@ import com.totalwar.warhammer.views.faction.FactionListScreen
 @Composable
 fun AppRouter(
     navController: NavHostController,
-    viewModel: AppViewModel,
-    dataStore: DataStore<Settings>,
     openDrawer: () -> Unit
 ) {
     AnimatedNavHost(navController, startDestination = AppScreens.FactionsScreen.route) {

@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AppScreen(viewModel: AppViewModel, dataStore: DataStore<Settings>) {
+fun AppScreen() {
     val navController = rememberAnimatedNavController()
     Surface(color = MaterialTheme.colors.background) {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -83,9 +83,7 @@ fun AppScreen(viewModel: AppViewModel, dataStore: DataStore<Settings>) {
         ) {
             AppRouter(
                 navController,
-                viewModel = viewModel,
-                openDrawer = { openDrawer() },
-                dataStore = dataStore
+                openDrawer = { openDrawer() }
             )
         }
     }

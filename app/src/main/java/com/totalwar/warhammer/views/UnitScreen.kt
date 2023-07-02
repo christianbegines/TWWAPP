@@ -48,8 +48,8 @@ import com.totalwar.warhammer.views.common.UnitAttribute
 import com.totalwar.warhammer.views.common.UnitBullets
 import com.totalwar.warhammer.views.common.UnitDetailImage
 import com.totalwar.warhammer.views.common.UnitIconImage
+import com.totalwar.warhammer.views.common.UnitMissileWeapon
 import com.totalwar.warhammer.views.common.UnitMount
-import com.totalwar.warhammer.views.common.UnitPrimaryWeapon
 import com.totalwar.warhammer.views.common.UnitStat
 import com.totalwar.warhammer.views.common.UnitSubStat
 import java.math.RoundingMode
@@ -99,7 +99,6 @@ fun UnitScreen(
                         )
                     }
                     Box(
-                        modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                         contentAlignment = Alignment.TopCenter,
                     ) {
                         Image(
@@ -111,8 +110,8 @@ fun UnitScreen(
                         Column(
                             modifier = Modifier
                                 .padding(
-                                    top = if (selectedUnit.isRenown()) 10.dp else 40.dp,
-                                    bottom = 20.dp,
+                                    top = if (selectedUnit.isRenown()) 10.dp else 25.dp,
+                                    bottom = 10.dp,
                                 )
                                 .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -292,9 +291,13 @@ fun UnitScreen(
                                         statIcon = R.drawable.icon_stat_speed,
                                     )
                                     UnitStat(
+                                        gameVersion = state.gameVersion,
                                         statName = "Melee Attack",
                                         statValue = selectedUnit.land_unit?.melee_attack.toString(),
                                         statIcon = R.drawable.icon_stat_attack,
+                                        magical = selectedUnit.land_unit?.primary_melee_weapon?.is_magical == true,
+                                        ignition = selectedUnit.land_unit?.primary_melee_weapon?.ignition_amount ?: 0 > 0,
+                                        contact = selectedUnit.land_unit?.primary_melee_weapon?.contact_phase?.contact_phase
                                     )
                                     UnitSubStat(
                                         statName = "Attack Interval",
@@ -370,30 +373,33 @@ fun UnitScreen(
                                         statIcon = R.drawable.icon_stat_charge_bonus,
                                     )
                                     if (selectedUnit.land_unit?.primary_missile_weapon?.default_projectile?.projectile != null) {
-                                        UnitPrimaryWeapon(
+                                        UnitMissileWeapon(
+                                            gameVersion = state.gameVersion,
                                             landUnit = selectedUnit.land_unit,
                                             ammo = selectedUnit.land_unit.primary_ammo,
                                             projectile = selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile,
                                             title = "Primary Missile Weapon"
                                         )
                                     } else if (selectedUnit.land_unit?.engine?.missile_weapon?.default_projectile?.projectile != null) {
-                                        UnitPrimaryWeapon(
+                                        UnitMissileWeapon(
+                                            gameVersion = state.gameVersion,
                                             landUnit = selectedUnit.land_unit,
                                             ammo = selectedUnit.land_unit.primary_ammo,
                                             projectile = selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
                                             title = "Primary Missile Weapon"
                                         )
                                     }
-
                                     if (selectedUnit.land_unit?.primary_missile_weapon?.default_projectile?.projectile != null && selectedUnit.land_unit.primary_missile_weapon.use_secondary_ammo_pool == true) {
-                                        UnitPrimaryWeapon(
+                                        UnitMissileWeapon(
+                                            gameVersion = state.gameVersion,
                                             title = "Secondary Missile Weapon",
                                             ammo = selectedUnit.land_unit.secondary_ammo,
                                             landUnit = selectedUnit.land_unit,
                                             projectile = selectedUnit.land_unit.primary_missile_weapon.default_projectile.projectile
                                         )
                                     } else if (selectedUnit.land_unit?.engine?.missile_weapon?.default_projectile?.projectile != null && selectedUnit.land_unit.engine.missile_weapon.use_secondary_ammo_pool == true) {
-                                        UnitPrimaryWeapon(
+                                        UnitMissileWeapon(
+                                            gameVersion = state.gameVersion,
                                             landUnit = selectedUnit.land_unit,
                                             ammo = selectedUnit.land_unit.secondary_ammo,
                                             projectile = selectedUnit.land_unit.engine.missile_weapon.default_projectile.projectile,
