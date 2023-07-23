@@ -24,6 +24,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.totalwar.warhammer.settings.Settings
 import com.totalwar.warhammer.viewmodels.AppViewModel
+import com.totalwar.warhammer.views.ArmiesListScreen
 import com.totalwar.warhammer.views.FactionUnitsScreen
 import com.totalwar.warhammer.views.UnitScreen
 import com.totalwar.warhammer.views.faction.FactionListScreen
@@ -89,6 +90,9 @@ fun AppRouter(
         }
         composable(route = AppScreens.Contact.route) {
             // ContactUsScreen(navController, homeViewModel, openDrawer)
+        }
+        composable(route = AppScreens.Armies.route){
+            ArmiesListScreen(openDrawer = openDrawer, navController = navController)
         }
     }
 }

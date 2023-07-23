@@ -2,6 +2,7 @@ package com.totalwar.warhammer.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -16,6 +17,8 @@ sealed class AppScreens(val title: String, val route: String, var icon: ImageVec
 
     object Account : AppScreens("Account", "account", Icons.Default.AccountCircle)
     object Contact : AppScreens("Raise a Concern", "contact", Icons.Default.Email)
+
+    object Armies : AppScreens("Armies", "armies", Icons.Default.Build )
 
     fun routeWithArgs(vararg args: String): String {
         return buildString {

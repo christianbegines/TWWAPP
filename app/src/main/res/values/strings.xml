@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Total Warhammer Database</string>
     <string name="back">Back</string>
+    <string name="armies">Armies</string>
 </resources>

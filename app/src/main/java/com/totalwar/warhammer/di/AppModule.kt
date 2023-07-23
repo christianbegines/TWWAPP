@@ -1,11 +1,13 @@
 package com.totalwar.warhammer.di
 
 import com.totalwar.warhammer.datasources.AbilityDataSource
+import com.totalwar.warhammer.datasources.ArmyDataSource
 import com.totalwar.warhammer.datasources.FactionDataSource
 import com.totalwar.warhammer.datasources.FactionUnitsDataSource
 import com.totalwar.warhammer.datasources.GameVersionDataSource
 import com.totalwar.warhammer.datasources.UnitsDataSource
 import com.totalwar.warhammer.repository.AbilityRepository
+import com.totalwar.warhammer.repository.ArmyRepository
 import com.totalwar.warhammer.repository.FactionRepository
 import com.totalwar.warhammer.repository.FactionUnitsRepository
 import com.totalwar.warhammer.repository.GameVersionRepository
@@ -48,5 +50,11 @@ object AppModule {
     @Provides
     fun provideAbilityRepository(abilityDataSource: AbilityDataSource): AbilityRepository {
         return AbilityRepository(abilityDataSource)
+    }
+
+    @Singleton
+    @Provides
+    fun provideArmyRepository(armyDataSource: ArmyDataSource): ArmyRepository{
+        return ArmyRepository(armyDataSource)
     }
 }

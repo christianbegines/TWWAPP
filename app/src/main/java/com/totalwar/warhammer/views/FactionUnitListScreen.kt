@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
@@ -68,7 +67,6 @@ fun FactionUnitsScreen(
     viewModel: FactionUnitsViewModel = hiltViewModel(),
     id: String
 ) {
-    val lazyGridState = rememberLazyGridState()
     val faction: FactionUnitsState by viewModel.faction.observeAsState(
         initial = FactionUnitsState.Idle
     )
@@ -236,7 +234,7 @@ fun FactionUnitCard(
                     val abilitiesCustom = factionUnit.custom_battle_permissions
                         ?.firstOrNull()
                         ?.set_piece_character?.ancillaries.orEmpty()
-                    for (item in abilitiesCustom){
+                    for (item in abilitiesCustom) {
                         val abilities = item?.ancillary_effects?.firstOrNull {
                             it?.effect?.abilities?.isNotEmpty() == true
                         }?.effect?.abilities.orEmpty()
