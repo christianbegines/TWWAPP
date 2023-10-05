@@ -16,18 +16,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.datastore.core.DataStore
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.totalwar.warhammer.settings.Settings
-import com.totalwar.warhammer.viewmodels.AppViewModel
 import com.totalwar.warhammer.views.ArmiesListScreen
 import com.totalwar.warhammer.views.FactionUnitsScreen
 import com.totalwar.warhammer.views.UnitScreen
-import com.totalwar.warhammer.views.faction.FactionListScreen
+import com.totalwar.warhammer.views.FactionListScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
