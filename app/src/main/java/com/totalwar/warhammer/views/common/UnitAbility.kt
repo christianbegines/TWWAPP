@@ -21,7 +21,6 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.ui.theme.Grey
 import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
-import com.totalwar.warhammer.views.AbilityTooltip
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views
+package com.totalwar.warhammer.views.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -90,7 +90,7 @@ fun AbilityTooltip(
                             fontStyle = FontStyle.Italic
                         )
                     }
-                    Spacer(modifier = Modifier.height(25.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -188,7 +188,7 @@ fun AbilityTooltip(
                                 )
                             }
                             val range =
-                                ability.ability.unit_special_ability?.target_intercept_range ?: 0
+                                ability.ability.unit_special_ability.target_intercept_range ?: 0
                             if (range > 0) {
                                 Column(
                                     modifier = Modifier.weight(3f)
@@ -223,6 +223,45 @@ fun AbilityTooltip(
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    if (ability.ability.additional_ui_effects?.isNotEmpty() == true ||
+                        ability.ability.phases?.first()?.contact_phase_ability?.stat_effects?.isNotEmpty() == true
+                    )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(
+                                modifier = Modifier.weight(2f)
+                            ) {
+                                Text(
+                                    text = "Effects:",
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    fontWeight = Bold,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(6f)
+                            ) {
+                                ability.ability.additional_ui_effects?.forEach { additional ->
+                                    Text(
+                                        text = additional?.localised_text.toString(),
+                                        color = Color.White,
+                                        fontSize = 15.sp,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+
+                            }
+                            Column(
+                                modifier = Modifier.weight(6f)
+                            ) {
+                                ability.ability.phases?.first()?.contact_phase_ability?.stat_effects?.forEach { statEffect ->
+                                    
+                                }
+                            }
+                        }
                 }
             }
         }

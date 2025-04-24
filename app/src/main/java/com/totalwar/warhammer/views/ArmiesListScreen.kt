@@ -44,7 +44,7 @@ fun ArmiesListScreen(
 ) {
     var showCustomDialogWithResult by remember { mutableStateOf(false) }
     if (showCustomDialogWithResult) {
-        CreateArmy(
+        CreateArmyScreen(
             onDismiss = { showCustomDialogWithResult = !showCustomDialogWithResult },
             onNegativeClick = { showCustomDialogWithResult = !showCustomDialogWithResult }) {
         }
