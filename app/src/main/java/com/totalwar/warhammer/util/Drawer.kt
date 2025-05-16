@@ -68,7 +68,7 @@ fun Drawer(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = { onDestinationClicked(screen.route) })
+                    .clickable(onClick = { onDestinationClicked(screen.route.name) })
                     .height(45.dp)
                     .padding(start = 10.dp)
             ) {

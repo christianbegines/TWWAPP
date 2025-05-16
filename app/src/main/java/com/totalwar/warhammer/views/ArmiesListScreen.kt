@@ -99,9 +99,9 @@ fun ArmiesListScreen(
                             modifier = Modifier.padding(vertical = 4.dp),
                             state = lazyGridState
                         ) {
-                            items(state.armies) { army ->
-                                Text(text = army.name)
-                            }
+                            //items(state.armies) { army ->
+                            //    Text(text = army.name)
+                            //}
                         }
                     }
                 }

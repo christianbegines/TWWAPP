@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.totalwar.warhammer.datastore";
+option java_multiple_files = true;
+
+message Settings {
+  string game_version = 1;
+}

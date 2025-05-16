@@ -19,9 +19,7 @@ class ArmiesViewModel @Inject constructor(
         armyList.postValue(ArmiesState.Loading)
         viewModelScope.launch {
             armyList.postValue(
-                ArmiesState.Success(
-                    armyRepository.getArmies()
-                )
+                ArmiesState.Success
             )
         }
     }

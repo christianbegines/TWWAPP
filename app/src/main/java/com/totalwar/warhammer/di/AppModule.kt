@@ -1,7 +1,7 @@
 package com.totalwar.warhammer.di
 
 import com.totalwar.warhammer.datasources.AbilityDataSource
-import com.totalwar.warhammer.datasources.ArmyDataSource
+//import com.totalwar.warhammer.datasources.ArmyDataSource
 import com.totalwar.warhammer.datasources.FactionDataSource
 import com.totalwar.warhammer.datasources.FactionUnitsDataSource
 import com.totalwar.warhammer.datasources.GameVersionDataSource
@@ -54,7 +54,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideArmyRepository(armyDataSource: ArmyDataSource): ArmyRepository{
-        return ArmyRepository(armyDataSource)
+    fun provideArmyRepository(): ArmyRepository{
+        return ArmyRepository()
     }
 }

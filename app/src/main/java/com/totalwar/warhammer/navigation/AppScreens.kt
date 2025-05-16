@@ -6,19 +6,32 @@ import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
+import kotlinx.serialization.Serializable
 
-sealed class AppScreens(val title: String, val route: String, var icon: ImageVector) {
-    object FactionsScreen : AppScreens("Faction", "factionScreen", Icons.Default.Home)
+
+
+@Serializable
+enum class ScreenRoute {
+    FactionsScreen,
+    FactionUnitsScreen,
+    UnitScreen,
+    Account,
+    Contact,
+    Armies
+}
+
+sealed class AppScreens(val title: String, val route: ScreenRoute, var icon: ImageVector) {
+    data object FactionsScreen : AppScreens("Faction", ScreenRoute.FactionsScreen, Icons.Default.Home)
     object FactionUnitsScreen :
-        AppScreens("Faction Unit Screen", "factionUnitsScreen", Icons.Default.Home)
+        AppScreens("Faction Unit Screen", ScreenRoute.FactionUnitsScreen, Icons.Default.Home)
 
     object UnitScreen :
-        AppScreens("Faction Unit Screen", "unitScreen", Icons.Default.Home)
+        AppScreens("Unit Screen", ScreenRoute.UnitScreen, Icons.Default.Home)
 
-    object Account : AppScreens("Account", "account", Icons.Default.AccountCircle)
-    object Contact : AppScreens("Raise a Concern", "contact", Icons.Default.Email)
+    object Account : AppScreens("Account", ScreenRoute.Account, Icons.Default.AccountCircle)
+    object Contact : AppScreens("Raise a Concern", ScreenRoute.Contact, Icons.Default.Email)
 
-    object Armies : AppScreens("Armies", "armies", Icons.Default.Build )
+    object Armies : AppScreens("Armies", ScreenRoute.Armies, Icons.Default.Build )
 
     fun routeWithArgs(vararg args: String): String {
         return buildString {

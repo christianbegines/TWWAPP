@@ -3,8 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
+    id "com.google.protobuf" version "0.9.4"
     id 'dagger.hilt.android.plugin'
-    id 'com.google.dagger.hilt.android'
     id("com.apollographql.apollo3") version "3.8.1"
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
@@ -40,7 +40,12 @@ android {
     composeCompiler {
         reportsDestination = layout.buildDirectory.dir("compose_compiler")
     }
-
+    sourceSets {
+        getByName("main") {
+            java.srcDir("build/generated/source/proto/main/java")
+            proto.srcDir("src/main/proto")
+        }
+    }
     buildFeatures {
         compose true
     }
@@ -83,7 +88,15 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.test:runner:1.6.2'
-    implementation 'androidx.datastore:datastore-core-android:1.1.6'
+    implementation("androidx.datastore:datastore:1.1.6")
+
+    // optional - RxJava2 support
+    implementation("androidx.datastore:datastore-rxjava2:1.1.6")
+
+    // optional - RxJava3 support
+    implementation("androidx.datastore:datastore-rxjava3:1.1.6")
+
+    implementation("com.google.protobuf:protobuf-java:3.25.1")
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
@@ -131,4 +144,17 @@ dependencies {
     }
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.1"
+    }
+    generateProtoTasks {
+        all().forEach {
+            it.builtins {
+                create("java") {}
+            }
+        }
+    }
 }

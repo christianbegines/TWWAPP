@@ -6,7 +6,6 @@ import com.totalwar.warhammer.datasources.GameVersionDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class GameVersionRepository(
     private val gameVersionDataSource: GameVersionDataSource
@@ -15,7 +14,7 @@ class GameVersionRepository(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     fun getVersion() {
-        coroutineScope.launch(Dispatchers.IO) {
+        coroutineScope.launch {
             gameVersion.postValue(gameVersionDataSource.getGameVersion())
         }
     }
