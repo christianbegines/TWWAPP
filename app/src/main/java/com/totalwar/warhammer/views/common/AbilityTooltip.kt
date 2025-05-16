@@ -254,13 +254,13 @@ fun AbilityTooltip(
                                 }
 
                             }
-                            Column(
-                                modifier = Modifier.weight(6f)
-                            ) {
-                                ability.ability.phases?.first()?.contact_phase_ability?.stat_effects?.forEach { statEffect ->
-                                    
-                                }
-                            }
+                            //Column(
+                            //    modifier = Modifier.weight(6f)
+                            //) {
+                            //    ability.ability.phases?.first()?.contact_phase_ability?.stat_effects?.forEach { statEffect ->
+                            //
+                            //    }
+                            //}
                         }
                 }
             }

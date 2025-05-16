@@ -1,10 +1,12 @@
 package com.totalwar.warhammer.views.common
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
@@ -18,6 +20,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -29,12 +32,15 @@ fun UnitAttribute(
     gameVersion: String,
     scope: CoroutineScope
 ) {
+    val tooltipState = rememberTooltipState()
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
-            AttributeTooltip(tooltip)
+            RichTooltip {
+                AttributeTooltip(tooltip)
+            }
         },
-        state = rememberTooltipState(),
+        state = tooltipState,
     ) {
         val url = formatUrlAbilityAttrIcon(id, gameVersion)
         AsyncImage(
@@ -44,6 +50,11 @@ fun UnitAttribute(
             modifier = Modifier
                 .size(size)
                 .padding(0.dp)
+                .clickable {
+                    scope.launch {
+                        tooltipState.show()
+                    }
+                }
                 .clip(RoundedCornerShape(5.dp)),
         )
     }

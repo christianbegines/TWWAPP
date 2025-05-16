@@ -10,7 +10,6 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -39,7 +38,6 @@ fun UnitMount(
 ) {
     val tooltipState = rememberTooltipState()
     val iconName = battleMounts.firstOrNull { it?.mounted_unit == unit }?.icon_name
-    val coroutineScope = rememberCoroutineScope()
 
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
@@ -66,7 +64,7 @@ fun UnitMount(
                 modifier = Modifier
                     .size(50.dp)
                     .clickable {
-                        coroutineScope.launch {
+                        scope.launch {
                             tooltipState.show()
                         }
                     }
@@ -80,7 +78,7 @@ fun UnitMount(
                     .size(50.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .clickable {
-                        coroutineScope.launch {
+                        scope.launch {
                             tooltipState.show()
                         }
                     },
