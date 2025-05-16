@@ -38,7 +38,8 @@ class CreateArmyViewModel @Inject constructor(
                         settings.gameVersion
                     ).let {
                         FactionState.Success(
-                            it.sortedBy { faction -> faction?.subculture?.name }
+                            it.sortedBy { faction -> faction?.subculture?.name },
+                            settings.gameVersion
                         )
                     }
 

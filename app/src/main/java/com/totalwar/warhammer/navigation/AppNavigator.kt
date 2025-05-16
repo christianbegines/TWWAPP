@@ -17,12 +17,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.totalwar.warhammer.views.ArmiesListScreen
 import com.totalwar.warhammer.views.FactionListScreen
+import com.totalwar.warhammer.views.FactionUnitsScreen
+import com.totalwar.warhammer.views.UnitScreen
 
-
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppRouter(
     navController: NavHostController,
@@ -31,6 +34,74 @@ fun AppRouter(
     NavHost(navController = navController, startDestination = AppScreens.FactionsScreen.route.name) {
         composable(route = AppScreens.FactionsScreen.route.name) {
             FactionListScreen(openDrawer = openDrawer, navController = navController)
+        }
+        composable(
+            route = AppScreens.FactionUnitsScreen.route.name + "/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                }
+            )
+        ) {
+            val id = it.arguments?.getString("id").orEmpty()
+            FactionUnitsScreen(navController = navController, id = id)
+        }
+        composable(
+            route = AppScreens.UnitScreen.route.name + "/{faction_id}/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                },
+                navArgument("faction_id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val id = it.arguments?.getString("id").orEmpty()
+            val factionId = it.arguments?.getString("faction_id").orEmpty()
+            UnitScreen(
+                id = id,
+                faction_id = factionId
+            )
+        }
+        composable(route = AppScreens.FactionsScreen.route.name) {
+            FactionListScreen(openDrawer = openDrawer, navController = navController)
+        }
+        composable(
+            route = AppScreens.UnitScreen.route.name + "/{id}",
+            arguments = listOf(
+                navArgument("id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                },
+                navArgument("faction_id") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val id = it.arguments?.getString("id").orEmpty()
+            val factionId = it.arguments?.getString("faction_id").orEmpty()
+            UnitScreen(
+                id = id,
+                faction_id = factionId
+            )
+        }
+        composable(route = AppScreens.Account.route.name) {
+            // AccountScreen(navController, homeViewModel, openDrawer)
+        }
+        composable(route = AppScreens.Contact.route.name) {
+            // ContactUsScreen(navController, homeViewModel, openDrawer)
+        }
+        composable(route = AppScreens.Armies.route.name) {
+            ArmiesListScreen(openDrawer = openDrawer, navController = navController)
         }
     }
 }

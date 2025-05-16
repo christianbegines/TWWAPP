@@ -1,12 +1,12 @@
 package com.totalwar.warhammer.di
 
-//import com.totalwar.warhammer.database.army.ArmyDao
-//import com.totalwar.warhammer.datasources.ArmyDataSource
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.MultiProcessDataStoreFactory
 import com.apollographql.apollo3.ApolloClient
+import com.totalwar.warhammer.database.army.ArmyDao
 import com.totalwar.warhammer.datasources.AbilityDataSource
+import com.totalwar.warhammer.datasources.ArmyDataSource
 import com.totalwar.warhammer.datasources.FactionDataSource
 import com.totalwar.warhammer.datasources.FactionUnitsDataSource
 import com.totalwar.warhammer.datasources.GameVersionDataSource
@@ -62,11 +62,11 @@ object NetworkModule {
         return AbilityDataSource(apollo)
     }
 
-    //@Provides
-    //@Singleton
-    //fun providesArmyDataSource(armyDao: ArmyDao): ArmyDataSource {
-    //    return ArmyDataSource(armyDao)
-    //}
+    @Provides
+    @Singleton
+    fun providesArmyDataSource(armyDao: ArmyDao): ArmyDataSource {
+        return ArmyDataSource(armyDao)
+    }
 
     @Provides
     @Singleton

@@ -43,6 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.navigation.AppScreens
+import com.totalwar.warhammer.settings.SETTINGS_DEFAULT_GAME_VERSION
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.util.CustomToolbar
 import com.totalwar.warhammer.viewmodels.faction.FactionState
@@ -53,9 +54,9 @@ import com.totalwar.warhammer.viewmodels.faction.FactionViewModel
 fun FactionListScreen(
     viewModel: FactionViewModel = hiltViewModel(),
     openDrawer: () -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
-    val factionList: FactionState by viewModel.factionList.observeAsState(
+    val factionState: FactionState by viewModel.factionList.observeAsState(
         initial = FactionState.Idle
     )
     viewModel.findAllFactions()
@@ -78,7 +79,7 @@ fun FactionListScreen(
                         contentScale = ContentScale.FillBounds
                     )
             ) {
-                when (val state = factionList) {
+                when (val state = factionState) {
                     FactionState.Error -> {}
                     FactionState.Idle -> {}
                     is FactionState.Loading,
@@ -88,10 +89,14 @@ fun FactionListScreen(
                             is FactionState.Success -> state.factionList
                             else -> emptyList()
                         }
+                        val gameVersion = when (state) {
+                            is FactionState.Success -> state.gameVersion
+                            else -> SETTINGS_DEFAULT_GAME_VERSION
+                        }
                         Box(
                             modifier = Modifier.pullRefresh(
                                 rememberPullRefreshState(
-                                    refreshing = factionList is FactionState.Loading,
+                                    refreshing = factionState is FactionState.Loading,
                                     onRefresh = { viewModel.findAllFactions() }
                                 )
                             )
@@ -105,7 +110,8 @@ fun FactionListScreen(
                                     faction?.let {
                                         FactionCard(
                                             faction = faction,
-                                            navController = navController
+                                            navController = navController,
+                                            gameVersion = gameVersion
                                         )
                                     }
                                 }
@@ -124,7 +130,7 @@ fun FactionListScreen(
 }
 
 @Composable
-fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
+fun FactionCard(faction: FactionsQuery.Faction, navController: NavController, gameVersion: String) {
     Card(
         modifier = Modifier
             .padding(10.dp)
@@ -156,7 +162,7 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController) {
         ) {
             Row {
                 Image(
-                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${faction.flags_url}/mon_64.jpg"),
+                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/${gameVersion}/${faction.flags_url}/mon_64.webp"),
                     contentDescription = null,
                     modifier = Modifier.size(130.dp)
                 )
