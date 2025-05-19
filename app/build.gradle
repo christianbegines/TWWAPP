@@ -3,9 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
-    id "com.google.protobuf" version "0.9.4"
     id 'dagger.hilt.android.plugin'
-    id("com.apollographql.apollo3") version "3.8.1"
+    id("com.apollographql.apollo3") version "3.8.5"
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
@@ -34,17 +33,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     composeCompiler {
         reportsDestination = layout.buildDirectory.dir("compose_compiler")
-    }
-    sourceSets {
-        getByName("main") {
-            java.srcDir("build/generated/source/proto/main/java")
-            proto.srcDir("src/main/proto")
-        }
     }
     buildFeatures {
         compose true
@@ -53,6 +46,9 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
@@ -96,8 +92,6 @@ dependencies {
     // optional - RxJava3 support
     implementation("androidx.datastore:datastore-rxjava3:1.1.6")
 
-    implementation("com.google.protobuf:protobuf-java:3.25.1")
-
     // Testing
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
@@ -132,7 +126,7 @@ dependencies {
     ksp "com.google.dagger:hilt-compiler:2.56.2"
     ksp("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
     implementation 'androidx.hilt:hilt-navigation-compose:1.2.0'
-    implementation "com.apollographql.apollo3:apollo-runtime:3.8.1"
+    implementation "com.apollographql.apollo3:apollo-runtime:3.8.5"
 
     //libreria de retrofit para hacer peticiones http
     implementation "com.squareup.retrofit2:converter-gson:2.11.0"
@@ -143,18 +137,5 @@ dependencies {
         exclude module: 'okhttp'
     }
     implementation("io.coil-kt:coil-compose:2.4.0")
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0"
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc:3.25.1"
-    }
-    generateProtoTasks {
-        all().forEach {
-            it.builtins {
-                create("java") {}
-            }
-        }
-    }
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
 }

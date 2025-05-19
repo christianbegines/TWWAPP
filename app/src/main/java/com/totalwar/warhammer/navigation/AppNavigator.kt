@@ -1,7 +1,6 @@
 package com.totalwar.warhammer.navigation
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -66,33 +65,11 @@ fun AppRouter(
             val factionId = it.arguments?.getString("faction_id").orEmpty()
             UnitScreen(
                 id = id,
-                faction_id = factionId
+                factionId = factionId
             )
         }
         composable(route = AppScreens.FactionsScreen.route.name) {
             FactionListScreen(openDrawer = openDrawer, navController = navController)
-        }
-        composable(
-            route = AppScreens.UnitScreen.route.name + "/{id}",
-            arguments = listOf(
-                navArgument("id") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = true
-                },
-                navArgument("faction_id") {
-                    type = NavType.StringType
-                    defaultValue = ""
-                    nullable = true
-                }
-            )
-        ) {
-            val id = it.arguments?.getString("id").orEmpty()
-            val factionId = it.arguments?.getString("faction_id").orEmpty()
-            UnitScreen(
-                id = id,
-                faction_id = factionId
-            )
         }
         composable(route = AppScreens.Account.route.name) {
             // AccountScreen(navController, homeViewModel, openDrawer)

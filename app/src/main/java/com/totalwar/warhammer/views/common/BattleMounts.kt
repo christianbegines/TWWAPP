@@ -22,7 +22,6 @@ import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.formatUrlBattleMountImage
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun BattleMounts(

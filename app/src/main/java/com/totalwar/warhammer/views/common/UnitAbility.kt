@@ -39,7 +39,14 @@ fun UnitAbility(
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
-            RichTooltip {
+            RichTooltip(
+                colors = RichTooltipColors(
+                    containerColor = Grey,
+                    contentColor = Color.Transparent,
+                    titleContentColor = Color.Transparent,
+                    actionContentColor = Color.Transparent,
+                )
+            ) {
                 AbilityTooltip(id = id)
             }
         },

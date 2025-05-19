@@ -126,7 +126,7 @@ fun FactionUnitsScreen(
 
 @Composable
 fun FactionUnitCard(
-    faction_id: String,
+    factionId: String,
     factionUnit: FactionUnitsQuery.Unit,
     gameVersion: String
 ) {
@@ -145,7 +145,7 @@ fun FactionUnitCard(
                 showCustomDialogWithResult = !showCustomDialogWithResult
             },
             id = factionUnit.unit.toString(),
-            faction_id = faction_id
+            factionId = factionId
         )
     }
     Surface(
@@ -300,7 +300,7 @@ fun FactionUnitCard(
 @Composable
 fun UnitDialog(
     id: String,
-    faction_id: String,
+    factionId: String,
     onDismiss: () -> Unit,
     onNegativeClick: () -> Unit,
     onPositiveClick: () -> Unit
@@ -308,7 +308,7 @@ fun UnitDialog(
     Dialog(onDismissRequest = onDismiss) {
         UnitScreen(
             id = id,
-            faction_id = faction_id
+            factionId = factionId
         )
     }
 }

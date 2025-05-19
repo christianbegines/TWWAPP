@@ -60,10 +60,10 @@ import kotlin.math.roundToInt
 fun UnitScreen(
     viewModel: UnitViewModel = hiltViewModel(),
     id: String,
-    faction_id: String,
+    factionId: String,
 ) {
     val unit: UnitState by viewModel.unit.observeAsState(initial = UnitState.Idle)
-    viewModel.findUnitById(id, faction_id)
+    viewModel.findUnitById(id, factionId)
     Scaffold(
         modifier = Modifier.padding(5.dp),
         backgroundColor = Color.Transparent,
@@ -132,7 +132,8 @@ fun UnitScreen(
                                     textAlign = TextAlign.Center
                                 )
                                 Image(
-                                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/327635228256759215/${state.faction.flags_url}/mon_64.jpg"),
+                                    painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/w_64,f_auto/twwstats/api/${state.gameVersion
+                                    }/${state.faction.flags_url}/mon_64.jpg"),
                                     contentDescription = null,
                                     modifier = Modifier.size(30.dp),
                                 )
@@ -144,7 +145,7 @@ fun UnitScreen(
                             ) {
                                 if (selectedUnit.battle_mounts?.isNotEmpty() == true) {
                                     UnitMount(
-                                        faction_id,
+                                        factionId,
                                         selectedUnit.land_unit?.key.toString(),
                                         scope = rememberCoroutineScope(),
                                         selectedUnit.land_unit?.mount,
