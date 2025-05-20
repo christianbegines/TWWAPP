@@ -43,13 +43,13 @@ import com.totalwar.warhammer.ui.theme.BulletBackground
 import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import com.totalwar.warhammer.views.composables.UnitAbilityTooltip
-import com.totalwar.warhammer.views.composables.UnitAttributeTooltip
+import com.totalwar.warhammer.views.composables.tootlips.UnitAbilityTooltip
+import com.totalwar.warhammer.views.composables.tootlips.UnitAttributeTooltip
 import com.totalwar.warhammer.views.composables.UnitBullets
 import com.totalwar.warhammer.views.composables.UnitDetailImage
 import com.totalwar.warhammer.views.composables.UnitIconImage
 import com.totalwar.warhammer.views.composables.UnitMissileWeapon
-import com.totalwar.warhammer.views.composables.UnitMountTooltip
+import com.totalwar.warhammer.views.composables.tootlips.UnitMountTooltip
 import com.totalwar.warhammer.views.composables.UnitStat
 import com.totalwar.warhammer.views.composables.UnitSubStat
 import java.math.RoundingMode

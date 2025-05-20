@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables
+package com.totalwar.warhammer.views.composables.tootlips.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

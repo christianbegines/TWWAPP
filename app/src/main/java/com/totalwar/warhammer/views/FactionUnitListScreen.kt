@@ -55,8 +55,8 @@ import com.totalwar.warhammer.util.isLargeUnit
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
-import com.totalwar.warhammer.views.composables.UnitAbilityTooltip
-import com.totalwar.warhammer.views.composables.UnitAttributeTooltip
+import com.totalwar.warhammer.views.composables.tootlips.UnitAbilityTooltip
+import com.totalwar.warhammer.views.composables.tootlips.UnitAttributeTooltip
 import com.totalwar.warhammer.views.composables.UnitIconImage
 import com.totalwar.warhammer.views.composables.UnitImage
 

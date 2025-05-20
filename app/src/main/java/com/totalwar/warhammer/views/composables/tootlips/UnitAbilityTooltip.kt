@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables
+package com.totalwar.warhammer.views.composables.tootlips
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -22,18 +22,19 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.ui.theme.Grey
 import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
+import com.totalwar.warhammer.views.composables.tootlips.content.AbilityTooltipContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitAttributeTooltip(
+fun UnitAbilityTooltip(
     id: String,
-    tooltip: String,
+    iconName: String,
     size: Dp,
     gameVersion: String,
-    scope: CoroutineScope
+    scope: CoroutineScope,
 ) {
     val tooltipState = rememberTooltipState()
     TooltipBox(
@@ -47,12 +48,12 @@ fun UnitAttributeTooltip(
                     actionContentColor = Color.Transparent,
                 )
             ) {
-                AttributeTooltipContent(tooltip)
+                AbilityTooltipContent(id = id)
             }
         },
         state = tooltipState,
     ) {
-        val url = formatUrlAbilityAttrIcon(id, gameVersion)
+        val url = formatUrlAbilityAttrIcon(iconName, gameVersion)
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current).data(url).diskCacheKey(url)
                 .memoryCacheKey(url).crossfade(true).build(),
