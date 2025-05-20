@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitMount(
+fun UnitMountTooltip(
     faction: String,
     unit: String,
     scope: CoroutineScope,
@@ -43,7 +43,7 @@ fun UnitMount(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
             RichTooltip {
-                BattleMounts(
+                UnitMountContent(
                     gameVersion = gameVersion,
                     faction = faction,
                     battleMounts = battleMounts,

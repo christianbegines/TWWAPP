@@ -25,8 +25,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,10 +55,10 @@ import com.totalwar.warhammer.util.isLargeUnit
 import com.totalwar.warhammer.util.map
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
-import com.totalwar.warhammer.views.common.UnitAbility
-import com.totalwar.warhammer.views.common.UnitAttribute
-import com.totalwar.warhammer.views.common.UnitIconImage
-import com.totalwar.warhammer.views.common.UnitImage
+import com.totalwar.warhammer.views.composables.UnitAbilityTooltip
+import com.totalwar.warhammer.views.composables.UnitAttributeTooltip
+import com.totalwar.warhammer.views.composables.UnitIconImage
+import com.totalwar.warhammer.views.composables.UnitImage
 
 @OptIn(ExperimentalFoundationApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -67,16 +68,17 @@ fun FactionUnitsScreen(
     viewModel: FactionUnitsViewModel = hiltViewModel(),
     id: String
 ) {
-    val faction: FactionUnitsState by viewModel.faction.observeAsState(
-        initial = FactionUnitsState.Idle
-    )
-    viewModel.findUnitsByFaction(id)
+    val faction by viewModel.faction.collectAsState(initial = FactionUnitsState.Idle)
+    val factionState = faction
+    LaunchedEffect(id) {
+        viewModel.findUnitsByFaction(id)
+    }
+
     Scaffold(
         topBar = {
-            val title = if (faction is FactionUnitsState.Success) {
-                (faction as FactionUnitsState.Success).faction.subculture?.name.orEmpty()
-            } else {
-                ""
+            val title = when (factionState) {
+                is FactionUnitsState.Success -> factionState.faction.subculture?.name.orEmpty()
+                else -> ""
             }
             CustomToolbarWithBackArrow(title = "$title Units", navController = navController)
         },
@@ -239,7 +241,7 @@ fun FactionUnitCard(
                             it?.effect?.abilities?.isNotEmpty() == true
                         }?.effect?.abilities.orEmpty()
                         items(abilities) { ability ->
-                            UnitAbility(
+                            UnitAbilityTooltip(
                                 id = ability?.effect_bonus?.value?.onAbility?.key.orEmpty(),
                                 iconName = ability?.effect_bonus?.value?.onAbility?.icon_name.orEmpty(),
                                 gameVersion = gameVersion,
@@ -254,7 +256,7 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(factionUnit.land_unit?.attributes.orEmpty()) { item ->
-                        UnitAttribute(
+                        UnitAttributeTooltip(
                             id = item?.key.toString(),
                             tooltip = item?.bullet_text.orEmpty(),
                             gameVersion = gameVersion,
@@ -269,7 +271,7 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(factionUnit.land_unit?.abilities.orEmpty()) { item ->
-                        UnitAbility(
+                        UnitAbilityTooltip(
                             id = item?.key.orEmpty(),
                             iconName = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,
@@ -283,7 +285,7 @@ fun FactionUnitCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     items(factionUnit.land_unit?.special_ability_groups?.firstOrNull()?.abilities.orEmpty()) { item ->
-                        UnitAbility(
+                        UnitAbilityTooltip(
                             id = item?.key.orEmpty(),
                             iconName = item?.icon_name.orEmpty(),
                             gameVersion = gameVersion,

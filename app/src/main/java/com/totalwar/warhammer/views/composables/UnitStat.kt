@@ -1,9 +1,7 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,15 +22,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.fragment.Contact_phase
 import com.totalwar.warhammer.ui.theme.ColorOnPrimary
-import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
-import com.totalwar.warhammer.util.formatUrlAbilityTypeImage
 import com.totalwar.warhammer.util.formatUrlAbilityTypeImageEffect
-import com.totalwar.warhammer.util.getAbilityIcon
-import com.totalwar.warhammer.util.getAbilityType
-import com.totalwar.warhammer.util.removeImageTags
 
 @Composable
 fun UnitStat(

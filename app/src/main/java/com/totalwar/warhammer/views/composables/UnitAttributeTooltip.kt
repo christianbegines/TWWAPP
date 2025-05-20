@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnitAttribute(
+fun UnitAttributeTooltip(
     id: String,
     tooltip: String,
     size: Dp,
@@ -47,7 +47,7 @@ fun UnitAttribute(
                     actionContentColor = Color.Transparent,
                 )
             ) {
-                AttributeTooltip(tooltip)
+                AttributeTooltipContent(tooltip)
             }
         },
         state = tooltipState,

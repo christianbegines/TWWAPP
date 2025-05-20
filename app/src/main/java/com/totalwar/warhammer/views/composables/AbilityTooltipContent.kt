@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -42,7 +42,7 @@ import com.totalwar.warhammer.viewmodels.ability.AbilityState
 import com.totalwar.warhammer.viewmodels.ability.AbilityViewModel
 
 @Composable
-fun AbilityTooltip(
+fun AbilityTooltipContent(
     viewModel: AbilityViewModel = hiltViewModel(),
     id: String
 ) {

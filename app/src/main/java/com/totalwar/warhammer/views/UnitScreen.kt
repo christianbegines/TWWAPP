@@ -43,15 +43,15 @@ import com.totalwar.warhammer.ui.theme.BulletBackground
 import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import com.totalwar.warhammer.views.common.UnitAbility
-import com.totalwar.warhammer.views.common.UnitAttribute
-import com.totalwar.warhammer.views.common.UnitBullets
-import com.totalwar.warhammer.views.common.UnitDetailImage
-import com.totalwar.warhammer.views.common.UnitIconImage
-import com.totalwar.warhammer.views.common.UnitMissileWeapon
-import com.totalwar.warhammer.views.common.UnitMount
-import com.totalwar.warhammer.views.common.UnitStat
-import com.totalwar.warhammer.views.common.UnitSubStat
+import com.totalwar.warhammer.views.composables.UnitAbilityTooltip
+import com.totalwar.warhammer.views.composables.UnitAttributeTooltip
+import com.totalwar.warhammer.views.composables.UnitBullets
+import com.totalwar.warhammer.views.composables.UnitDetailImage
+import com.totalwar.warhammer.views.composables.UnitIconImage
+import com.totalwar.warhammer.views.composables.UnitMissileWeapon
+import com.totalwar.warhammer.views.composables.UnitMountTooltip
+import com.totalwar.warhammer.views.composables.UnitStat
+import com.totalwar.warhammer.views.composables.UnitSubStat
 import java.math.RoundingMode
 import kotlin.math.roundToInt
 
@@ -144,7 +144,7 @@ fun UnitScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 if (selectedUnit.battle_mounts?.isNotEmpty() == true) {
-                                    UnitMount(
+                                    UnitMountTooltip(
                                         factionId,
                                         selectedUnit.land_unit?.key.toString(),
                                         scope = rememberCoroutineScope(),
@@ -434,7 +434,7 @@ fun UnitScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     items(selectedUnit.land_unit?.attributes.orEmpty()) { item ->
-                                        UnitAttribute(
+                                        UnitAttributeTooltip(
                                             id = item?.key.toString(),
                                             tooltip = item?.bullet_text.orEmpty(),
                                             gameVersion = state.gameVersion,
@@ -449,7 +449,7 @@ fun UnitScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     items(selectedUnit.land_unit?.abilities.orEmpty()) { item ->
-                                        UnitAbility(
+                                        UnitAbilityTooltip(
                                             id = item?.key.orEmpty(),
                                             iconName = item?.icon_name.orEmpty(),
                                             gameVersion = state.gameVersion,
@@ -470,7 +470,7 @@ fun UnitScreen(
                                             it?.effect?.abilities?.isNotEmpty() == true
                                         }?.effect?.abilities.orEmpty()
                                         items(abilities) { ability ->
-                                            UnitAbility(
+                                            UnitAbilityTooltip(
                                                 id = ability?.effect_bonus?.value?.onAbility?.key.orEmpty(),
                                                 iconName = ability?.effect_bonus?.value?.onAbility?.icon_name.orEmpty(),
                                                 gameVersion = state.gameVersion,
@@ -487,7 +487,7 @@ fun UnitScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     items(selectedUnit.land_unit?.special_ability_groups?.firstOrNull()?.abilities.orEmpty()) { item ->
-                                        UnitAbility(
+                                        UnitAbilityTooltip(
                                             id = item?.key.orEmpty(),
                                             iconName = item?.icon_name.orEmpty(),
                                             gameVersion = state.gameVersion,

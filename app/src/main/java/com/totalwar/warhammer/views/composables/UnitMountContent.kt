@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.common
+package com.totalwar.warhammer.views.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -24,7 +24,7 @@ import com.totalwar.warhammer.util.formatUrlBattleMountImage
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 
 @Composable
-fun BattleMounts(
+fun UnitMountContent(
     gameVersion: String,
     faction: String,
     battleMounts: List<UnitQuery.Battle_mount?>,
