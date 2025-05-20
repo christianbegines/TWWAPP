@@ -26,8 +26,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -56,10 +57,12 @@ fun FactionListScreen(
     openDrawer: () -> Unit,
     navController: NavController,
 ) {
-    val factionState: FactionState by viewModel.factionList.observeAsState(
+    val factionState: FactionState by viewModel.factionList.collectAsState(
         initial = FactionState.Idle
     )
-    viewModel.findAllFactions()
+    LaunchedEffect(Unit) {
+        viewModel.findAllFactions()
+    }
     val lazyGridState = rememberLazyGridState()
     Scaffold(
         topBar = {
@@ -80,12 +83,33 @@ fun FactionListScreen(
                     )
             ) {
                 when (val state = factionState) {
-                    FactionState.Error -> {}
-                    FactionState.Idle -> {}
-                    is FactionState.Loading,
+                    FactionState.Error -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text("Failed to load factions.")
+                                androidx.compose.material.Button(
+                                    onClick = { viewModel.findAllFactions() },
+                                    modifier = Modifier.padding(top = 8.dp)
+                                ) {
+                                    Text("Retry")
+                                }
+                            }
+                        }
+                    }
+                    FactionState.Idle,
+                    is FactionState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Welcome! Loading factions soon...")
+                        }
+                    }
                     is FactionState.Success -> {
                         val list = when (state) {
-                            is FactionState.Loading -> state.factionList
                             is FactionState.Success -> state.factionList
                             else -> emptyList()
                         }
