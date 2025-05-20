@@ -11,7 +11,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.totalwar.warhammer.navigation.AppRouter
-import com.totalwar.warhammer.util.Drawer
+import com.totalwar.warhammer.ui.screen.components.Drawer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

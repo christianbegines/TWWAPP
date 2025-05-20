@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.util
+package com.totalwar.warhammer.ui.screen.components
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton

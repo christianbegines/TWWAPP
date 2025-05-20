@@ -1,13 +1,16 @@
 package com.totalwar.warhammer.ui.screen.components
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.ui.screen.components.tootlips.UnitAbilityTooltip
+import com.totalwar.warhammer.viewmodels.units.UnitState
 
 @Composable
 fun UnitAbilities2Row(abilities: List<FactionUnitsQuery.Ability2?>?, gameVersion: String) {
@@ -22,6 +25,24 @@ fun UnitAbilities2Row(abilities: List<FactionUnitsQuery.Ability2?>?, gameVersion
                     scope = rememberCoroutineScope()
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun UnitAbilities2Row(state: UnitState.Success) {
+    LazyRow(
+        modifier = Modifier.padding(0.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items(state.unit.land_unit?.special_ability_groups?.firstOrNull()?.abilities.orEmpty()) { item ->
+            UnitAbilityTooltip(
+                id = item?.key.orEmpty(),
+                iconName = item?.icon_name.orEmpty(),
+                gameVersion = state.gameVersion,
+                size = 30.dp,
+                scope = rememberCoroutineScope()
+            )
         }
     }
 }

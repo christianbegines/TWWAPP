@@ -1,13 +1,13 @@
 package com.totalwar.warhammer.viewmodels.units
 
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.totalwar.warhammer.repository.FactionRepository
 import com.totalwar.warhammer.repository.UnitsRepository
 import com.totalwar.warhammer.settings.Settings
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,17 +17,27 @@ class UnitViewModel @Inject constructor(
     private val factionRepository: FactionRepository,
     private val dataStore: DataStore<Settings>
 ) : ViewModel() {
-    val unit: MutableLiveData<UnitState> = MutableLiveData(UnitState.Idle)
-    fun findUnitById(id: String, faction_id: String) {
-        unit.postValue(UnitState.Loading)
+
+    private val _unitState = MutableStateFlow<UnitState>(UnitState.Idle)
+    val unitState: StateFlow<UnitState> = _unitState.asStateFlow()
+
+    fun findUnitById(id: String, factionId: String) {
+        _unitState.value = UnitState.Loading
         viewModelScope.launch {
-            dataStore.data.collect { settings ->
-                factionRepository.getAllFactions(settings.gameVersion)
-                    .firstOrNull { it?.key == faction_id }?.let { faction ->
-                        unitsRepository.getUnit(id, settings.gameVersion)?.let {
-                            unit.postValue(UnitState.Success(it, faction, settings.gameVersion))
-                        } ?: UnitState.Error
-                    }
+            dataStore.data.firstOrNull()?.let { settings ->
+                val faction = factionRepository
+                    .getAllFactions(settings.gameVersion)
+                    .firstOrNull { it?.key == factionId }
+
+                val unit = unitsRepository.getUnit(id, settings.gameVersion)
+
+                if (unit != null && faction != null) {
+                    _unitState.value = UnitState.Success(unit, faction, settings.gameVersion)
+                } else {
+                    _unitState.value = UnitState.Error
+                }
+            } ?: run {
+                _unitState.value = UnitState.Error
             }
         }
     }

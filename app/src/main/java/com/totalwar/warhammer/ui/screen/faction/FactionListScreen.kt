@@ -32,7 +32,7 @@ import androidx.navigation.NavController
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.settings.SETTINGS_DEFAULT_GAME_VERSION
 import com.totalwar.warhammer.ui.screen.faction.composables.FactionCard
-import com.totalwar.warhammer.util.CustomToolbar
+import com.totalwar.warhammer.ui.screen.components.CustomToolbar
 import com.totalwar.warhammer.viewmodels.faction.FactionState
 import com.totalwar.warhammer.viewmodels.faction.FactionViewModel
 

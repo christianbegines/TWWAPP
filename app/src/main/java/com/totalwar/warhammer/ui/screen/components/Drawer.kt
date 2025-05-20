@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.util
+package com.totalwar.warhammer.ui.screen.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
