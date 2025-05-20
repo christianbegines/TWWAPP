@@ -20,7 +20,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.totalwar.warhammer.views.ArmiesListScreen
+import com.totalwar.warhammer.ui.screen.army.ArmiesListScreen
 import com.totalwar.warhammer.ui.screen.faction.FactionListScreen
 import com.totalwar.warhammer.ui.screen.factionunits.UnitListScreen
 import com.totalwar.warhammer.ui.screen.units.UnitScreen
