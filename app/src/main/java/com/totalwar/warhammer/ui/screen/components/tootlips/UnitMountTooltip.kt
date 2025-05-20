@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables.tootlips
+package com.totalwar.warhammer.ui.screen.components.tootlips
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -22,7 +22,7 @@ import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.formatUrlMountImage
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import com.totalwar.warhammer.views.composables.tootlips.content.UnitMountContent
+import com.totalwar.warhammer.ui.screen.components.tootlips.content.UnitMountContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

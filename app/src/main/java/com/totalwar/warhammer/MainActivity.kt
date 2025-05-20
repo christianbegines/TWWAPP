@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.totalwar.warhammer.ui.theme.TotalWarhammerAppTheme
 import com.totalwar.warhammer.viewmodels.AppViewModel
-import com.totalwar.warhammer.views.AppScreen
+import com.totalwar.warhammer.ui.screen.AppScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables
+package com.totalwar.warhammer.ui.screen.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text

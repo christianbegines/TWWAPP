@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views
+package com.totalwar.warhammer.ui.screen.army
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.totalwar.warhammer.R
+import com.totalwar.warhammer.ui.screen.army.create.CreateArmyScreen
 import com.totalwar.warhammer.util.CustomToolbar
 import com.totalwar.warhammer.viewmodels.armies.ArmiesState
 import com.totalwar.warhammer.viewmodels.armies.ArmiesViewModel

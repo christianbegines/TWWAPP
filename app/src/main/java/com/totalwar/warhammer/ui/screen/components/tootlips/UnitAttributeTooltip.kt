@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables.tootlips
+package com.totalwar.warhammer.ui.screen.components.tootlips
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
@@ -22,7 +22,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.ui.theme.Grey
 import com.totalwar.warhammer.util.formatUrlAbilityAttrIcon
-import com.totalwar.warhammer.views.composables.tootlips.content.AttributeTooltipContent
+import com.totalwar.warhammer.ui.screen.components.tootlips.content.AttributeTooltipContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

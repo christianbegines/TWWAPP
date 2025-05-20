@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views
+package com.totalwar.warhammer.ui.screen.units
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -43,15 +43,15 @@ import com.totalwar.warhammer.ui.theme.BulletBackground
 import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import com.totalwar.warhammer.views.composables.tootlips.UnitAbilityTooltip
-import com.totalwar.warhammer.views.composables.tootlips.UnitAttributeTooltip
-import com.totalwar.warhammer.views.composables.UnitBullets
-import com.totalwar.warhammer.views.composables.UnitDetailImage
-import com.totalwar.warhammer.views.composables.UnitIconImage
-import com.totalwar.warhammer.views.composables.UnitMissileWeapon
-import com.totalwar.warhammer.views.composables.tootlips.UnitMountTooltip
-import com.totalwar.warhammer.views.composables.UnitStat
-import com.totalwar.warhammer.views.composables.UnitSubStat
+import com.totalwar.warhammer.ui.screen.components.tootlips.UnitAbilityTooltip
+import com.totalwar.warhammer.ui.screen.components.tootlips.UnitAttributeTooltip
+import com.totalwar.warhammer.ui.screen.components.UnitBullets
+import com.totalwar.warhammer.ui.screen.components.UnitDetailImage
+import com.totalwar.warhammer.ui.screen.components.UnitIconImage
+import com.totalwar.warhammer.ui.screen.components.UnitMissileWeapon
+import com.totalwar.warhammer.ui.screen.components.tootlips.UnitMountTooltip
+import com.totalwar.warhammer.ui.screen.components.UnitStat
+import com.totalwar.warhammer.ui.screen.components.UnitSubStat
 import java.math.RoundingMode
 import kotlin.math.roundToInt
 

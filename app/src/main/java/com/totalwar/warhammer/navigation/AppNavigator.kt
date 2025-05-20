@@ -21,9 +21,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.totalwar.warhammer.views.ArmiesListScreen
-import com.totalwar.warhammer.views.FactionListScreen
-import com.totalwar.warhammer.views.FactionUnitsScreen
-import com.totalwar.warhammer.views.UnitScreen
+import com.totalwar.warhammer.ui.screen.faction.FactionListScreen
+import com.totalwar.warhammer.ui.screen.factionunits.UnitListScreen
+import com.totalwar.warhammer.ui.screen.units.UnitScreen
 
 @Composable
 fun AppRouter(
@@ -44,7 +44,7 @@ fun AppRouter(
             )
         ) {
             val id = it.arguments?.getString("id").orEmpty()
-            FactionUnitsScreen(navController = navController, id = id)
+            UnitListScreen(navController = navController, id = id)
         }
         composable(
             route = AppScreens.UnitScreen.route.name + "/{faction_id}/{id}",

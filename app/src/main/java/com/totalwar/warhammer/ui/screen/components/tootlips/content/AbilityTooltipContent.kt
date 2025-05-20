@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views.composables.tootlips.content
+package com.totalwar.warhammer.ui.screen.components.tootlips.content
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

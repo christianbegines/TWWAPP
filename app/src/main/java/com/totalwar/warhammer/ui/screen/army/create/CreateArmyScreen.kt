@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.views
+package com.totalwar.warhammer.ui.screen.army.create
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
