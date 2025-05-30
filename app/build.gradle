@@ -84,13 +84,13 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.0'
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.test:runner:1.6.2'
-    implementation("androidx.datastore:datastore:1.1.6")
+    implementation("androidx.datastore:datastore:1.1.7")
 
     // optional - RxJava2 support
-    implementation("androidx.datastore:datastore-rxjava2:1.1.6")
+    implementation("androidx.datastore:datastore-rxjava2:1.1.7")
 
     // optional - RxJava3 support
-    implementation("androidx.datastore:datastore-rxjava3:1.1.6")
+    implementation("androidx.datastore:datastore-rxjava3:1.1.7")
 
     // Testing
     testImplementation 'junit:junit:4.13.2'

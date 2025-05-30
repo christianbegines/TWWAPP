@@ -8,8 +8,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
 
-
-
 @Serializable
 enum class ScreenRoute {
     FactionsScreen,
