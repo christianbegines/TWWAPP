@@ -1,10 +1,12 @@
 package com.totalwar.warhammer.viewmodels.armies
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.totalwar.warhammer.repository.ArmyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,14 +15,13 @@ class ArmiesViewModel @Inject constructor(
     private val armyRepository: ArmyRepository
 ) : ViewModel() {
 
-    val armyList: MutableLiveData<ArmiesState> = MutableLiveData(ArmiesState.Idle)
+    private val _armyList = MutableStateFlow<ArmiesState>(ArmiesState.Idle)
+    val armyList: StateFlow<ArmiesState> = _armyList.asStateFlow()
 
     fun findAllArmies() {
-        armyList.postValue(ArmiesState.Loading)
+        _armyList.value = ArmiesState.Loading
         viewModelScope.launch {
-            armyList.postValue(
-                ArmiesState.Success
-            )
+            _armyList.value = ArmiesState.Success
         }
     }
 }

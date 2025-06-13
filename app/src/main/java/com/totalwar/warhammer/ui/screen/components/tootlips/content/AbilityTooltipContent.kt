@@ -14,8 +14,8 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +46,7 @@ fun AbilityTooltipContent(
     viewModel: AbilityViewModel = hiltViewModel(),
     id: String
 ) {
-    val state: AbilityState by viewModel.state.observeAsState(initial = AbilityState.Idle)
+    val state: AbilityState by viewModel.state.collectAsState(initial = AbilityState.Idle)
     LaunchedEffect(Unit) {
         viewModel.findAbility(id)
     }
