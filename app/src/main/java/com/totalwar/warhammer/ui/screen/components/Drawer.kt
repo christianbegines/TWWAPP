@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,7 +80,7 @@ fun Drawer(
                 Spacer(modifier = Modifier.width(7.dp))
                 Text(
                     text = screen.title,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .padding(12.dp)
                         .fillMaxWidth()
@@ -93,7 +93,7 @@ fun Drawer(
             text = "Developed by Christian Begines. \nV (1.0)",
             color = Color.Gray,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .padding(12.dp)
                 .align(Alignment.CenterHorizontally)

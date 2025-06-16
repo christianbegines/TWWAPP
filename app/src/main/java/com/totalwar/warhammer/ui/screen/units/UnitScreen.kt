@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.screen.components.CustomAncillaryAbilities
-import com.totalwar.warhammer.ui.screen.components.UnitAbilities1Row
-import com.totalwar.warhammer.ui.screen.components.UnitAbilities2Row
+import com.totalwar.warhammer.ui.screen.components.UnitAbilitiesRow
 import com.totalwar.warhammer.ui.screen.components.UnitAttributesRow
+import com.totalwar.warhammer.ui.screen.components.UnitSpecialAbilitiesRow
 import com.totalwar.warhammer.ui.screen.units.composables.BottomScroll
 import com.totalwar.warhammer.ui.screen.units.composables.TopScroll
 import com.totalwar.warhammer.ui.screen.units.composables.UnitBulletsSection
@@ -56,8 +56,8 @@ fun UnitScreen(
     }
     Scaffold(
         modifier = Modifier.padding(5.dp),
-        backgroundColor = Color.Transparent,
-    ) {
+        containerColor = Color.Transparent,
+    ) { contentPadding ->
         when (val state = unit) {
             is UnitState.Error -> {}
             is UnitState.Idle,
@@ -72,7 +72,9 @@ fun UnitScreen(
                 val selectedUnit = state.unit
                 Surface(
                     color = Color.Transparent,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPadding),
                 ) {
                     TopScroll()
                     Box(
@@ -109,9 +111,9 @@ fun UnitScreen(
                                     )
                             ) {
                                 UnitAttributesRow(state)
-                                UnitAbilities1Row(state)
+                                UnitAbilitiesRow(state)
                                 CustomAncillaryAbilities(state)
-                                UnitAbilities2Row(state)
+                                UnitSpecialAbilitiesRow(state)
                             }
                         }
                     }

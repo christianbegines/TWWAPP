@@ -1,11 +1,12 @@
 package com.totalwar.warhammer.ui.screen
 
-import androidx.compose.material.DrawerState
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalDrawer
-import androidx.compose.material.Surface
-import androidx.compose.material.rememberDrawerState
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Surface
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
@@ -15,12 +16,11 @@ import com.totalwar.warhammer.ui.screen.components.Drawer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun AppScreen() {
-    Surface(color = MaterialTheme.colors.background) {
+    Surface(color = MaterialTheme.colorScheme.background) {
         AppDrawer(
-            drawerState = rememberDrawerState(DrawerValue.Closed),
+            drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
             navController = rememberNavController(),
             scope = rememberCoroutineScope()
         )
@@ -33,22 +33,24 @@ fun AppDrawer(
     navController: NavHostController,
     scope: CoroutineScope
 ) {
-    ModalDrawer(
+    ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
-            Drawer(
-                onDestinationClicked = { route ->
-                    scope.launch { drawerState.close() }
-                    navController.navigate(route) {
-                        navController.graph.startDestinationRoute?.let { start ->
-                            popUpTo(start) { saveState = true }
+            ModalDrawerSheet {
+                Drawer(
+                    onDestinationClicked = { route ->
+                        scope.launch { drawerState.close() }
+                        navController.navigate(route) {
+                            navController.graph.startDestinationRoute?.let { start ->
+                                popUpTo(start) { saveState = true }
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
     ) {
         AppRouter(

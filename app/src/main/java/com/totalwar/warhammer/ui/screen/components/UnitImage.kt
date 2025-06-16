@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +41,9 @@ fun UnitDetailImage(unit: UnitQuery.Unit, size: Dp, gameVersion: String) {
 
 @Composable
 fun UnitImageBox(url: String, size: Dp) {
-    Surface(modifier = Modifier.padding(start = 5.dp).size(size)) {
+    Surface(modifier = Modifier
+        .padding(start = 5.dp)
+        .size(size)) {
         Image(
             painter = painterResource(id = R.drawable.unit_card_frame_plain),
             contentDescription = "",

@@ -8,14 +8,14 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,9 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.settings.SETTINGS_DEFAULT_GAME_VERSION
-import com.totalwar.warhammer.ui.screen.faction.composables.FactionCard
 import com.totalwar.warhammer.ui.screen.components.CustomToolbar
+import com.totalwar.warhammer.ui.screen.faction.composables.FactionCard
 import com.totalwar.warhammer.viewmodels.faction.FactionState
 import com.totalwar.warhammer.viewmodels.faction.FactionViewModel
 

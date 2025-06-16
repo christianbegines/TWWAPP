@@ -13,7 +13,7 @@ import com.totalwar.warhammer.ui.screen.components.tootlips.UnitAbilityTooltip
 import com.totalwar.warhammer.viewmodels.units.UnitState
 
 @Composable
-fun UnitAbilities2Row(abilities: List<FactionUnitsQuery.Ability2?>?, gameVersion: String) {
+fun UnitSpecialAbilitiesRow(abilities: List<FactionUnitsQuery.Ability2?>?, gameVersion: String) {
     if (!abilities.isNullOrEmpty()) {
         LazyRow(verticalAlignment = Alignment.CenterVertically) {
             items(abilities) { ability ->
@@ -30,7 +30,7 @@ fun UnitAbilities2Row(abilities: List<FactionUnitsQuery.Ability2?>?, gameVersion
 }
 
 @Composable
-fun UnitAbilities2Row(state: UnitState.Success) {
+fun UnitSpecialAbilitiesRow(state: UnitState.Success) {
     LazyRow(
         modifier = Modifier.padding(0.dp),
         verticalAlignment = Alignment.CenterVertically

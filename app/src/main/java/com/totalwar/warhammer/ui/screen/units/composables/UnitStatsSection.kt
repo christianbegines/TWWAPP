@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.ui.screen.components.UnitMissileWeapon
 import com.totalwar.warhammer.ui.screen.components.UnitStat
 import com.totalwar.warhammer.ui.screen.components.UnitSubStat

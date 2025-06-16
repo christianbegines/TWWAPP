@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,11 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.ui.screen.factionunits.composables.UnitListCard
 import com.totalwar.warhammer.ui.screen.components.CustomToolbarWithBackArrow
+import com.totalwar.warhammer.ui.screen.components.header.Header
+import com.totalwar.warhammer.ui.screen.factionunits.composables.UnitListCard
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
-import com.totalwar.warhammer.ui.screen.components.header.Header
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -45,7 +45,7 @@ fun UnitListScreen(
             else -> ""
         }
         CustomToolbarWithBackArrow(title = "$title Units", navController = navController)
-    }, content = {
+    }, content = { contentPadding ->
         Surface(
             color = Color.Transparent, modifier = Modifier
                 .fillMaxSize()
@@ -61,10 +61,12 @@ fun UnitListScreen(
                         CircularProgressIndicator()
                     }
                 }
-
                 is FactionUnitsState.Success -> {
                     val list = state.unitTypes
-                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = contentPadding
+                    ) {
                         list.forEach { (initial, units) ->
                             stickyHeader {
                                 Header(initial)

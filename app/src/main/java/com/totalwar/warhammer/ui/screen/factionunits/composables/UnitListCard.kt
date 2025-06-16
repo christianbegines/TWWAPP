@@ -7,7 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,8 +27,8 @@ import com.totalwar.warhammer.ui.screen.components.UnitIconImage
 import com.totalwar.warhammer.ui.screen.components.UnitImage
 import com.totalwar.warhammer.ui.screen.components.dialog.UnitDialog
 import com.totalwar.warhammer.ui.screen.components.CustomAncillaryAbilities
-import com.totalwar.warhammer.ui.screen.components.UnitAbilities1Row
-import com.totalwar.warhammer.ui.screen.components.UnitAbilities2Row
+import com.totalwar.warhammer.ui.screen.components.UnitAbilitiesRow
+import com.totalwar.warhammer.ui.screen.components.UnitSpecialAbilitiesRow
 import com.totalwar.warhammer.ui.screen.components.UnitAttributesRow
 
 @Composable
@@ -86,9 +86,9 @@ fun UnitListCard(
                     UnitMainInfo(it)
                     CustomAncillaryAbilities(it, gameVersion)
                     UnitAttributesRow(it.land_unit?.attributes.orEmpty(), gameVersion)
-                    UnitAbilities1Row(it.land_unit?.abilities.orEmpty(), gameVersion)
+                    UnitAbilitiesRow(it.land_unit?.abilities.orEmpty(), gameVersion)
                     for (abilities in it.land_unit?.special_ability_groups.orEmpty()) {
-                        UnitAbilities2Row(
+                        UnitSpecialAbilitiesRow(
                             abilities?.abilities.orEmpty(),
                             gameVersion
                         )
