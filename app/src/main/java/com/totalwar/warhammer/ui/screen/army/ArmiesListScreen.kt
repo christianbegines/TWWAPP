@@ -13,11 +13,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -43,6 +43,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.screen.army.create.CreateArmyScreen
 import com.totalwar.warhammer.ui.screen.components.CustomToolbar
+import com.totalwar.warhammer.ui.theme.ColorOnPrimary
 import com.totalwar.warhammer.viewmodels.armies.ArmiesState
 import com.totalwar.warhammer.viewmodels.armies.ArmiesViewModel
 
@@ -170,7 +171,7 @@ fun ArmiesListScreen(
                                             }
                                             Row(modifier = Modifier.padding(10.dp)) {
                                                 Text(
-                                                    text = army.name, fontSize = 15.sp
+                                                    text = army.name, fontSize = 15.sp, color = ColorOnPrimary
                                                 )
                                             }
                                         }

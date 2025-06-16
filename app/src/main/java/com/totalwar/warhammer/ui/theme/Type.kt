@@ -1,6 +1,6 @@
 package com.totalwar.warhammer.ui.theme
 
-import androidx.compose.material.Typography
+import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -15,41 +15,35 @@ val fonts = FontFamily(
     Font(R.font.barlow_bold, FontWeight.Bold)
 )
 
-// Set of Material typography styles to start with
 val Typography = Typography(
-    h1 = TextStyle(
+    displayLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
+        fontSize = 30.sp
     ),
-    h2 = TextStyle(
+    titleLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp
+        fontSize = 22.sp
     ),
-    h3 = TextStyle(
+    titleMedium = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Medium,
-        fontSize = 20.sp
+        fontSize = 18.sp
     ),
-    body1 = TextStyle(
+    bodyLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
-    body2 = TextStyle(
+    bodyMedium = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
+        fontSize = 14.sp
     ),
-    button = TextStyle(
+    labelLarge = TextStyle(
         fontFamily = fonts,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp
-    ),
-    caption = TextStyle(
-        fontFamily = fonts,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
+        fontSize = 14.sp
     )
 )

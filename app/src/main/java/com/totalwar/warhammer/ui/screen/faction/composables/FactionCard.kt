@@ -42,7 +42,7 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController, ga
             ),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
-        )
+        ),
     ) {
         Column(modifier = Modifier
             .padding(10.dp)
@@ -60,14 +60,22 @@ fun FactionCard(faction: FactionsQuery.Faction, navController: NavController, ga
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Image(
                     painter = rememberAsyncImagePainter("https://res.cloudinary.com/fishofstone/image/upload/twwstats/api/${gameVersion}/${faction.flags_url}/mon_64.webp"),
                     contentDescription = null,
                     modifier = Modifier.size(130.dp)
                 )
             }
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 Text(
                     text = faction.subculture?.name.orEmpty(),
                     color = ColorOnPrimary,

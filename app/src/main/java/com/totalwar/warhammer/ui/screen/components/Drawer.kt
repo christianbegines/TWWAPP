@@ -93,7 +93,7 @@ fun Drawer(
             text = "Developed by Christian Begines. \nV (1.0)",
             color = Color.Gray,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleMedium,
+            style = MaterialTheme.typography.bodySmall,
             modifier = Modifier
                 .padding(12.dp)
                 .align(Alignment.CenterHorizontally)

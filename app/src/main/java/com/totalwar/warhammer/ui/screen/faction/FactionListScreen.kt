@@ -2,6 +2,7 @@ package com.totalwar.warhammer.ui.screen.faction
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -105,7 +106,9 @@ fun FactionListScreen(
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
-                                modifier = Modifier.padding(vertical = 4.dp),
+                                modifier = Modifier
+                                    .padding(vertical = 4.dp)
+                                    .consumeWindowInsets(padding),
                                 state = lazyGridState
                             ) {
                                 items(state.factionList) { faction ->
