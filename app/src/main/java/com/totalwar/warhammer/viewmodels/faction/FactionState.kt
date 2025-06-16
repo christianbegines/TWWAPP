@@ -9,7 +9,7 @@ sealed class FactionState {
         val factionList: List<FactionsQuery.Faction?>
     ) : FactionState()
     data class Success(
-        val factionList: List<FactionsQuery.Faction?>,
+        val factionList: List<FactionsQuery.Faction>,
         val gameVersion: String
     ) : FactionState()
 }

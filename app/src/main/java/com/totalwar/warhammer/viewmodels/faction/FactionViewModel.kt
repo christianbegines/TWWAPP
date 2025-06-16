@@ -34,7 +34,8 @@ class FactionViewModel @Inject constructor(
                 dataStore.data.first().let { settings ->
                     val factions = factionRepository.getAllFactions(settings.gameVersion)
                         .sortedBy { it?.subculture?.name }
-                    _factionList.value = FactionState.Success(factions, settings.gameVersion)
+                    _factionList.value =
+                        FactionState.Success(factions.filterNotNull(), settings.gameVersion)
                 }
             } catch (e: Exception) {
                 _factionList.value = FactionState.Error

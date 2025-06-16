@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.totalwar.warhammer.database.army.Army
 import com.totalwar.warhammer.repository.ArmyRepository
 import com.totalwar.warhammer.repository.FactionRepository
 import com.totalwar.warhammer.settings.Settings
@@ -38,13 +39,25 @@ class CreateArmyViewModel @Inject constructor(
                         settings.gameVersion
                     ).let {
                         FactionState.Success(
-                            it.sortedBy { faction -> faction?.subculture?.name },
+                            it.sortedBy { faction -> faction?.subculture?.name }.filterNotNull(),
                             settings.gameVersion
                         )
                     }
 
                 )
             }
+        }
+    }
+
+    fun saveFaction(name: String, factionId: String, onComplete:() -> Unit) {
+        viewModelScope.launch {
+            armyRepository.addArmy(
+                Army(
+                    faction = factionId,
+                    name = name
+                )
+            )
+            onComplete()
         }
     }
 }

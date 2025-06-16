@@ -32,7 +32,11 @@ fun AppRouter(
 ) {
     NavHost(navController = navController, startDestination = AppScreens.FactionsScreen.route.name) {
         composable(route = AppScreens.FactionsScreen.route.name) {
-            FactionListScreen(openDrawer = openDrawer, navController = navController)
+            EnterAnimation {
+                FactionListScreen(
+                    openDrawer = openDrawer, navController = navController
+                )
+            }
         }
         composable(
             route = AppScreens.FactionUnitsScreen.route.name + "/{id}",
@@ -43,8 +47,11 @@ fun AppRouter(
                 }
             )
         ) {
-            val id = it.arguments?.getString("id").orEmpty()
-            UnitListScreen(navController = navController, id = id)
+            EnterAnimation {
+                UnitListScreen(
+                    navController = navController, id = it.arguments?.getString("id").orEmpty()
+                )
+            }
         }
         composable(
             route = AppScreens.UnitScreen.route.name + "/{faction_id}/{id}",
@@ -61,24 +68,30 @@ fun AppRouter(
                 }
             )
         ) {
-            val id = it.arguments?.getString("id").orEmpty()
-            val factionId = it.arguments?.getString("faction_id").orEmpty()
-            UnitScreen(
-                id = id,
-                factionId = factionId
-            )
+            EnterAnimation {
+                UnitScreen(
+                    id = it.arguments?.getString("id").orEmpty(),
+                    factionId = it.arguments?.getString("faction_id").orEmpty()
+                )
+            }
         }
         composable(route = AppScreens.FactionsScreen.route.name) {
-            FactionListScreen(openDrawer = openDrawer, navController = navController)
+            EnterAnimation {
+                FactionListScreen(
+                    openDrawer = openDrawer, navController = navController
+                )
+            }
         }
         composable(route = AppScreens.Account.route.name) {
-            // AccountScreen(navController, homeViewModel, openDrawer)
         }
         composable(route = AppScreens.Contact.route.name) {
-            // ContactUsScreen(navController, homeViewModel, openDrawer)
         }
         composable(route = AppScreens.Armies.route.name) {
-            ArmiesListScreen(openDrawer = openDrawer, navController = navController)
+            EnterAnimation {
+                ArmiesListScreen(
+                    openDrawer = openDrawer, navController = navController
+                )
+            }
         }
     }
 }

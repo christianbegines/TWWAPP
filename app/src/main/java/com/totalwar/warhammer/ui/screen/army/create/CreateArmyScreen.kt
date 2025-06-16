@@ -128,7 +128,9 @@ fun CreateArmyScreen(
                                 Column(modifier = Modifier.fillMaxWidth()) {
                                     Button(
                                         modifier = Modifier.fillMaxWidth(),
-                                        onClick = {},
+                                        onClick = {
+                                            viewModel.saveFaction(name, factionId, onDismiss)
+                                        },
                                     ) {
                                         Text(text = "Create and Add Units", color = Color.White)
                                     }

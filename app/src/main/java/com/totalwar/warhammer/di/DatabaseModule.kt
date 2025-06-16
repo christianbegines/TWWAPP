@@ -3,6 +3,8 @@ package com.totalwar.warhammer.di
 import android.content.Context
 import com.totalwar.warhammer.database.WarHammerDataBase
 import com.totalwar.warhammer.database.army.ArmyDao
+import com.totalwar.warhammer.util.dispatcher.CoroutineDispatcherProvider
+import com.totalwar.warhammer.util.dispatcher.DefaultDispatcherProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,4 +26,7 @@ object DatabaseModule {
     fun provideWarHammerDataBase(@ApplicationContext context: Context): WarHammerDataBase {
         return WarHammerDataBase.getInstance(context)
     }
+
+    @Provides
+    fun provideDispatcherProvider(): CoroutineDispatcherProvider = DefaultDispatcherProvider()
 }

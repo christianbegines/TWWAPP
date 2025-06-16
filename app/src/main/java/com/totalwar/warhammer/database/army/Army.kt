@@ -11,16 +11,16 @@ import kotlinx.parcelize.Parcelize
 data class Army(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    var id: Int,
+    var id: Int? = null,
 
     @ColumnInfo(name = "lordId")
-    var lordId:String,
+    var lordId: String? = null,
 
     @ColumnInfo(name = "faction")
-    var faction:String,
+    var faction: String?,
 
     @ColumnInfo(name = "army")
-    var army:List<String>,
+    var army: List<String> = emptyList(),
 
     @ColumnInfo(name = "name")
     var name:String,

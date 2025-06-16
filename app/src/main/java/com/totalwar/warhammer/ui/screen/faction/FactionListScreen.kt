@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
@@ -76,7 +77,7 @@ fun FactionListScreen(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text("Failed to load factions.")
-                                androidx.compose.material.Button(
+                                Button(
                                     onClick = { viewModel.findAllFactions() },
                                     modifier = Modifier.padding(top = 8.dp)
                                 ) {
@@ -95,14 +96,6 @@ fun FactionListScreen(
                         }
                     }
                     is FactionState.Success -> {
-                        val list = when (state) {
-                            is FactionState.Success -> state.factionList
-                            else -> emptyList()
-                        }
-                        val gameVersion = when (state) {
-                            is FactionState.Success -> state.gameVersion
-                            else -> SETTINGS_DEFAULT_GAME_VERSION
-                        }
                         Box(
                             modifier = Modifier.pullRefresh(
                                 rememberPullRefreshState(
@@ -116,12 +109,12 @@ fun FactionListScreen(
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 state = lazyGridState
                             ) {
-                                items(list) { faction ->
+                                items(state.factionList) { faction ->
                                     faction?.let {
                                         FactionCard(
-                                            faction = faction,
+                                            faction = it,
                                             navController = navController,
-                                            gameVersion = gameVersion
+                                            gameVersion = state.gameVersion
                                         )
                                     }
                                 }
