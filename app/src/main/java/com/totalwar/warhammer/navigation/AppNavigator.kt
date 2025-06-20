@@ -89,7 +89,7 @@ fun AppRouter(
         composable(route = AppScreens.Armies.route.name) {
             EnterAnimation {
                 ArmiesListScreen(
-                    openDrawer = openDrawer, navController = navController
+                    openDrawer = openDrawer
                 )
             }
         }

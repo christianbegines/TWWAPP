@@ -22,14 +22,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.totalwar.warhammer.FactionUnitsQuery
 import com.totalwar.warhammer.R
-import com.totalwar.warhammer.util.map
-import com.totalwar.warhammer.ui.screen.components.UnitIconImage
-import com.totalwar.warhammer.ui.screen.components.UnitImage
-import com.totalwar.warhammer.ui.screen.components.dialog.UnitDialog
 import com.totalwar.warhammer.ui.screen.components.CustomAncillaryAbilities
 import com.totalwar.warhammer.ui.screen.components.UnitAbilitiesRow
-import com.totalwar.warhammer.ui.screen.components.UnitSpecialAbilitiesRow
 import com.totalwar.warhammer.ui.screen.components.UnitAttributesRow
+import com.totalwar.warhammer.ui.screen.components.UnitIconImage
+import com.totalwar.warhammer.ui.screen.components.UnitImage
+import com.totalwar.warhammer.ui.screen.components.UnitSpecialAbilitiesRow
+import com.totalwar.warhammer.util.map
 
 @Composable
 fun UnitListCard(

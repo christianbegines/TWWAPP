@@ -1,4 +1,4 @@
-package com.totalwar.warhammer.ui.screen.components.dialog
+package com.totalwar.warhammer.ui.screen.factionunits.composables
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Dialog

@@ -1,6 +1,5 @@
 package com.totalwar.warhammer.ui.screen.factionunits
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,7 +27,6 @@ import com.totalwar.warhammer.ui.screen.factionunits.composables.UnitListCard
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsState
 import com.totalwar.warhammer.viewmodels.factionunits.FactionUnitsViewModel
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun UnitListScreen(
     navController: NavHostController, viewModel: FactionUnitsViewModel = hiltViewModel(), id: String
@@ -55,8 +53,9 @@ fun UnitListScreen(
                 )
         ) {
             when (val state = faction) {
-                is FactionUnitsState.Error -> {}
-                is FactionUnitsState.Idle, is FactionUnitsState.Loading -> {
+                is FactionUnitsState.Error,
+                is FactionUnitsState.Idle,
+                is FactionUnitsState.Loading -> {
                     Box(contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }

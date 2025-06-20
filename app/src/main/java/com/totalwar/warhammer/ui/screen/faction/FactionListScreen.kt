@@ -1,39 +1,31 @@
 package com.totalwar.warhammer.ui.screen.faction
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import FactionErrorState
+import FactionLoadingState
+import FactionSuccessState
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.ui.screen.components.CustomToolbar
-import com.totalwar.warhammer.ui.screen.faction.composables.FactionCard
 import com.totalwar.warhammer.viewmodels.faction.FactionState
 import com.totalwar.warhammer.viewmodels.faction.FactionViewModel
 
@@ -44,17 +36,24 @@ fun FactionListScreen(
     openDrawer: () -> Unit,
     navController: NavController,
 ) {
-    val factionState: FactionState by viewModel.factionList.collectAsState(
-        initial = FactionState.Idle
-    )
-    LaunchedEffect(Unit) {
+    val factionState: FactionState by viewModel.factionList.collectAsState(initial = FactionState.Idle)
+
+    LaunchedEffect(true) {
         viewModel.findAllFactions()
     }
+
     val lazyGridState = rememberLazyGridState()
+    val isRefreshing = factionState is FactionState.Loading
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = isRefreshing,
+        onRefresh = { viewModel.findAllFactions() }
+    )
+    val appName = stringResource(id = R.string.app_name)
+
     Scaffold(
         topBar = {
             CustomToolbar(
-                title = stringResource(id = R.string.app_name),
+                title = appName,
                 openDrawer
             )
         },
@@ -63,71 +62,23 @@ fun FactionListScreen(
                 color = Color.Transparent,
                 modifier = Modifier
                     .padding(padding)
+                    .consumeWindowInsets(padding)
                     .fillMaxSize()
+                    .pullRefresh(pullRefreshState)
                     .paint(
                         painter = painterResource(R.drawable.backgroundttw),
                         contentScale = ContentScale.FillBounds
                     )
             ) {
                 when (val state = factionState) {
-                    FactionState.Error -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text("Failed to load factions.")
-                                Button(
-                                    onClick = { viewModel.findAllFactions() },
-                                    modifier = Modifier.padding(top = 8.dp)
-                                ) {
-                                    Text("Retry")
-                                }
-                            }
-                        }
-                    }
-                    FactionState.Idle,
-                    is FactionState.Loading -> {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Welcome! Loading factions soon...")
-                        }
-                    }
-                    is FactionState.Success -> {
-                        Box(
-                            modifier = Modifier.pullRefresh(
-                                rememberPullRefreshState(
-                                    refreshing = factionState is FactionState.Loading,
-                                    onRefresh = { viewModel.findAllFactions() }
-                                )
-                            )
-                        ) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(2),
-                                modifier = Modifier
-                                    .padding(vertical = 4.dp)
-                                    .consumeWindowInsets(padding),
-                                state = lazyGridState
-                            ) {
-                                items(state.factionList) { faction ->
-                                    faction?.let {
-                                        FactionCard(
-                                            faction = it,
-                                            navController = navController,
-                                            gameVersion = state.gameVersion
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        if (state is FactionState.Loading) {
-                            Box(contentAlignment = Alignment.Center) {
-                                CircularProgressIndicator()
-                            }
-                        }
-                    }
+                    is FactionState.Error -> FactionErrorState(onRetry = { viewModel.findAllFactions() })
+                    is FactionState.Idle, is FactionState.Loading -> FactionLoadingState()
+                    is FactionState.Success -> FactionSuccessState(
+                        factions = state.factionList,
+                        gameVersion = state.gameVersion,
+                        navController = navController,
+                        gridState = lazyGridState
+                    )
                 }
             }
         }
