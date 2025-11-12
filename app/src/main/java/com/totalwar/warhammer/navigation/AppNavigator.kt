@@ -25,6 +25,11 @@ import com.totalwar.warhammer.ui.screen.faction.FactionListScreen
 import com.totalwar.warhammer.ui.screen.factionunits.UnitListScreen
 import com.totalwar.warhammer.ui.screen.units.UnitScreen
 
+private const val ID = "id"
+private const val ID_PARAM = "/{${ID}}"
+private const val FACTION_ID = "faction_id"
+private const val FACTION_ID_PARAM = "/{${FACTION_ID}}"
+
 @Composable
 fun AppRouter(
     navController: NavHostController,
@@ -39,9 +44,9 @@ fun AppRouter(
             }
         }
         composable(
-            route = AppScreens.FactionUnitsScreen.route.name + "/{id}",
+            route = AppScreens.FactionUnitsScreen.route.name + ID_PARAM ,
             arguments = listOf(
-                navArgument("id") {
+                navArgument(ID) {
                     type = NavType.StringType
                     defaultValue = ""
                 }
@@ -49,19 +54,19 @@ fun AppRouter(
         ) {
             EnterAnimation {
                 UnitListScreen(
-                    navController = navController, id = it.arguments?.getString("id").orEmpty()
+                    navController = navController, id = it.arguments?.getString(ID).orEmpty()
                 )
             }
         }
         composable(
-            route = AppScreens.UnitScreen.route.name + "/{faction_id}/{id}",
+            route = AppScreens.UnitScreen.route.name + FACTION_ID_PARAM + ID_PARAM,
             arguments = listOf(
-                navArgument("id") {
+                navArgument(ID) {
                     type = NavType.StringType
                     defaultValue = ""
                     nullable = true
                 },
-                navArgument("faction_id") {
+                navArgument(FACTION_ID) {
                     type = NavType.StringType
                     defaultValue = ""
                     nullable = true
@@ -70,8 +75,8 @@ fun AppRouter(
         ) {
             EnterAnimation {
                 UnitScreen(
-                    id = it.arguments?.getString("id").orEmpty(),
-                    factionId = it.arguments?.getString("faction_id").orEmpty()
+                    id = it.arguments?.getString(ID).orEmpty(),
+                    factionId = it.arguments?.getString(FACTION_ID).orEmpty()
                 )
             }
         }
