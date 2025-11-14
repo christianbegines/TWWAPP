@@ -16,7 +16,6 @@ private val LightColorScheme = lightColorScheme(
     primary = PrimaryColor,
     secondary = SecondaryColor,
     onSecondary = ColorOnPrimary,
-    onBackground = PrimaryColor // Ahora los textos por defecto usan primary
 )
 
 @Composable
