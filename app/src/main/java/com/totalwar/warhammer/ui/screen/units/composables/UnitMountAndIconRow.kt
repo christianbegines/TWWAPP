@@ -29,7 +29,6 @@ fun UnitMountAndIconRow(
                 factionId,
                 state.unit.land_unit?.key.toString(),
                 scope = rememberCoroutineScope(),
-                state.unit.land_unit?.mount,
                 state.gameVersion,
                 state.unit.battle_mounts,
                 viewModel

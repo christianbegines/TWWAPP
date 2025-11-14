@@ -20,9 +20,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
+import com.totalwar.warhammer.ui.screen.components.tootlips.content.UnitMountContent
 import com.totalwar.warhammer.util.formatUrlMountImage
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
-import com.totalwar.warhammer.ui.screen.components.tootlips.content.UnitMountContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -32,7 +32,6 @@ fun UnitMountTooltip(
     faction: String,
     unit: String,
     scope: CoroutineScope,
-    mount: UnitQuery.Mount?,
     gameVersion: String,
     battleMounts: List<UnitQuery.Battle_mount?>,
     viewModel: UnitViewModel
