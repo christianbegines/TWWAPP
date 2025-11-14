@@ -36,7 +36,7 @@ fun UnitAttributeTooltip(
     gameVersion: String,
     scope: CoroutineScope
 ) {
-    val tooltipState = rememberTooltipState()
+    val tooltipState = rememberTooltipState(isPersistent = true)
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {

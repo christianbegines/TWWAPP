@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,13 +24,18 @@ import com.totalwar.warhammer.R
 import com.totalwar.warhammer.UnitQuery
 import com.totalwar.warhammer.util.formatUrlBattleMountImage
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitMountContent(
     gameVersion: String,
     faction: String,
     battleMounts: List<UnitQuery.Battle_mount?>,
-    viewModel: UnitViewModel
+    viewModel: UnitViewModel,
+    tooltipState: TooltipState,
+    scope: CoroutineScope
 ) {
     Column{
         LazyColumn(
@@ -49,6 +56,9 @@ fun UnitMountContent(
                         .size(70.dp)
                         .clickable {
                             viewModel.findUnitById(it?.mounted_unit.toString(),faction)
+                            scope.launch {
+                                tooltipState.dismiss()
+                            }
                         }
                         .clip(RoundedCornerShape(5.dp)),
                 )
@@ -62,6 +72,9 @@ fun UnitMountContent(
                 .padding(0.dp)
                 .clickable {
                     viewModel.findUnitById(battleMounts.firstOrNull()?.base_unit.toString(),faction)
+                    scope.launch {
+                        tooltipState.dismiss()
+                    }
                 }
                 .clip(RoundedCornerShape(5.dp)),
             contentScale = ContentScale.FillBounds,

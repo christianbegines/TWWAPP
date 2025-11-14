@@ -54,6 +54,7 @@ fun FactionCard(
     ) {
         Column(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(12.dp)
                 .animateContentSize(
                     animationSpec = spring(

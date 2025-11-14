@@ -37,9 +37,8 @@ fun UnitMountTooltip(
     battleMounts: List<UnitQuery.Battle_mount?>,
     viewModel: UnitViewModel
 ) {
-    val tooltipState = rememberTooltipState()
-    val iconName = battleMounts.firstOrNull { it?.mounted_unit == unit }?.icon_name
-
+    val tooltipState = rememberTooltipState(isPersistent = true)
+    val iconName = battleMounts.find { it?.mounted_unit == unit }?.icon_name
     TooltipBox(
         positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
         tooltip = {
@@ -48,13 +47,15 @@ fun UnitMountTooltip(
                     gameVersion = gameVersion,
                     faction = faction,
                     battleMounts = battleMounts,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    tooltipState = tooltipState,
+                    scope = scope
                 )
             }
         },
         state = tooltipState,
     ) {
-        if (iconName != null && mount != null) {
+        if (iconName != null) {
             val url = formatUrlMountImage(gameVersion, iconName)
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
