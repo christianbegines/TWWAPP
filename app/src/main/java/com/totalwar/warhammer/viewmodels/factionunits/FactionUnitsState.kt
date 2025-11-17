@@ -2,9 +2,12 @@ package com.totalwar.warhammer.viewmodels.factionunits
 
 import com.totalwar.warhammer.FactionUnitsQuery
 
+/**
+ * Represents different states of the Faction Units screen
+ */
 sealed class FactionUnitsState {
     object Idle : FactionUnitsState()
-    object Error : FactionUnitsState()
+    data class Error(val message: String) : FactionUnitsState()
     object Loading : FactionUnitsState()
 
     data class Success(

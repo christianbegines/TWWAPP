@@ -3,8 +3,9 @@ package com.totalwar.warhammer.viewmodels.factionunits
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.totalwar.warhammer.repository.FactionUnitsRepository
+import com.totalwar.warhammer.domain.usecase.GetFactionUnitsUseCase
 import com.totalwar.warhammer.settings.Settings
+import com.totalwar.warhammer.util.Result
 import com.totalwar.warhammer.util.getUnitsByType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,9 +15,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing Faction Units screen state
+ * Uses GetFactionUnitsUseCase to separate business logic
+ */
 @HiltViewModel
 class FactionUnitsViewModel @Inject constructor(
-    private val factionUnitsRepository: FactionUnitsRepository,
+    private val getFactionUnitsUseCase: GetFactionUnitsUseCase,
     private val dataStore: DataStore<Settings>
 ) : ViewModel() {
     private val _faction = MutableStateFlow<FactionUnitsState>(FactionUnitsState.Idle)
@@ -27,22 +32,28 @@ class FactionUnitsViewModel @Inject constructor(
             _faction.value = FactionUnitsState.Loading
 
             try {
-                dataStore.data.first().let {
-                    val factionUnits =
-                        factionUnitsRepository.findUnitsByFaction(id, it.gameVersion)
-                    if (factionUnits != null) {
+                val settings = dataStore.data.first()
+                when (val result = getFactionUnitsUseCase(id, settings.gameVersion)) {
+                    is Result.Success -> {
                         _faction.value = FactionUnitsState.Success(
-                            factionUnits,
-                            factionUnits.getUnitsByType(),
-                            it.gameVersion
+                            result.data,
+                            result.data.getUnitsByType(),
+                            settings.gameVersion
                         )
-                    } else {
-                        _faction.value = FactionUnitsState.Error
+                    }
+                    is Result.Error -> {
+                        _faction.value = FactionUnitsState.Error(
+                            result.message ?: "Error al cargar unidades de la facción"
+                        )
+                    }
+                    Result.Loading -> {
+                        // Ya manejado arriba
                     }
                 }
-
             } catch (e: Exception) {
-                _faction.value = FactionUnitsState.Error
+                _faction.value = FactionUnitsState.Error(
+                    e.message ?: "Error inesperado al cargar unidades"
+                )
             }
         }
     }

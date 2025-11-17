@@ -3,8 +3,9 @@ package com.totalwar.warhammer.viewmodels.faction
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.totalwar.warhammer.repository.FactionRepository
+import com.totalwar.warhammer.domain.usecase.GetAllFactionsUseCase
 import com.totalwar.warhammer.settings.Settings
+import com.totalwar.warhammer.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,9 +14,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for managing Faction screen state
+ * Uses GetAllFactionsUseCase to separate business logic
+ */
 @HiltViewModel
 class FactionViewModel @Inject constructor(
-    private val factionRepository: FactionRepository,
+    private val getAllFactionsUseCase: GetAllFactionsUseCase,
     private val dataStore: DataStore<Settings>
 ) : ViewModel() {
 
@@ -31,14 +36,25 @@ class FactionViewModel @Inject constructor(
         )
         viewModelScope.launch {
             try {
-                dataStore.data.first().let { settings ->
-                    val factions = factionRepository.getAllFactions(settings.gameVersion)
-                        .sortedBy { it?.subculture?.name }
-                    _factionList.value =
-                        FactionState.Success(factions.filterNotNull(), settings.gameVersion)
+                val settings = dataStore.data.first()
+                when (val result = getAllFactionsUseCase(settings.gameVersion)) {
+                    is Result.Success -> {
+                        val sortedFactions = result.data.sortedBy { it.subculture?.name }
+                        _factionList.value = FactionState.Success(sortedFactions, settings.gameVersion)
+                    }
+                    is Result.Error -> {
+                        _factionList.value = FactionState.Error(
+                            result.exception.message ?: "Error desconocido al cargar facciones"
+                        )
+                    }
+                    Result.Loading -> {
+                        // Estado ya manejado arriba
+                    }
                 }
             } catch (e: Exception) {
-                _factionList.value = FactionState.Error
+                _factionList.value = FactionState.Error(
+                    e.message ?: "Error inesperado al cargar facciones"
+                )
             }
         }
     }

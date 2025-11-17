@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil.request.ImageRequest.Builder
 import com.totalwar.warhammer.R
 import com.totalwar.warhammer.util.TooltipUtils
 import com.totalwar.warhammer.util.formatUrlAbilityTypeImage
@@ -52,12 +52,20 @@ fun AbilityTooltipContent(
     }
 
     when (val ability = state) {
-        AbilityState.Error,
-        AbilityState.Idle,
-        AbilityState.Loading -> Box(contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+        AbilityState.Loading, AbilityState.Idle -> {
+            Box(contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
         }
 
+        is AbilityState.Error -> {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = ability.message,
+                    color = Color.Red
+                )
+            }
+        }
         is AbilityState.Success -> {
             val target = ability.ability.unit_special_ability?.getTarget()
             Surface(color = Color.Transparent) {
@@ -110,7 +118,7 @@ fun AbilityTooltipContent(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
+                                    model = Builder(LocalContext.current)
                                         .data(
                                             formatUrlAbilityTypeImage(
                                                 ability.gameVersion,
@@ -252,7 +260,6 @@ fun AbilityTooltipContent(
                                         textAlign = TextAlign.Center
                                     )
                                 }
-
                             }
                         }
                 }

@@ -4,28 +4,70 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
+/**
+ * Color scheme for dark mode
+ * Optimized for Total Warhammer theme
+ */
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryColor,
+    onPrimary = ColorOnPrimary,
+    primaryContainer = PrimaryDarkColor,
+    onPrimaryContainer = ColorOnPrimary,
     secondary = SecondaryColor,
-    onSecondary = ColorOnPrimary,
-    onBackground = PrimaryColor // Ahora los textos por defecto usan primary
+    onSecondary = ColorOnSecondary,
+    secondaryContainer = SecondaryDarkColor,
+    onSecondaryContainer = ColorOnSecondary,
+    background = PrimaryColor,
+    onBackground = ColorOnPrimary,
+    surface = SecondaryColor,
+    onSurface = ColorOnPrimary,
+    error = BulletDecrease,
+    onError = ColorOnPrimary,
 )
 
+/**
+ * Color scheme for light mode
+ * Similar to dark mode to maintain brand consistency
+ */
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryColor,
+    onPrimary = ColorOnPrimary,
+    primaryContainer = PrimaryColor,
+    onPrimaryContainer = ColorOnPrimary,
     secondary = SecondaryColor,
-    onSecondary = ColorOnPrimary,
+    onSecondary = ColorOnSecondary,
+    secondaryContainer = SecondaryColor,
+    onSecondaryContainer = ColorOnSecondary,
+    background = PrimaryColor,
+    onBackground = ColorOnPrimary,
+    surface = SecondaryColor,
+    onSurface = ColorOnPrimary,
+    error = BulletDecrease,
+    onError = ColorOnPrimary,
 )
 
+/**
+ * Main theme composable for the Total Warhammer application
+ * Uses Material Design 3 with custom colors
+ * @param darkTheme Whether to use dark theme (default true)
+ * @param content The content to display with this theme
+ */
 @Composable
 fun TotalWarhammerAppTheme(
+    darkTheme: Boolean = true, // Always use dark theme for this app
     content: @Composable () -> Unit
 ) {
+    val colorScheme = when {
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
+
     MaterialTheme(
-        colorScheme = DarkColorScheme,
-        typography = Typography, // Asegúrate de que Typography está actualizado a M3
-        shapes = Shapes,         // Igual para Shapes si los usas
+        colorScheme = colorScheme,
+        typography = Typography,
+        shapes = Shapes,
         content = content
     )
 }

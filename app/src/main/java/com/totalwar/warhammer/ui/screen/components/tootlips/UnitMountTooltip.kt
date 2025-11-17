@@ -26,6 +26,10 @@ import com.totalwar.warhammer.viewmodels.units.UnitViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * Tooltip for unit mount information
+ * El tooltip es persistente y se cierra al hacer clic fuera o seleccionar una opción
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitMountTooltip(

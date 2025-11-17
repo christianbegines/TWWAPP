@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.totalwar.warhammer.R
@@ -38,6 +41,7 @@ import com.totalwar.warhammer.ui.screen.units.composables.UnitImageAndName
 import com.totalwar.warhammer.ui.screen.units.composables.UnitMountAndIconRow
 import com.totalwar.warhammer.ui.screen.units.composables.UnitStatsSection
 import com.totalwar.warhammer.ui.theme.BulletBackground
+import com.totalwar.warhammer.util.Constants
 import com.totalwar.warhammer.util.isRenown
 import com.totalwar.warhammer.viewmodels.units.UnitState
 import com.totalwar.warhammer.viewmodels.units.UnitViewModel
@@ -59,7 +63,21 @@ fun UnitScreen(
         containerColor = Color.Transparent,
     ) { contentPadding ->
         when (val state = unit) {
-            is UnitState.Error -> {}
+            is UnitState.Error -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(Constants.UI.PADDING_LARGE)
+                    ) {
+                        Text(
+                            text = state.message,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
             is UnitState.Idle,
             is UnitState.Loading,
             -> {

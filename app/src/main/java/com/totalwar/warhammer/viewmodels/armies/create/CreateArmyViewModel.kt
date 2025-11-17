@@ -1,63 +1,91 @@
 package com.totalwar.warhammer.viewmodels.armies.create
 
 import androidx.datastore.core.DataStore
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.totalwar.warhammer.database.army.Army
+import com.totalwar.warhammer.domain.usecase.GetAllFactionsUseCase
 import com.totalwar.warhammer.repository.ArmyRepository
-import com.totalwar.warhammer.repository.FactionRepository
 import com.totalwar.warhammer.settings.Settings
+import com.totalwar.warhammer.util.Logger
+import com.totalwar.warhammer.util.Result
 import com.totalwar.warhammer.viewmodels.faction.FactionState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel para crear nuevas armadas
+ * Carga las facciones disponibles y permite crear una nueva armada
+ */
 @HiltViewModel
 class CreateArmyViewModel @Inject constructor(
-    private val factionRepository: FactionRepository,
+    private val getAllFactionsUseCase: GetAllFactionsUseCase,
     private val armyRepository: ArmyRepository,
     private val dataStore: DataStore<Settings>
 ): ViewModel() {
-    val factionList: MutableLiveData<FactionState> = MutableLiveData(FactionState.Idle)
+
+    private val _factionList = MutableStateFlow<FactionState>(FactionState.Idle)
+    val factionList: StateFlow<FactionState> = _factionList.asStateFlow()
 
     fun findAllFactions() {
-        val currentState = factionList.value
-        factionList.postValue(
-            FactionState.Loading(
-                if (currentState is FactionState.Success) {
-                    currentState.factionList
-                } else {
-                    emptyList()
-                }
-            )
+        val currentState = _factionList.value
+        _factionList.value = FactionState.Loading(
+            if (currentState is FactionState.Success) {
+                currentState.factionList
+            } else {
+                emptyList()
+            }
         )
         viewModelScope.launch {
-            dataStore.data.collect { settings ->
-                factionList.postValue(
-                    factionRepository.getAllFactions(
-                        settings.gameVersion
-                    ).let {
-                        FactionState.Success(
-                            it.sortedBy { faction -> faction?.subculture?.name }.filterNotNull(),
-                            settings.gameVersion
+            try {
+                val settings = dataStore.data.first()
+                when (val result = getAllFactionsUseCase(settings.gameVersion)) {
+                    is Result.Success -> {
+                        val sortedFactions = result.data.sortedBy { it.subculture?.name }
+                        _factionList.value =
+                            FactionState.Success(sortedFactions, settings.gameVersion)
+                        Logger.d("Factions loaded successfully: ${sortedFactions.size}")
+                    }
+
+                    is Result.Error -> {
+                        Logger.e("Error loading factions", result.exception)
+                        _factionList.value = FactionState.Error(
+                            result.message ?: "Error al cargar facciones"
                         )
                     }
 
+                    Result.Loading -> {
+                        // Ya manejado arriba
+                    }
+                }
+            } catch (e: Exception) {
+                Logger.e("Error in findAllFactions", e)
+                _factionList.value = FactionState.Error(
+                    e.message ?: "Error desconocido al cargar facciones"
                 )
             }
         }
     }
 
-    fun saveFaction(name: String, factionId: String, onComplete:() -> Unit) {
+    fun saveFaction(name: String, factionId: String, onComplete: () -> Unit) {
         viewModelScope.launch {
-            armyRepository.addArmy(
-                Army(
-                    faction = factionId,
-                    name = name
+            try {
+                armyRepository.addArmy(
+                    Army(
+                        faction = factionId,
+                        name = name
+                    )
                 )
-            )
-            onComplete()
+                Logger.d("Army saved successfully: $name")
+                onComplete()
+            } catch (e: Exception) {
+                Logger.e("Error saving army", e)
+            }
         }
     }
 }

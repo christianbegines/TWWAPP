@@ -7,22 +7,39 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.totalwar.warhammer.FactionsQuery
 import com.totalwar.warhammer.ui.screen.faction.composables.FactionCard
+import com.totalwar.warhammer.util.Constants
 
+/**
+ * Shows error state with specific error message
+ */
 @Composable
-fun FactionErrorState(onRetry: () -> Unit) {
+fun FactionErrorState(errorMessage: String, onRetry: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Failed to load factions.")
-            Button(onClick = onRetry, modifier = Modifier.padding(top = 8.dp)) {
-                Text("Retry")
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(Constants.UI.PADDING_LARGE)
+        ) {
+            Text(
+                text = errorMessage,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.error
+            )
+            Button(
+                onClick = onRetry,
+                modifier = Modifier.padding(top = Constants.UI.PADDING_MEDIUM)
+            ) {
+                Text("Reintentar")
             }
         }
     }
@@ -31,7 +48,10 @@ fun FactionErrorState(onRetry: () -> Unit) {
 @Composable
 fun FactionLoadingState() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text("Welcome! Loading factions soon...")
+        Text(
+            "Cargando facciones...",
+            style = MaterialTheme.typography.bodyLarge
+        )
     }
 }
 
@@ -44,7 +64,10 @@ fun FactionSuccessState(
 ) {
     if (factions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No factions available.")
+            Text(
+                "No hay facciones disponibles.",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     } else {
         LazyVerticalGrid(
@@ -63,4 +86,3 @@ fun FactionSuccessState(
     }
 
 }
-

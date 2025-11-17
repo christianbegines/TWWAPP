@@ -2,7 +2,8 @@ package com.totalwar.warhammer.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.MultiProcessDataStoreFactory
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
 import com.apollographql.apollo3.ApolloClient
 import com.totalwar.warhammer.database.army.ArmyDao
 import com.totalwar.warhammer.datasources.AbilityDataSource
@@ -19,7 +20,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.io.File
 import javax.inject.Singleton
 
 @Module
@@ -71,10 +71,11 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Settings> =
-        MultiProcessDataStoreFactory.create(
+        DataStoreFactory.create(
             serializer = SettingsSerializer(),
             produceFile = {
-                File("${context.cacheDir.path}/myapp.preferences_pb")
+                // Usar filesDir en lugar de cacheDir para persistencia permanente
+                context.dataStoreFile("settings.pb")
             }
         )
 }

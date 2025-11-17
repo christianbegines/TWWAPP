@@ -1,13 +1,13 @@
 package com.totalwar.warhammer.viewmodels.armies
 
-import com.totalwar.warhammer.database.army.Army
-import com.totalwar.warhammer.type.GameVersion
+import com.totalwar.warhammer.viewmodels.armies.ArmyUi
 
-//import com.totalwar.warhammer.database.army.Army
-
+/**
+ * Represents different states of the Armies screen
+ */
 sealed class ArmiesState {
     object Idle : ArmiesState()
-    object Error : ArmiesState()
+    data class Error(val message: String) : ArmiesState()
     object Loading : ArmiesState()
     data class Success(
         val armies: List<ArmyUi>,

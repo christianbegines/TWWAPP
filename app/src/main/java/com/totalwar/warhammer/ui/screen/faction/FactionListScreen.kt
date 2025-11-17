@@ -71,7 +71,10 @@ fun FactionListScreen(
                     )
             ) {
                 when (val state = factionState) {
-                    is FactionState.Error -> FactionErrorState(onRetry = { viewModel.findAllFactions() })
+                    is FactionState.Error -> FactionErrorState(
+                        errorMessage = state.message,
+                        onRetry = { viewModel.findAllFactions() }
+                    )
                     is FactionState.Idle, is FactionState.Loading -> FactionLoadingState()
                     is FactionState.Success -> FactionSuccessState(
                         factions = state.factionList,
