@@ -159,13 +159,8 @@ type battle_mount {
 
 type battle_personality {
   key: ID
-  type: String
-  missile_type: projectile
-  variant: unit_variant
   battle_entity: battle_entity
-  rider_attachment_point: String
   battle_entity_stats: battle_entity_stats
-  autonomous_rider_hero: StringBoolean
 }
 
 type battle_set_piece_armies_character {
@@ -310,6 +305,11 @@ type character_trait_level {
   trait_level_effects: [trait_level_effect]
 }
 
+type culture {
+  key: String
+  name: String
+}
+
 type effect {
   effect: ID
   icon: String
@@ -380,12 +380,8 @@ type faction {
   flags_path: String
   flags_url: String
   name_group: String
-  primary_colour_r: Int
-  primary_colour_g: Int
-  primary_colour_b: Int
-  secondary_colour_r: Int
-  secondary_colour_g: Int
-  secondary_colour_b: Int
+  primary_colour_hex: String
+  secondary_colour_hex: String
   military_group: String
   can_be_horde: StringBoolean
   faction_swapping_id: String
@@ -471,14 +467,9 @@ type land_unit {
   special_ability_groups: [special_ability_group]
   battle_entity: battle_entity
   engine: engine
-  officers: land_unit_officers
+  battle_personalities: [battle_personality]
   variant: unit_variant
   articulated_vehicle_entity: battle_entity
-}
-
-type land_unit_officers {
-  officer_1: battle_personality
-  additionnal_personalities: [battle_personality]
 }
 
 type main_unit {
@@ -522,7 +513,7 @@ type melee_weapon {
   damage: Int
   ap_damage: Int
   first_strike: Int
-  weapon_length: Int
+  weapon_length: Float
   melee_weapon_type: String
   splash_attack_target_size: String
   splash_attack_max_attacks: Int
@@ -726,6 +717,7 @@ scalar StringBoolean
 type subculture {
   subculture: String
   name: String
+  culture: culture
 }
 
 type trait_category {
@@ -858,6 +850,8 @@ type unit_shield_type {
   key: ID
   parry_chance: Int
   material: String
+  shield_defence_value: Int
+  shield_armour_value: Int
 }
 
 type unit_stat {
@@ -924,4 +918,3 @@ type vortex {
   delay: Float
   num_vortexs: Int
 }
-

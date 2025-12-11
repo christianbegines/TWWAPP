@@ -111,7 +111,6 @@ fun FactionUnitsQuery.Unit.map(): UnitQuery.Unit {
             null,
             null,
             null,
-            null,
         ),
     )
 }

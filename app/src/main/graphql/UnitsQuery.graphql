@@ -137,19 +137,6 @@ query UnitQuery($tww_version: String!, $key: String!) {
                     key
                     onscreen
                 }
-                officers {
-                    additionnal_personalities {
-                        key
-                        battle_entity_stats {
-                            primary_missile_weapon {
-                                use_secondary_ammo_pool
-                                default_projectile {
-                                    ...projectile
-                                }
-                            }
-                        }
-                    }
-                }
                 primary_melee_weapon {
                     key
                     bonus_v_cavalry
